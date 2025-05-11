@@ -1,20 +1,3 @@
-<header>
-
-<!--
-  <<< Author notes: Course header >>>
-  Read <https://skills.github.com/quickstart> for more information about how to build courses using this template.
-  Include a 1280×640 image, course name in sentence case, and a concise description in emphasis.
-  In your repository settings: enable template repository, add your 1280×640 social image, auto delete head branches.
-  Next to "About", add description & tags; disable releases, packages, & environments.
-  Add your open source license, GitHub uses the MIT license.
--->
-
-# Building Your Portfolio Website
-
-_A comprehensive 16-chapter course to build your professional web development portfolio from the ground up_
-
-</header>
-
 <!--
   <<< Author notes: Step 1 >>>
   The first step introduces web fundamentals and guides students on how to complete the quiz.
@@ -48,24 +31,6 @@ In this first chapter, you'll learn about web fundamentals and how to complete t
    
 5. After you've answered all questions, commit your changes to the `docs/Chapter1-Quiz.md` file.
    
-6. The GitHub Actions workflow will automatically check your answers and, if correct, will:
-   - Progress you to the next chapter
-   - Automatically close the associated "Complete Chapter 1 Quiz" issue
-   - Add a congratulatory comment to the closed issue
+6. The GitHub Actions workflow will automatically check your answers and, if correct, will progress you to the next chapter.
 
 Remember: There's no need to create a new branch - simply edit the quiz file, commit your changes, and push them to the main branch.
-
-<footer>
-
-<!--
-  <<< Author notes: Footer >>>
-  Add a link to get support, GitHub status page, code of conduct, license link.
--->
-
----
-
-Get help: [Open an issue](../../issues) &bull; [Review the GitHub status page](https://www.githubstatus.com/)
-
-&copy; 2023 TBD-copyright-holder &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
-
-</footer>
