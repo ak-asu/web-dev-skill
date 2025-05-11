@@ -1,10 +1,10 @@
 name: Chapter 1 - Web Fundamentals
 
-# This workflow validates quiz answers and progresses to the next chapter
 on:
   push:
+    branches: [ main ]
     paths:
-      - 'docs/Chapter1-Quiz.md'
+      - 'quizzes/Chapter1.md'
   workflow_dispatch:
 
 permissions:
@@ -36,116 +36,57 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Check if quiz file exists
         run: |
-          if [ ! -f "docs/Chapter1-Quiz.md" ]; then
-            echo "Error: docs/Chapter1-Quiz.md is missing"
+          if [ ! -f "quizzes/Chapter1.md" ]; then
+            echo "::error::quizzes/Chapter1.md is missing"
             exit 1
           fi
-      
+
       - name: Validate quiz answers
         id: quiz_validation
         run: |
-          # Get the quiz markdown file
-          QUIZ_FILE="docs/Chapter1-Quiz.md"
-          
-          # Check if the quiz has been attempted
+          QUIZ_FILE="quizzes/Chapter1.md"
           SELECTED_COUNT=$(grep -c "\[X\]" "$QUIZ_FILE" || true)
           if [ "$SELECTED_COUNT" -eq 0 ]; then
-            echo "::error::No answers have been selected in the quiz. Please mark your answers with [X]."
+            echo "::error::No answers selected. Mark answers with [X]."
             exit 1
           fi
-          
-          # Check if the user selected exactly 5 answers (one per question)
           if [ "$SELECTED_COUNT" -ne 5 ]; then
-            echo "::error::You've selected $SELECTED_COUNT answers. Please select exactly one answer for each of the 5 questions."
+            echo "::error::Found $SELECTED_COUNT selections; select exactly 5 answers."
             exit 1
           fi
-          
-          # Check for correct pattern of answers
-          # Question 1
-          if ! grep -q "\[X\] B. Served as pre-built files" "$QUIZ_FILE"; then
-            INCORRECT=$((INCORRECT+1))
+          INCORRECT=0
+          if ! grep -q "\[X\] B. Served as pre-built files" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] C. The client sends requests and the server responds" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] B. A tree-like representation of the HTML document" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] D. To control the presentation and layout of elements" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] C. Use the useState hook's setter function" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if [ "$INCORRECT" -gt 0 ]; then
+            echo "::error::Found $INCORRECT incorrect answers."
+            exit 1
           fi
-          
-          # Question 2
-          if ! grep -q "\[X\] C. The client sends requests and the server responds" "$QUIZ_FILE"; then
-            INCORRECT=$((INCORRECT+1))
-          fi
-          
-          # Question 3
-          if ! grep -q "\[X\] B. A tree-like representation of the HTML document" "$QUIZ_FILE"; then
-            INCORRECT=$((INCORRECT+1))
-          fi
-          
-          # Question 4
-          if ! grep -q "\[X\] D. To control the presentation and layout of elements" "$QUIZ_FILE"; then
-            INCORRECT=$((INCORRECT+1))
-          fi
-          
-          # Question 5
-          if ! grep -q "\[X\] C. Use the useState hook's setter function" "$QUIZ_FILE"; then
-            INCORRECT=$((INCORRECT+1))
-          fi
-          
-          echo "Validation complete. Proceeding to next step."
           echo "quiz_completed=true" >> $GITHUB_OUTPUT
-      
-      - name: Find open issues with chapter1-task label
+
+      - name: Ensure All Chapter-1 Tasks Are Closed
         if: steps.quiz_validation.outputs.quiz_completed == 'true'
-        id: find_issues
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const issues = await github.rest.issues.listForRepo({
+            const open = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              state: 'open',
-              labels: 'chapter1-task'
+              labels: 'chapter1-task',
+              state: 'open'
             });
-            
-            if (issues.data.length > 0) {
-              const issueNumbers = issues.data.map(issue => issue.number);
-              console.log(`Found open issues: ${issueNumbers.join(', ')}`);
-              return { issueNumbers };
-            } else {
-              console.log('No open issues found with chapter1-task label');
-              return { issueNumbers: [] };
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter1-task issues.`);
             }
-          result-encoding: json
-      
-      - name: Close issues
-        if: steps.quiz_validation.outputs.quiz_completed == 'true' && steps.find_issues.outputs.result != '[]'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const result = JSON.parse('${{ steps.find_issues.outputs.result }}');
-            if (result.issueNumbers && result.issueNumbers.length > 0) {
-              for (const issueNumber of result.issueNumbers) {
-                await github.rest.issues.update({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issueNumber,
-                  state: 'closed',
-                  state_reason: 'completed'
-                });
-                
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issueNumber,
-                  body: '🎉 Great job! You have successfully completed the Chapter 1 Quiz. Your answers have been verified as correct. Moving on to the next chapter!'
-                });
-                
-                console.log(`Closed issue #${issueNumber}`);
-              }
-            }
-      
+
       - name: Update to step 2
-        if: steps.quiz_validation.outputs.quiz_completed == 'true'
+        if: success()
         uses: skills/action-update-step@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

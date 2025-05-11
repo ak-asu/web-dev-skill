@@ -1,0 +1,72 @@
+name: Chapter 3 - Project Setup, Linting & Vite
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quizzes/Chapter3.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  get_current_step:
+    runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.read_step.outputs.current_step }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: read_step
+        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  validate_and_progress:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '3'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Quiz Answers
+        id: quiz
+        run: |
+          QUIZ=quizzes/Chapter3.md
+          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
+          if [ "$COUNT" -ne 5 ]; then
+            echo "::error::You must select exactly 5 answers (found $COUNT)."
+            exit 1
+          fi
+          # (Add any correctness grep checks here if desired)
+          echo "quiz_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Ensure All Chapter-3 Tasks Are Closed
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter3-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter3-task issues.`);
+            }
+
+      - name: Advance to Step 4
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 3
+          to_step: 4
+          branch_name: main
