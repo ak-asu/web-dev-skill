@@ -63,39 +63,8 @@ This chart illustrates how you'll progress through the course:
 
 ![Course Flow](https://mermaid.ink/img/pako:eNptks1uwjAQhF9l5TMgJRBI4FIou1SpbXqlh4Zd4kK82D-yHVIi3r2OExAUcsnKM9-sZr3eGnklgXPoxNi82dZl-5Qr1uxRWHM_M2qHVcVGiCXabwRWLrDKHYPu9TWVWOpfZXDQNL1PW1jHZHcMv3N_IxUYuBwDQe-xZHiL0bFWoYm6DHT55NOVFfDkxJdG1bOVvhLZcmexD4XiHAXSHFzA7UoY3uBFkzj_FJvODFXYp5sWbvxCpbH0J9TM4mlCQoGQRjRf7BuQzlypMB8c9ZE8gUGUjrY3C-4RtYGWqHR5KktpUJ3A9uQXpWqtO9A9jOSsNpAKRbjQzUftAxm6EwTyEo6V7dI0j3I2lM2Fuw1ry6_vW-zAdSwsqX_wd9qQNvDMNTkbsRYcxQ4sxqPww5C8Pff7L8uAz4Y?type=png)
 
-## Step 1: Web Fundamentals
-
-_Welcome to "Building Your Portfolio Website"! :wave:_
-
-In this first chapter, you'll learn about web fundamentals and how to complete tasks and quizzes in this course.
-
-**What is this course?**: This is a comprehensive course that will guide you through building your professional portfolio website. We'll start with basic web concepts and progressively add more advanced features.
-
-### :keyboard: Activity: Complete the Chapter 1 Quiz
-
-1. Start by reading through the content in [docs/Chapter1.md](./docs/Chapter1.md) to understand the course workflow and basic web concepts.
-   
-2. Once you've reviewed the material, open the [docs/Chapter1-Quiz.md](./docs/Chapter1-Quiz.md) file to take the quiz.
-   
-3. For each question in the quiz, place an 'X' inside the brackets [ ] for your chosen answer:
-   ```markdown
-   [ ] A. First option
-   [X] B. Second option (this is your selected answer)
-   [ ] C. Third option
-   [ ] D. Fourth option
-   ```
-   
-4. Make sure to select exactly one answer for each of the 5 questions.
-   
-5. After you've answered all questions, commit your changes to the `docs/Chapter1-Quiz.md` file.
-   
-6. The GitHub Actions workflow will automatically check your answers and, if correct, will:
-   - Progress you to the next chapter
-   - Automatically close the associated "Complete Chapter 1 Quiz" issue
-   - Add a congratulatory comment to the closed issue
-
 <p align="center">
-  <a href="./quizzes/chapter1.md">
+  <a href="./resources/chapter1.md">
     <img src="https://img.shields.io/badge/-Take%20the%20Quiz-blue?style=for-the-badge" alt="Take the Quiz">
   </a>
 </p>

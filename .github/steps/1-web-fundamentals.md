@@ -8,11 +8,11 @@ This guide provides a comprehensive introduction to web fundamentals, designed f
 
 1. Start by reading through the content to understand the course workflow and basic web concepts.
    
-2. Once you've reviewed the material, open the `quizzes/Chapter1.md` file to take the quiz.
+2. Once you've reviewed the material, open the `resources/Quiz1.md` file to take the quiz.
    
 3. For each question in the quiz, place an 'X' inside the brackets [ ] for your chosen answer.
    
-4. After you've answered all questions, commit your changes to the `quizzes/Chapter1.md` file.
+4. After you've answered all questions, commit your changes to the `resources/Quiz1.md` file.
    
 5. The GitHub Actions workflow will automatically check your answers and, if correct, will progress you to the next chapter.
 

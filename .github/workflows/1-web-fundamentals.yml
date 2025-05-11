@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'quizzes/Chapter1.md'
+      - 'resources/Quiz1.md'
   workflow_dispatch:
 
 permissions:
@@ -39,15 +39,15 @@ jobs:
 
       - name: Check if quiz file exists
         run: |
-          if [ ! -f "quizzes/Chapter1.md" ]; then
-            echo "::error::quizzes/Chapter1.md is missing"
+          if [ ! -f "resources/Quiz1.md" ]; then
+            echo "::error::resources/Quiz1.md is missing"
             exit 1
           fi
 
       - name: Validate quiz answers
         id: quiz_validation
         run: |
-          QUIZ_FILE="quizzes/Chapter1.md"
+          QUIZ_FILE="resources/Quiz1.md"
           SELECTED_COUNT=$(grep -c "\[X\]" "$QUIZ_FILE" || true)
           if [ "$SELECTED_COUNT" -eq 0 ]; then
             echo "::error::No answers selected. Mark answers with [X]."

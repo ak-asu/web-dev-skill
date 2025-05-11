@@ -4,7 +4,8 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'quizzes/Chapter2.md'
+      - 'resources/Quiz2.md'
+      - 'resources/SRS.md'
   workflow_dispatch:
 
 permissions:
@@ -37,7 +38,7 @@ jobs:
       - name: Validate Quiz Answers
         id: quiz
         run: |
-          QUIZ=quizzes/Chapter2.md
+          QUIZ=resources/Quiz2.md
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."
@@ -46,8 +47,26 @@ jobs:
           # (Add any correctness grep checks here if desired)
           echo "quiz_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Ensure All Chapter-2 Tasks Are Closed
+      - name: Check SRS Document
+        id: srs
         if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if [ ! -f "resources/SRS.md" ]; then
+            echo "::error::SRS document is missing. Please create resources/SRS.md"
+            exit 1
+          fi
+          
+          # Check if SRS document has minimum content
+          SRS_SIZE=$(wc -c < "resources/SRS.md" || echo 0)
+          if [ "$SRS_SIZE" -lt 500 ]; then
+            echo "::error::SRS document is too short. Please complete the document."
+            exit 1
+          fi
+          
+          echo "srs_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Ensure All Chapter-2 Tasks Are Closed
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.srs.outputs.srs_ok == 'true'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
