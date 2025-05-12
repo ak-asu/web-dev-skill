@@ -1,0 +1,166 @@
+name: Chapter 4 - HTML Fundamentals
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quizzes/Chapter4.md'
+      - 'index.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  get_current_step:
+    runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.read_step.outputs.current_step }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: read_step
+        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  validate_and_progress:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '4'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Validate Quiz Answers
+        id: quiz
+        run: |
+          QUIZ=quizzes/Chapter4.md
+          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
+          if [ "$COUNT" -ne 5 ]; then
+            echo "::error::You must select exactly 5 answers (found $COUNT)."
+            exit 1
+          fi
+          # (Add any correctness grep checks here if desired)
+          echo "quiz_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check HTML File
+        id: html_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if [ ! -f "index.html" ]; then
+            echo "::error::index.html file is missing."
+            exit 1
+          fi
+          
+          # Check for required HTML elements and structure
+          HTML_CHECKS=(
+            # Basic HTML structure
+            "<!doctype html>"
+            "<html.*lang=\".*\""
+            "<head>"
+            "<meta charset="
+            "<meta name=\"viewport\""
+            "<title>"
+            "<body>"
+            "<div id=\"root\""
+            "<script.*src=\".*main.*\""
+            
+            # Meta tags for SEO
+            "<meta name=\"description\""
+            
+            # Core elements usage
+            "<h1"
+            
+            # Links and resources
+            "<link.*rel=\".*\""
+          )
+          
+          MISSING=""
+          for check in "${HTML_CHECKS[@]}"; do
+            if ! grep -qi "$check" "index.html"; then
+              MISSING="$MISSING\n- $check"
+            fi
+          done
+          
+          if [ ! -z "$MISSING" ]; then
+            echo "::error::index.html is missing required elements:$MISSING"
+            exit 1
+          fi
+          
+          # Validate basic structure
+          if ! grep -A1000 "<head>" "index.html" | grep -q "<body>"; then
+            echo "::error::HTML structure is incorrect. The <body> tag should appear after the <head> tag."
+            exit 1
+          fi
+          
+          # Check for valid HTML syntax
+          if ! grep -q "<html" "index.html" || ! grep -q "</html>" "index.html"; then
+            echo "::error::HTML file missing opening or closing <html> tag."
+            exit 1
+          fi
+          
+          # Check if root div exists for React mounting
+          if ! grep -q "<div.*id=\"root\"" "index.html"; then
+            echo "::error::Missing root div element for React mounting."
+            exit 1
+          fi
+          
+          # Check for proper script inclusion
+          if ! grep -q "<script.*src=\".*main.*\"" "index.html"; then
+            echo "::error::Missing script tag to load React application."
+            exit 1
+          fi
+          
+          echo "html_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Install HTML validator
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.html_check.outputs.html_ok == 'true'
+        run: npm install -g html-validate
+
+      - name: Run HTML linting
+        id: html_lint
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.html_check.outputs.html_ok == 'true'
+        run: |
+          if html-validate index.html; then
+            echo "html_lint_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::HTML validation failed. Please check your HTML for errors."
+            exit 1
+          fi
+
+      - name: Ensure All Chapter-4 Tasks Are Closed
+        if: >
+          steps.quiz.outputs.quiz_ok == 'true' && 
+          steps.html_check.outputs.html_ok == 'true' &&
+          steps.html_lint.outputs.html_lint_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter4-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter4-task issues.`);
+
+      - name: Advance to Step 5
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 4
+          to_step: 5
+          branch_name: main

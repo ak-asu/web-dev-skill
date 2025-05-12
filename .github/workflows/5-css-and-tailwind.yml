@@ -1,0 +1,206 @@
+name: Chapter 5 - CSS and Tailwind
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quizzes/Chapter5.md'
+      - 'src/index.css'
+      - 'tailwind.config.js'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  get_current_step:
+    runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.read_step.outputs.current_step }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: read_step
+        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  validate_and_progress:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '5'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Validate Quiz Answers
+        id: quiz
+        run: |
+          QUIZ=quizzes/Chapter5.md
+          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
+          if [ "$COUNT" -ne 5 ]; then
+            echo "::error::You must select exactly 5 answers (found $COUNT)."
+            exit 1
+          fi
+          # (Add any correctness grep checks here if desired)
+          echo "quiz_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check CSS File
+        id: css_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if [ ! -f "src/index.css" ]; then
+            echo "::error::src/index.css file is missing."
+            exit 1
+          fi
+          
+          # Check for required CSS elements
+          CSS_CHECKS=(
+            "@import \"tailwindcss\""
+            "@layer"
+          )
+          
+          MISSING=""
+          for check in "${CSS_CHECKS[@]}"; do
+            if ! grep -q "$check" "src/index.css"; then
+              MISSING="$MISSING\n- $check"
+            fi
+          done
+          
+          if [ ! -z "$MISSING" ]; then
+            echo "::error::index.css is missing required elements:$MISSING"
+            exit 1
+          fi
+          
+          echo "css_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Tailwind Config
+        id: tailwind_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.css_check.outputs.css_ok == 'true'
+        run: |
+          if [ ! -f "tailwind.config.js" ]; then
+            echo "::error::tailwind.config.js file is missing."
+            exit 1
+          fi
+          
+          # Check for required Tailwind configuration
+          TAILWIND_CHECKS=(
+            "content: \["
+            "\"./index.html\""
+            "\"./src/\*\*/\*.{js,ts,jsx,tsx}\""
+            "darkMode:"
+            "theme: {"
+            "extend: {"
+          )
+          
+          MISSING=""
+          for check in "${TAILWIND_CHECKS[@]}"; do
+            if ! grep -q "$check" "tailwind.config.js"; then
+              MISSING="$MISSING\n- $check"
+            fi
+          done
+          
+          if [ ! -z "$MISSING" ]; then
+            echo "::error::tailwind.config.js is missing required configuration:$MISSING"
+            exit 1
+          fi
+          
+          echo "tailwind_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Package.json
+        id: package_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.tailwind_check.outputs.tailwind_ok == 'true'
+        run: |
+          if [ ! -f "package.json" ]; then
+            echo "::error::package.json file is missing."
+            exit 1
+          fi
+          
+          # Check for Tailwind 4 and required packages
+          PACKAGE_CHECKS=(
+            "\"tailwindcss\": \"\^4"
+            "\"@tailwindcss/vite\":"
+            "\"@tailwindcss/forms\":"
+            "\"@tailwindcss/typography\":"
+          )
+          
+          MISSING=""
+          for check in "${PACKAGE_CHECKS[@]}"; do
+            if ! grep -q "$check" "package.json"; then
+              MISSING="$MISSING\n- $check"
+            fi
+          done
+          
+          if [ ! -z "$MISSING" ]; then
+            echo "::error::package.json is missing required dependencies:$MISSING"
+            exit 1
+          fi
+          
+          echo "package_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Install Dependencies
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.package_check.outputs.package_ok == 'true'
+        run: npm install
+
+      - name: Run Lint Check
+        id: lint_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npm run lint; then
+            echo "lint_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Linting failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Build Project
+        id: build_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        run: |
+          if npm run build; then
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Build failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Ensure All Chapter-5 Tasks Are Closed
+        if: >
+          steps.quiz.outputs.quiz_ok == 'true' && 
+          steps.css_check.outputs.css_ok == 'true' && 
+          steps.tailwind_check.outputs.tailwind_ok == 'true' &&
+          steps.package_check.outputs.package_ok == 'true' &&
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter5-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter5-task issues.`);
+            }
+
+      - name: Advance to Step 6
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 5
+          to_step: 6
+          branch_name: main
