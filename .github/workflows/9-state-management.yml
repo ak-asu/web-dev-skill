@@ -1,0 +1,171 @@
+name: Chapter 9 - State Management with Redux Toolkit
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quizzes/Chapter9.md'
+      - 'src/**/*.{ts,tsx}'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  get_current_step:
+    runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.read_step.outputs.current_step }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: read_step
+        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  validate_and_progress:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '9'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Validate Quiz Answers
+        id: quiz
+        run: |
+          QUIZ=quizzes/Chapter9.md
+          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
+          if [ "$COUNT" -ne 5 ]; then
+            echo "::error::You must select exactly 5 answers (found $COUNT)."
+            exit 1
+          fi
+          echo "quiz_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Redux Toolkit Dependencies
+        id: redux_deps_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          # Check for Redux Toolkit in package.json
+          if ! grep -q "\"@reduxjs/toolkit\"" "package.json" || ! grep -q "\"react-redux\"" "package.json"; then
+            echo "::error::Missing Redux Toolkit dependencies (@reduxjs/toolkit and/or react-redux) in package.json."
+            exit 1
+          fi
+          
+          echo "redux_deps_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Redux Store Implementation
+        id: redux_store_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.redux_deps_check.outputs.redux_deps_ok == 'true'
+        run: |
+          # Check for Redux store configuration
+          if ! find src -name "store.ts" > /dev/null && ! find src -path "*/app/store.ts" > /dev/null; then
+            echo "::error::No Redux store configuration found."
+            exit 1
+          fi
+          
+          # Check for createSlice usage
+          if ! grep -r "createSlice" --include="*.ts" --include="*.tsx" src > /dev/null; then
+            echo "::error::No Redux Toolkit slice creation found."
+            exit 1
+          fi
+          
+          echo "redux_store_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Redux Integration in React
+        id: redux_integration_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.redux_store_check.outputs.redux_store_ok == 'true'
+        run: |
+          # Check for useSelector or useDispatch
+          if ! grep -r "useSelector\|useDispatch" --include="*.tsx" src > /dev/null; then
+            echo "::error::No Redux hooks usage found (useSelector/useDispatch)."
+            exit 1
+          fi
+          
+          # Check for Provider
+          if ! grep -r "Provider" --include="*.tsx" src > /dev/null; then
+            echo "::error::No Redux Provider component found."
+            exit 1
+          fi
+          
+          echo "redux_integration_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Install Dependencies
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: npm install
+
+      - name: Type Check
+        id: type_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npx tsc --noEmit; then
+            echo "type_check_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::TypeScript type checking failed. Please fix the type errors."
+            exit 1
+          fi
+
+      - name: Run Lint Check
+        id: lint_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npm run lint; then
+            echo "lint_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Linting failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Build Project
+        id: build_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        run: |
+          if npm run build; then
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Build failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Ensure All Chapter-9 Tasks Are Closed
+        if: >
+          steps.quiz.outputs.quiz_ok == 'true' && 
+          steps.redux_deps_check.outputs.redux_deps_ok == 'true' &&
+          steps.redux_store_check.outputs.redux_store_ok == 'true' &&
+          steps.redux_integration_check.outputs.redux_integration_ok == 'true' &&
+          steps.type_check.outputs.type_check_ok == 'true' &&
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter9-task issues.`);
+            }
+
+      - name: Advance to Step 10
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 9
+          to_step: 10
+          branch_name: main

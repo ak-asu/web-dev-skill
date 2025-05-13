@@ -1,15 +1,10 @@
-name: Chapter 6 - TypeScript & Tooling
+name: Chapter 8 - React Advanced Patterns
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'quizzes/Chapter6.md'
-      - 'tsconfig.json'
-      - 'tsconfig.app.json'
-      - 'tsconfig.node.json'
-      - 'eslint.config.js'
-      - '.prettierrc'
+      - 'quizzes/Chapter8.md'
       - 'src/**/*.{ts,tsx}'
   workflow_dispatch:
 
@@ -34,7 +29,7 @@ jobs:
     needs: get_current_step
     if: >
       !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '6'
+      needs.get_current_step.outputs.current_step == '8'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,7 +44,7 @@ jobs:
       - name: Validate Quiz Answers
         id: quiz
         run: |
-          QUIZ=quizzes/Chapter6.md
+          QUIZ=quizzes/Chapter8.md
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."
@@ -57,64 +52,41 @@ jobs:
           fi
           echo "quiz_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check TypeScript Config
-        id: ts_config
+      - name: Check useEffect Usage
+        id: useeffect_check
         if: steps.quiz.outputs.quiz_ok == 'true'
         run: |
-          if [ ! -f "tsconfig.json" ]; then
-            echo "::error::tsconfig.json file is missing."
+          # Check for useEffect hook
+          if ! grep -r "useEffect" --include="*.tsx" src > /dev/null; then
+            echo "::error::No useEffect hook found in the components."
             exit 1
           fi
           
-          # Check for key TypeScript configurations
-          TS_CHECKS=(
-            "\"strict\": true"
-            "\"noEmit\": true"
-            "\"jsx\": \"react-jsx\""
-          )
-          
-          MISSING=""
-          for check in "${TS_CHECKS[@]}"; do
-            if ! grep -q "$check" "tsconfig.app.json"; then
-              MISSING="$MISSING\n- $check"
-            fi
-          done
-          
-          if [ ! -z "$MISSING" ]; then
-            echo "::error::tsconfig.app.json is missing required configurations:$MISSING"
-            exit 1
-          fi
-          
-          echo "ts_config_ok=true" >> $GITHUB_OUTPUT
+          echo "useeffect_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check ESLint Configuration
-        id: eslint_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.ts_config.outputs.ts_config_ok == 'true'
+      - name: Check Context API Usage
+        id: context_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.useeffect_check.outputs.useeffect_ok == 'true'
         run: |
-          if [ ! -f "eslint.config.js" ]; then
-            echo "::error::eslint.config.js file is missing."
+          # Check for createContext and useContext
+          if ! grep -r "createContext\|useContext" --include="*.tsx" --include="*.ts" src > /dev/null; then
+            echo "::error::No Context API usage found (createContext/useContext)."
             exit 1
           fi
           
-          # Check for TypeScript ESLint integration
-          if ! grep -q "typescript-eslint" "eslint.config.js"; then
-            echo "::error::eslint.config.js is missing TypeScript ESLint integration."
-            exit 1
-          fi
-          
-          echo "eslint_ok=true" >> $GITHUB_OUTPUT
+          echo "context_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check TypeScript Usage
-        id: ts_usage
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.eslint_check.outputs.eslint_ok == 'true'
+      - name: Check Code Splitting or Performance Optimization
+        id: optimization_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.context_check.outputs.context_ok == 'true'
         run: |
-          # Check for TypeScript interfaces or types
-          if ! find src -name "*.ts" -o -name "*.tsx" | xargs grep -l "interface\|type\|React.FC" > /dev/null; then
-            echo "::error::No TypeScript interfaces, types, or React.FC found in source files."
+          # Check for React.lazy, Suspense, useMemo, useCallback or memo
+          if ! grep -r "React.lazy\|lazy\|Suspense\|useMemo\|useCallback\|memo" --include="*.tsx" --include="*.ts" src > /dev/null; then
+            echo "::error::No code splitting or performance optimization found (React.lazy, Suspense, useMemo, useCallback, memo)."
             exit 1
           fi
           
-          echo "ts_usage_ok=true" >> $GITHUB_OUTPUT
+          echo "optimization_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         if: steps.quiz.outputs.quiz_ok == 'true'
@@ -142,14 +114,26 @@ jobs:
             exit 1
           fi
 
-      - name: Ensure All Chapter-6 Tasks Are Closed
+      - name: Build Project
+        id: build_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        run: |
+          if npm run build; then
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Build failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Ensure All Chapter-8 Tasks Are Closed
         if: >
           steps.quiz.outputs.quiz_ok == 'true' && 
-          steps.ts_config.outputs.ts_config_ok == 'true' &&
-          steps.eslint_check.outputs.eslint_ok == 'true' &&
-          steps.ts_usage.outputs.ts_usage_ok == 'true' &&
+          steps.useeffect_check.outputs.useeffect_ok == 'true' &&
+          steps.context_check.outputs.context_ok == 'true' &&
+          steps.optimization_check.outputs.optimization_ok == 'true' &&
           steps.type_check.outputs.type_check_ok == 'true' &&
-          steps.lint_check.outputs.lint_ok == 'true'
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -157,18 +141,18 @@ jobs:
             const open = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              labels: 'chapter6-task',
+              labels: 'chapter8-task',
               state: 'open'
             });
             if (open.data.length > 0) {
-              core.setFailed(`There are still ${open.data.length} open chapter6-task issues.`);
+              core.setFailed(`There are still ${open.data.length} open chapter8-task issues.`);
             }
 
-      - name: Advance to Step 7
+      - name: Advance to Step 9
         if: success()
         uses: skills/action-update-step@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          from_step: 6
-          to_step: 7
+          from_step: 8
+          to_step: 9
           branch_name: main

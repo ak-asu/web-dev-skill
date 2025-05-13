@@ -1,16 +1,12 @@
-name: Chapter 6 - TypeScript & Tooling
+name: Chapter 7 - React Fundamentals
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'quizzes/Chapter6.md'
-      - 'tsconfig.json'
-      - 'tsconfig.app.json'
-      - 'tsconfig.node.json'
-      - 'eslint.config.js'
-      - '.prettierrc'
-      - 'src/**/*.{ts,tsx}'
+      - 'quizzes/Chapter7.md'
+      - 'src/components/**'
+      - 'src/App.tsx'
   workflow_dispatch:
 
 permissions:
@@ -34,7 +30,7 @@ jobs:
     needs: get_current_step
     if: >
       !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '6'
+      needs.get_current_step.outputs.current_step == '7'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,7 +45,7 @@ jobs:
       - name: Validate Quiz Answers
         id: quiz
         run: |
-          QUIZ=quizzes/Chapter6.md
+          QUIZ=quizzes/Chapter7.md
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."
@@ -57,64 +53,48 @@ jobs:
           fi
           echo "quiz_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check TypeScript Config
-        id: ts_config
+      - name: Check React Components
+        id: components_check
         if: steps.quiz.outputs.quiz_ok == 'true'
         run: |
-          if [ ! -f "tsconfig.json" ]; then
-            echo "::error::tsconfig.json file is missing."
-            exit 1
+          if [ ! -d "src/components" ]; then
+            mkdir -p src/components
+            echo "::warning::Created missing components directory."
           fi
           
-          # Check for key TypeScript configurations
-          TS_CHECKS=(
-            "\"strict\": true"
-            "\"noEmit\": true"
-            "\"jsx\": \"react-jsx\""
+          # Check for required React components
+          REQUIRED_COMPONENTS=(
+            "About"
+            "Skills"
+            "Projects"
+            "Navbar"
           )
           
-          MISSING=""
-          for check in "${TS_CHECKS[@]}"; do
-            if ! grep -q "$check" "tsconfig.app.json"; then
-              MISSING="$MISSING\n- $check"
+          MISSING_COMPONENTS=""
+          for comp in "${REQUIRED_COMPONENTS[@]}"; do
+            if ! find src/components -name "${comp}*.tsx" > /dev/null; then
+              MISSING_COMPONENTS="$MISSING_COMPONENTS\n- $comp"
             fi
           done
           
-          if [ ! -z "$MISSING" ]; then
-            echo "::error::tsconfig.app.json is missing required configurations:$MISSING"
+          if [ ! -z "$MISSING_COMPONENTS" ]; then
+            echo "::error::Missing required React components:$MISSING_COMPONENTS"
             exit 1
           fi
           
-          echo "ts_config_ok=true" >> $GITHUB_OUTPUT
+          echo "components_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check ESLint Configuration
-        id: eslint_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.ts_config.outputs.ts_config_ok == 'true'
+      - name: Check React Hooks Usage
+        id: hooks_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.components_check.outputs.components_ok == 'true'
         run: |
-          if [ ! -f "eslint.config.js" ]; then
-            echo "::error::eslint.config.js file is missing."
+          # Check for useState hook
+          if ! grep -r "useState" --include="*.tsx" src > /dev/null; then
+            echo "::error::No useState hook found in the components."
             exit 1
           fi
           
-          # Check for TypeScript ESLint integration
-          if ! grep -q "typescript-eslint" "eslint.config.js"; then
-            echo "::error::eslint.config.js is missing TypeScript ESLint integration."
-            exit 1
-          fi
-          
-          echo "eslint_ok=true" >> $GITHUB_OUTPUT
-
-      - name: Check TypeScript Usage
-        id: ts_usage
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.eslint_check.outputs.eslint_ok == 'true'
-        run: |
-          # Check for TypeScript interfaces or types
-          if ! find src -name "*.ts" -o -name "*.tsx" | xargs grep -l "interface\|type\|React.FC" > /dev/null; then
-            echo "::error::No TypeScript interfaces, types, or React.FC found in source files."
-            exit 1
-          fi
-          
-          echo "ts_usage_ok=true" >> $GITHUB_OUTPUT
+          echo "hooks_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         if: steps.quiz.outputs.quiz_ok == 'true'
@@ -142,14 +122,25 @@ jobs:
             exit 1
           fi
 
-      - name: Ensure All Chapter-6 Tasks Are Closed
+      - name: Build Project
+        id: build_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        run: |
+          if npm run build; then
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Build failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Ensure All Chapter-7 Tasks Are Closed
         if: >
           steps.quiz.outputs.quiz_ok == 'true' && 
-          steps.ts_config.outputs.ts_config_ok == 'true' &&
-          steps.eslint_check.outputs.eslint_ok == 'true' &&
-          steps.ts_usage.outputs.ts_usage_ok == 'true' &&
+          steps.components_check.outputs.components_ok == 'true' &&
+          steps.hooks_check.outputs.hooks_ok == 'true' &&
           steps.type_check.outputs.type_check_ok == 'true' &&
-          steps.lint_check.outputs.lint_ok == 'true'
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -157,18 +148,18 @@ jobs:
             const open = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              labels: 'chapter6-task',
+              labels: 'chapter7-task',
               state: 'open'
             });
             if (open.data.length > 0) {
-              core.setFailed(`There are still ${open.data.length} open chapter6-task issues.`);
+              core.setFailed(`There are still ${open.data.length} open chapter7-task issues.`);
             }
 
-      - name: Advance to Step 7
+      - name: Advance to Step 8
         if: success()
         uses: skills/action-update-step@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          from_step: 6
-          to_step: 7
+          from_step: 7
+          to_step: 8
           branch_name: main
