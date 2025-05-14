@@ -1,36 +1,36 @@
-/* Import Tailwind CSS */
-@import "tailwindcss";
+@import "tailwindcss/preflight";
+@tailwind utilities;
 
-/* Base styles - fundamental styling for HTML elements */
 @layer base {
-  :root {
-    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
-    font-weight: 400;
-  
-    color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
-  
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  html {
+    scroll-behavior: smooth;
   }
-  
+
   body {
     margin: 0;
-    display: flex;
-    place-items: center;
-    min-width: 320px;
-    min-height: 100vh;
-  }
-  
-  h1 {
-    font-size: 3.2em;
-    line-height: 1.1;
+    font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #111827; /* bg-gray-900 */
+    color: #f9fafb; /* text-gray-50 */
   }
 }
+
+/* 
+  In Chapter 5, you'll learn how to:
+  - Customize Tailwind through @layer directives
+  - Create responsive designs using Tailwind's utility classes
+  - Implement dark mode with the dark: prefix
+  - Build a cohesive design system for your portfolio
+*/
+
+/* 
+  In Chapter 5, you'll learn how to:
+  - Customize Tailwind through @layer directives
+  - Create responsive designs using Tailwind's utility classes
+  - Implement dark mode with the dark: prefix
+  - Build a cohesive design system for your portfolio
+*/
 
 /* Component styles - reusable UI elements */
 @layer components {
