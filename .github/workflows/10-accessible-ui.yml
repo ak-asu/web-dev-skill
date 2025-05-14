@@ -1,0 +1,189 @@
+name: Chapter 10 - Accessible UI Components
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quizzes/Chapter10.md'
+      - 'package.json'
+      - 'src/components/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  get_current_step:
+    runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.read_step.outputs.current_step }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: read_step
+        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  validate_and_progress:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '10'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Validate Quiz Answers
+        id: quiz
+        run: |
+          QUIZ=quizzes/Chapter10.md
+          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
+          if [ "$COUNT" -ne 5 ]; then
+            echo "::error::You must select exactly 5 answers (found $COUNT)."
+            exit 1
+          fi
+          echo "quiz_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Package Dependencies
+        id: package_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if [ ! -f "package.json" ]; then
+            echo "::error::package.json file is missing."
+            exit 1
+          fi
+          
+          # Check for required dependencies
+          REQUIRED_DEPS=(
+            "\"@radix-ui/react"
+            "\"react-icons\""
+          )
+          
+          MISSING=""
+          for dep in "${REQUIRED_DEPS[@]}"; do
+            if ! grep -q "$dep" "package.json"; then
+              MISSING="$MISSING\n- $dep"
+            fi
+          done
+          
+          if [ ! -z "$MISSING" ]; then
+            echo "::error::package.json is missing required dependencies:$MISSING"
+            exit 1
+          fi
+          
+          echo "package_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Radix UI/shadcn Usage
+        id: component_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.package_check.outputs.package_ok == 'true'
+        run: |
+          # Check for Radix UI imports or shadcn/ui components
+          if ! grep -r "from '@radix-ui/react\|from '@/components/ui\|from \"@/components/ui" --include="*.tsx" src > /dev/null; then
+            echo "::error::No Radix UI or shadcn/ui components found in the project."
+            exit 1
+          fi
+          
+          echo "component_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check React Icons Usage
+        id: icons_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.component_check.outputs.component_ok == 'true'
+        run: |
+          # Check for React Icons imports
+          if ! grep -r "from 'react-icons\|from \"react-icons" --include="*.tsx" src > /dev/null; then
+            echo "::error::No React Icons usage found in the project."
+            exit 1
+          fi
+          
+          echo "icons_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Accessibility Attributes
+        id: accessibility_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.icons_check.outputs.icons_ok == 'true'
+        run: |
+          # Check for ARIA attributes or accessibility features
+          if ! grep -r "aria-label\|aria-labelledby\|aria-describedby\|role=" --include="*.tsx" src > /dev/null; then
+            echo "::error::No ARIA attributes found in the components."
+            exit 1
+          fi
+          
+          echo "accessibility_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Install Dependencies
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: npm install
+
+      - name: Type Check
+        id: type_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npx tsc --noEmit; then
+            echo "type_check_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::TypeScript type checking failed. Please fix the type errors."
+            exit 1
+          fi
+
+      - name: Run Lint Check
+        id: lint_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npm run lint; then
+            echo "lint_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Linting failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Build Project
+        id: build_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        run: |
+          if npm run build; then
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Build failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Ensure All Chapter-10 Tasks Are Closed
+        if: >
+          steps.quiz.outputs.quiz_ok == 'true' && 
+          steps.package_check.outputs.package_ok == 'true' &&
+          steps.component_check.outputs.component_ok == 'true' &&
+          steps.icons_check.outputs.icons_ok == 'true' &&
+          steps.accessibility_check.outputs.accessibility_ok == 'true' &&
+          steps.type_check.outputs.type_check_ok == 'true' &&
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter10-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter10-task issues.`);
+            }
+
+      - name: Advance to Step 11
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 10
+          to_step: 11
+          branch_name: main

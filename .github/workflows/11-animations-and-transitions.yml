@@ -1,0 +1,214 @@
+name: Chapter 11 - Animations and Transitions
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'quizzes/Chapter11.md'
+      - 'package.json'
+      - 'src/components/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  get_current_step:
+    runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.read_step.outputs.current_step }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: read_step
+        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  validate_and_progress:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '11'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Validate Quiz Answers
+        id: quiz
+        run: |
+          QUIZ=quizzes/Chapter11.md
+          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
+          if [ "$COUNT" -ne 5 ]; then
+            echo "::error::You must select exactly 5 answers (found $COUNT)."
+            exit 1
+          fi
+          echo "quiz_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Motion Dependency
+        id: dependency_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if [ ! -f "package.json" ]; then
+            echo "::error::package.json file is missing."
+            exit 1
+          fi
+          
+          # Check for Motion dependency
+          if ! grep -q "\"motion\":" "package.json" && ! grep -q "\"framer-motion\":" "package.json"; then
+            echo "::error::Motion or framer-motion dependency not found in package.json."
+            exit 1
+          fi
+          
+          echo "dependency_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Motion Usage
+        id: motion_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.dependency_check.outputs.dependency_ok == 'true'
+        run: |
+          # Check for Motion imports and usage
+          if ! grep -r "import \(.*\) from ['\"]motion\|import \(.*\) from ['\"]framer-motion" --include="*.tsx" src > /dev/null; then
+            echo "::error::No Motion or framer-motion imports found in the components."
+            exit 1
+          fi
+          
+          # Check for motion components
+          if ! grep -r "motion\.\|<motion" --include="*.tsx" src > /dev/null; then
+            echo "::error::No motion components found in the project."
+            exit 1
+          fi
+          
+          echo "motion_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Animation Properties
+        id: animation_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.motion_check.outputs.motion_ok == 'true'
+        run: |
+          # Check for animation properties like initial, animate, transition
+          ANIMATION_PROPS=(
+            "initial="
+            "animate="
+            "transition="
+            "variants="
+          )
+          
+          FOUND=false
+          for prop in "${ANIMATION_PROPS[@]}"; do
+            if grep -r "$prop" --include="*.tsx" src > /dev/null; then
+              FOUND=true
+              break
+            fi
+          done
+          
+          if [ "$FOUND" = false ]; then
+            echo "::error::No animation properties (initial, animate, transition, variants) found in the components."
+            exit 1
+          fi
+          
+          echo "animation_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Advanced Animation Features
+        id: advanced_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.animation_check.outputs.animation_ok == 'true'
+        run: |
+          # Check for advanced features like AnimatePresence, staggerChildren, or whileHover
+          ADVANCED_FEATURES=(
+            "AnimatePresence"
+            "staggerChildren"
+            "whileHover"
+            "whileTap"
+            "exit="
+          )
+          
+          FOUND=false
+          for feature in "${ADVANCED_FEATURES[@]}"; do
+            if grep -r "$feature" --include="*.tsx" --include="*.ts" src > /dev/null; then
+              FOUND=true
+              break
+            fi
+          done
+          
+          if [ "$FOUND" = false ]; then
+            echo "::error::No advanced animation features found. Include AnimatePresence, staggerChildren, whileHover, whileTap, or exit animations."
+            exit 1
+          fi
+          
+          echo "advanced_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Install Dependencies
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: npm install
+
+      - name: Type Check
+        id: type_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npx tsc --noEmit; then
+            echo "type_check_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::TypeScript type checking failed. Please fix the type errors."
+            exit 1
+          fi
+
+      - name: Run Lint Check
+        id: lint_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npm run lint; then
+            echo "lint_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Linting failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Build Project
+        id: build_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        run: |
+          if npm run build; then
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Build failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Ensure All Chapter-11 Tasks Are Closed
+        if: >
+          steps.quiz.outputs.quiz_ok == 'true' && 
+          steps.dependency_check.outputs.dependency_ok == 'true' &&
+          steps.motion_check.outputs.motion_ok == 'true' &&
+          steps.animation_check.outputs.animation_ok == 'true' &&
+          steps.advanced_check.outputs.advanced_ok == 'true' &&
+          steps.type_check.outputs.type_check_ok == 'true' &&
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter11-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter11-task issues.`);
+            }
+
+      - name: Advance to Step 12
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 11
+          to_step: 12
+          branch_name: main
