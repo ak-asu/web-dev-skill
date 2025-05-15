@@ -24,7 +24,6 @@ const Education: React.FC = () => {
             My academic background and continuous learning journey.
           </p>
         </motion.div>
-
         <div className="max-w-4xl mx-auto mb-16">
           {educationItems.map((edu) => (
             <motion.div
@@ -49,7 +48,6 @@ const Education: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
                   <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-400">
                     <div className="flex items-center">
                       <FaMapMarkerAlt className="mr-1" />
@@ -60,9 +58,7 @@ const Education: React.FC = () => {
                       <span>{edu.period}</span>
                     </div>
                   </div>
-
                   <p className="text-gray-300 mb-4">{edu.description}</p>
-
                   <div className="mb-4">
                     <h4 className="text-lg font-semibold mb-2 text-white">Achievements</h4>
                     <ul className="space-y-1 text-gray-300">
@@ -74,7 +70,6 @@ const Education: React.FC = () => {
                       ))}
                     </ul>
                   </div>
-
                   {edu.courses && (
                     <div>
                       <h4 className="text-lg font-semibold mb-2 text-white">Relevant Coursework</h4>
@@ -95,7 +90,6 @@ const Education: React.FC = () => {
             </motion.div>
           ))}
         </div>
-
         <motion.div
           className="max-w-4xl mx-auto"
           initial="hidden"
@@ -104,28 +98,25 @@ const Education: React.FC = () => {
           variants={fadeIn}
         >
           <h3 className="text-2xl font-bold mb-6 text-center">Certifications</h3>
-          <div className="flex flex-col space-y-3 max-w-2xl mx-auto">
+          <div className="flex flex-col space-y-4 max-w-2xl mx-auto">
             {certifications.map(cert => (
               <div
                 key={cert.id}
-                onClick={() => cert.credentialUrl && window.open(cert.credentialUrl, '_blank')}
-                className={`group bg-gray-700 hover:bg-gray-600 p-4 rounded-lg shadow-lg border border-gray-600 h-12 flex items-center justify-between transition-all duration-300 overflow-hidden ${cert.credentialUrl ? 'cursor-pointer hover:bg-gray-650' : ''}`}
+                className="cert-card-container"
               >
-                <div className="relative w-full flex justify-between items-center">
-                  {/* Front side (visible when not hovering) */}
-                  <div className="transition-opacity duration-300 group-hover:opacity-0 absolute left-0 font-semibold text-blue-400">
-                    {cert.name}
-                  </div>
-                  <div className="transition-opacity duration-300 group-hover:opacity-0 absolute right-0 text-gray-400 text-xs">
-                    {cert.credentialId}
-                  </div>
-
-                  {/* Back side (visible when hovering) */}
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute left-0 text-gray-300">
-                    {cert.issuer}
-                  </div>
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute right-0 text-gray-400 text-sm">
-                    {cert.date}
+                <div 
+                  className={`cert-card ${cert.credentialUrl ? 'cursor-pointer' : ''}`}
+                  onClick={() => cert.credentialUrl && window.open(cert.credentialUrl, '_blank')}
+                >
+                  {/* Front side */}
+                  <div className="cert-card-front shadow-lg">
+                    <span className="font-semibold text-blue-400">{cert.name}</span>
+                    <span className="text-gray-400 text-xs">{cert.credentialId}</span>
+                  </div>                  
+                  {/* Back side */}
+                  <div className="cert-card-back shadow-lg">
+                    <span className="text-gray-300">{cert.issuer}</span>
+                    <span className="text-gray-300 text-sm">{cert.date}</span>
                   </div>
                 </div>
               </div>

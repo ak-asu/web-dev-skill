@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { personalInfo } from '../data';
 import { motion } from 'framer-motion';
+import { personalInfo } from '../data';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -29,7 +29,6 @@ const Contact: React.FC = () => {
       email: '',
       message: ''
     };
-
     // Name validation
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
@@ -38,7 +37,6 @@ const Contact: React.FC = () => {
       newErrors.name = 'Name must be at least 2 characters';
       valid = false;
     }
-
     // Email validation
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
@@ -50,7 +48,6 @@ const Contact: React.FC = () => {
         valid = false;
       }
     }
-
     // Message validation
     if (!formData.message.trim()) {
       newErrors.message = 'Message is required';
@@ -59,15 +56,13 @@ const Contact: React.FC = () => {
       newErrors.message = 'Message must be at least 10 characters';
       valid = false;
     }
-
     setErrors(newErrors);
     return valid;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData(prev => ({ ...prev, [name]: value }));    
     // Clear error when user types
     if (errors[name as keyof typeof errors]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
@@ -75,8 +70,7 @@ const Contact: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault();    
     // If honeypot field is filled, silently reject but pretend to succeed
     if (formData.honeypot) {
       // Simulate success without actually submitting
@@ -93,15 +87,12 @@ const Contact: React.FC = () => {
         }, 5000);
       }, 1500);
       return;
-    }
-    
+    }    
     // Validate form
     if (!validateForm()) {
       return;
-    }
-    
+    }    
     setIsSubmitting(true);
-    
     try {
       // Call API endpoint to send email
       const response = await fetch('/api/contact', {
@@ -114,14 +105,11 @@ const Contact: React.FC = () => {
           email: formData.email,
           message: formData.message
         }),
-      });
-      
+      });      
       const data = await response.json();
-      
       if (!response.ok) {
         throw new Error(data.message || 'Failed to send message');
-      }
-      
+      }      
       // Success!
       setSubmitMessage({ 
         text: 'Your message has been sent successfully! I will get back to you soon.', 
@@ -160,7 +148,6 @@ const Contact: React.FC = () => {
             Have a question or want to work together? Feel free to contact me.
           </p>
         </motion.div>
-
         <div className="flex flex-col md:flex-row gap-10 max-w-4xl mx-auto">
           <motion.div 
             className="md:w-1/2"
@@ -190,7 +177,6 @@ const Contact: React.FC = () => {
                 </div>
               </div>
             </div>
-
             <h3 className="text-xl font-semibold mt-8 mb-4">Social Media</h3>
             <div className="flex gap-4">
               {personalInfo.socials.map(social => (
@@ -206,7 +192,6 @@ const Contact: React.FC = () => {
               ))}
             </div>
           </motion.div>
-
           <motion.div 
             className="md:w-1/2"
             initial="hidden"
@@ -233,8 +218,7 @@ const Contact: React.FC = () => {
                 {errors.name && (
                   <p className="mt-1 text-red-500 text-sm">{errors.name}</p>
                 )}
-              </div>
-              
+              </div>              
               <div>
                 <label htmlFor="email" className="block mb-2 text-gray-400">
                   Your Email
@@ -253,8 +237,7 @@ const Contact: React.FC = () => {
                 {errors.email && (
                   <p className="mt-1 text-red-500 text-sm">{errors.email}</p>
                 )}
-              </div>
-              
+              </div>              
               <div>
                 <label htmlFor="message" className="block mb-2 text-gray-400">
                   Your Message
@@ -273,8 +256,7 @@ const Contact: React.FC = () => {
                 {errors.message && (
                   <p className="mt-1 text-red-500 text-sm">{errors.message}</p>
                 )}
-              </div>
-              
+              </div>              
               {/* Honeypot field to catch bots - hidden from real users */}
               <div className="hidden">
                 <label htmlFor="honeypot">Leave this field empty</label>
@@ -287,8 +269,7 @@ const Contact: React.FC = () => {
                   tabIndex={-1}
                   autoComplete="off"
                 />
-              </div>
-              
+              </div>              
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -307,8 +288,7 @@ const Contact: React.FC = () => {
                 ) : (
                   'Send Message'
                 )}
-              </button>
-              
+              </button>              
               {submitMessage.text && (
                 <div className={`mt-4 p-3 rounded-md ${submitMessage.isError ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'}`}>
                   {submitMessage.text}

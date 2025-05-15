@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { skills } from '../data';
 import { motion } from 'framer-motion';
+import { skills } from '../data';
 
 // Custom animations that can't be handled directly by Tailwind
+// You can also use CSS file for this
 const customStyles = {
   skillCarousel: {
     animation: 'scroll 40s linear infinite',
@@ -21,6 +22,7 @@ const customStyles = {
 };
 
 // Add keyframes to document
+// You can also use CSS file for this
 const createKeyframes = () => {
   if (typeof document !== 'undefined') {
     const styleSheet = document.createElement('style');
@@ -49,7 +51,7 @@ const Skills: React.FC = () => {
 
   // Flatten all skills into a single array
   const allSkills = [...skills];
-  
+
   // Category-based border colors
   const categoryColors = {
     frontend: 'border-blue-400',
@@ -57,7 +59,7 @@ const Skills: React.FC = () => {
     tools: 'border-yellow-400',
     other: 'border-purple-400'
   };
-  
+
   return (
     <section id="skills" className="py-20 bg-gray-800 text-white flex flex-col justify-center">
       <div className="container mx-auto px-4">
@@ -73,7 +75,6 @@ const Skills: React.FC = () => {
             These are the technologies and tools I work with to build web applications.
           </p>
         </motion.div>
-
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -81,12 +82,12 @@ const Skills: React.FC = () => {
           variants={fadeIn}
           className="max-w-full mx-auto overflow-hidden flex items-center"
         >
-          <div 
+          <div
             className="w-full overflow-hidden py-5 flex items-center"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div 
+            <div
               className="flex w-fit items-center"
               style={{
                 ...customStyles.skillCarousel,

@@ -13,8 +13,6 @@ export interface PersonalInfo {
   location: string;
   email: string;
   socials: Social[];
-  imageUrl: string;
-  resumeUrl?: string;
 }
 
 export interface EducationItem {

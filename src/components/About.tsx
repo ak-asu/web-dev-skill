@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { personalInfo } from '../data';
+import personalImage from '../assets/profileimage.jpg';
 
 
 const About: React.FC = () => {
@@ -22,7 +23,7 @@ const About: React.FC = () => {
             <div className="md:w-1/3">
               <div className="w-60 h-60 mx-auto rounded-full overflow-hidden border-4 border-blue-500">
                 <img
-                  src={personalInfo.imageUrl}
+                  src={personalImage}
                   alt={personalInfo.name}
                   className="w-full h-full object-cover"
                 />

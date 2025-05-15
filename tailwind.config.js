@@ -26,6 +26,19 @@ export default {
       },
       animation: {
         'bounce-slow': 'bounce 3s ease-in-out infinite',
+        'flip': 'flip 0.6s ease-in-out',
+      },
+      keyframes: {
+        flip: {
+          '0%': { transform: 'rotateX(0deg)' },
+          '100%': { transform: 'rotateX(180deg)' },
+        },
+      },
+      transformStyle: {
+        '3d': 'preserve-3d',
+      },
+      backfaceVisibility: {
+        'hidden': 'hidden',
       },
     },
   },

@@ -1,6 +1,6 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { FaBuilding, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import { experiences } from '../data';
 
 const fadeIn = {
@@ -24,12 +24,10 @@ const Experience: React.FC = () => {
             My professional journey and the companies I've had the pleasure to work with.
           </p>
         </motion.div>
-
         <div className="max-w-4xl mx-auto">
           <div className="relative pl-8 md:pl-0">
-            {/* Timeline line - enhanced with gradient */}
+            {/* Timeline line */}
             <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-blue-500 via-blue-400 to-blue-500 shadow-lg shadow-blue-500/20"></div>
-
             {experiences.map((exp, index) => (
               <motion.div 
                 key={exp.id}
@@ -39,23 +37,21 @@ const Experience: React.FC = () => {
                 viewport={{ once: true, margin: "-100px" }}
                 variants={fadeIn}
               >
-                {/* Timeline dot and connector - enhanced with glow and better positioning */}
+                {/* Timeline dot and connector */}
                 <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-8 z-10">
-                  {/* The dot - enhanced with pulse effect */}
+                  {/* The dot with pulse effect */}
                   <div className="w-6 h-6 rounded-full bg-blue-500 border-4 border-gray-900 shadow-lg shadow-blue-500/50 relative">
                     {/* Inner glow/pulse */}
                     <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-30"></div>
                   </div>
-                  
-                  {/* Horizontal connector line - enhanced styling */}
+                  {/* Horizontal connector line */}
                   <div className={`absolute top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r ${
                     index % 2 === 0 
-                      ? 'left-6 w-12 from-blue-500 to-gray-700' 
-                      : 'right-6 w-12 from-gray-700 to-blue-500'
+                      ? 'left-6 w-10 from-blue-500 to-gray-700' 
+                      : 'right-6 w-10 from-gray-700 to-blue-500'
                   }`}>
                   </div>
-                </div>
-                
+                </div>                
                 <div className="md:w-1/2 md:px-8">
                   <div className="p-6 bg-gray-800 rounded-lg shadow-lg relative">
                     {/* Role and company */}
@@ -63,8 +59,7 @@ const Experience: React.FC = () => {
                     <div className="flex items-center mb-2">
                       <FaBuilding className="mr-2 text-gray-400" />
                       <span className="font-medium">{exp.company}</span>
-                    </div>
-                    
+                    </div>                    
                     {/* Location and period */}
                     <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-400">
                       <div className="flex items-center">
@@ -75,8 +70,7 @@ const Experience: React.FC = () => {
                         <FaCalendarAlt className="mr-1" />
                         <span>{exp.period}</span>
                       </div>
-                    </div>
-                    
+                    </div>                    
                     {/* Job description */}
                     <ul className="mb-4 space-y-2 text-gray-300">
                       {exp.description.map((item, i) => (
@@ -85,8 +79,7 @@ const Experience: React.FC = () => {
                           <span>{item}</span>
                         </li>
                       ))}
-                    </ul>
-                    
+                    </ul>                    
                     {/* Technologies used */}
                     <div className="flex flex-wrap gap-2 mt-3">
                       {exp.technologies.map(tech => (

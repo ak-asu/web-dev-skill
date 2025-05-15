@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { personalInfo } from '../data';
+import personalResume from '../assets/resume.pdf';
 
 
 const Hero: React.FC = () => {
@@ -32,16 +33,14 @@ const Hero: React.FC = () => {
             >
               Contact Me
             </a>
-            {personalInfo.resumeUrl && (
-              <a
-                href={personalInfo.resumeUrl}
-                className="px-8 py-3 bg-transparent border border-blue-500 hover:bg-blue-500/10 text-blue-400 font-semibold rounded-md transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View Resume
-              </a>
-            )}
+            <a
+              href={personalResume}
+              className="px-8 py-3 bg-transparent border border-blue-500 hover:bg-blue-500/10 text-blue-400 font-semibold rounded-md transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Resume
+            </a>
           </div>
         </motion.div>
       </div>
