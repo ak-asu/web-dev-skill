@@ -1,36 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { skills } from '../data';
 import { motion } from 'framer-motion';
+import './Skills.css';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 
-const SkillLevel: React.FC<{ level: number }> = ({ level }) => {
-  return (
-    <div className="flex gap-1">
-      {[...Array(5)].map((_, i) => (
-        <div 
-          key={i}
-          className={`w-2 h-2 rounded-full ${i < level ? 'bg-blue-400' : 'bg-gray-600'}`}
-        />
-      ))}
-    </div>
-  );
-};
-
 const Skills: React.FC = () => {
-  // Group skills by category
-  const categories = {
-    frontend: skills.filter(skill => skill.category === 'frontend'),
-    backend: skills.filter(skill => skill.category === 'backend'),
-    tools: skills.filter(skill => skill.category === 'tools'),
-    other: skills.filter(skill => skill.category === 'other')
-  };
+  const [isPaused, setIsPaused] = useState(false);
 
+  // Flatten all skills into a single array
+  const allSkills = [...skills];
+  
+  // Category-based border colors
+  const categoryColors = {
+    frontend: 'border-blue-400',
+    backend: 'border-green-400',
+    tools: 'border-yellow-400',
+    other: 'border-purple-400'
+  };
+  
   return (
-    <section id="skills" className="py-20 bg-gray-800 text-white">
+    <section id="skills" className="py-20 bg-gray-800 text-white flex flex-col justify-center">
       <div className="container mx-auto px-4">
         <motion.div
           className="text-center mb-12"
@@ -45,36 +38,40 @@ const Skills: React.FC = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-4xl mx-auto">
-          {Object.entries(categories).map(([category, categorySkills]) => (
-            categorySkills.length > 0 && (
-              <motion.div 
-                key={category}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-100px" }}
-                variants={fadeIn}
-              >
-                <h3 className="text-xl font-semibold mb-4 capitalize">
-                  {category}
-                </h3>
-                <div className="space-y-4">
-                  {categorySkills.map(skill => (
-                    <div key={skill.name} className="flex items-center p-3 bg-gray-700 rounded-lg">
-                      <div className="flex items-center flex-1">
-                        <div className="text-2xl text-blue-400 mr-3">
-                          <skill.icon />
-                        </div>
-                        <span>{skill.name}</span>
-                      </div>
-                      <SkillLevel level={skill.level} />
-                    </div>
-                  ))}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeIn}
+          className="max-w-full mx-auto overflow-hidden flex items-center"
+        >
+          <div 
+            className="skill-carousel-container"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            <div className={`skill-carousel ${isPaused ? 'paused' : ''}`}>
+              {/* First set of skills */}
+              {allSkills.map((skill, index) => (
+                <div key={`skill-1-${index}`} className="skill-item">
+                  <div className={`skill-icon-container border-2 ${categoryColors[skill.category] || 'border-gray-400'}`}>
+                    <skill.icon />
+                  </div>
+                  <span className="skill-name">{skill.name}</span>
                 </div>
-              </motion.div>
-            )
-          ))}
-        </div>
+              ))}
+              {/* Duplicate skills to create infinite scrolling effect */}
+              {allSkills.map((skill, index) => (
+                <div key={`skill-2-${index}`} className="skill-item">
+                  <div className={`skill-icon-container border-2 ${categoryColors[skill.category] || 'border-gray-400'}`}>
+                    <skill.icon />
+                  </div>
+                  <span className="skill-name">{skill.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

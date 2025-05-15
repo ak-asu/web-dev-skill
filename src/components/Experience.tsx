@@ -27,25 +27,37 @@ const Experience: React.FC = () => {
 
         <div className="max-w-4xl mx-auto">
           <div className="relative pl-8 md:pl-0">
-            {/* Timeline line */}
-            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-700"></div>
+            {/* Timeline line - enhanced with gradient */}
+            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-blue-500 via-blue-400 to-blue-500 shadow-lg shadow-blue-500/20"></div>
 
             {experiences.map((exp, index) => (
               <motion.div 
                 key={exp.id}
-                className={`mb-12 md:flex ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
+                className={`mb-12 md:flex ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} relative`}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
                 variants={fadeIn}
               >
+                {/* Timeline dot and connector - enhanced with glow and better positioning */}
+                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-8 z-10">
+                  {/* The dot - enhanced with pulse effect */}
+                  <div className="w-6 h-6 rounded-full bg-blue-500 border-4 border-gray-900 shadow-lg shadow-blue-500/50 relative">
+                    {/* Inner glow/pulse */}
+                    <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-30"></div>
+                  </div>
+                  
+                  {/* Horizontal connector line - enhanced styling */}
+                  <div className={`absolute top-1/2 -translate-y-1/2 h-0.5 bg-gradient-to-r ${
+                    index % 2 === 0 
+                      ? 'left-6 w-12 from-blue-500 to-gray-700' 
+                      : 'right-6 w-12 from-gray-700 to-blue-500'
+                  }`}>
+                  </div>
+                </div>
+                
                 <div className="md:w-1/2 md:px-8">
                   <div className="p-6 bg-gray-800 rounded-lg shadow-lg relative">
-                    {/* Timeline dot */}
-                    <div className="hidden md:block absolute top-8 left-0 md:left-auto transform md:translate-x-1/2 
-                      md:-translate-x-16 md:translate-y-0 w-5 h-5 rounded-full bg-blue-500 border-4 border-gray-900
-                      z-10"></div>
-                    
                     {/* Role and company */}
                     <h3 className="text-xl font-bold mb-1 text-blue-400">{exp.role}</h3>
                     <div className="flex items-center mb-2">

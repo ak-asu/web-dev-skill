@@ -11,34 +11,138 @@ const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    message: '',
+    honeypot: '' // Honeypot field to catch bots
+  });
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState({ text: '', isError: false });
 
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {
+      name: '',
+      email: '',
+      message: ''
+    };
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+      valid = false;
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+      valid = false;
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+      valid = false;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+        valid = false;
+      }
+    }
+
+    // Message validation
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+      valid = false;
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user types
+    if (errors[name as keyof typeof errors]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // If honeypot field is filled, silently reject but pretend to succeed
+    if (formData.honeypot) {
+      // Simulate success without actually submitting
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        setSubmitMessage({ 
+          text: 'Your message has been sent successfully! I will get back to you soon.', 
+          isError: false 
+        });
+        setFormData({ name: '', email: '', message: '', honeypot: '' });
+        setTimeout(() => {
+          setSubmitMessage({ text: '', isError: false });
+        }, 5000);
+      }, 1500);
+      return;
+    }
+    
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Call API endpoint to send email
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to send message');
+      }
+      
+      // Success!
       setSubmitMessage({ 
         text: 'Your message has been sent successfully! I will get back to you soon.', 
         isError: false 
       });
-      setFormData({ name: '', email: '', message: '' });
-      
+      setFormData({ name: '', email: '', message: '', honeypot: '' });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setSubmitMessage({ 
+        text: error instanceof Error 
+          ? error.message 
+          : 'An error occurred. Please try again later.',
+        isError: true 
+      });
+    } finally {
+      setIsSubmitting(false);
       // Clear message after 5 seconds
       setTimeout(() => {
         setSubmitMessage({ text: '', isError: false });
       }, 5000);
-    }, 1500);
+    }
   };
 
   return (
@@ -122,9 +226,15 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full p-3 bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.name ? 'border-red-500' : 'border-gray-600'
+                  }`}
                 />
+                {errors.name && (
+                  <p className="mt-1 text-red-500 text-sm">{errors.name}</p>
+                )}
               </div>
+              
               <div>
                 <label htmlFor="email" className="block mb-2 text-gray-400">
                   Your Email
@@ -136,9 +246,15 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full p-3 bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.email ? 'border-red-500' : 'border-gray-600'
+                  }`}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-red-500 text-sm">{errors.email}</p>
+                )}
               </div>
+              
               <div>
                 <label htmlFor="message" className="block mb-2 text-gray-400">
                   Your Message
@@ -150,7 +266,26 @@ const Contact: React.FC = () => {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full p-3 bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.message ? 'border-red-500' : 'border-gray-600'
+                  }`}
+                />
+                {errors.message && (
+                  <p className="mt-1 text-red-500 text-sm">{errors.message}</p>
+                )}
+              </div>
+              
+              {/* Honeypot field to catch bots - hidden from real users */}
+              <div className="hidden">
+                <label htmlFor="honeypot">Leave this field empty</label>
+                <input
+                  type="text"
+                  id="honeypot"
+                  name="honeypot"
+                  value={formData.honeypot}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete="off"
                 />
               </div>
               

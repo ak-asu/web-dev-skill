@@ -32,6 +32,7 @@ export interface Certification {
   issuer: string;
   date: string;
   credentialId: string;
+  credentialUrl: string;
 }
 
 export interface Achievement {
