@@ -4,8 +4,11 @@ import { motion } from 'framer-motion';
 const navLinks = [
   { name: 'Home', href: '#home' },
   { name: 'About', href: '#about' },
-  { name: 'Projects', href: '#projects' },
+  { name: 'Education', href: '#education' },
   { name: 'Skills', href: '#skills' },
+  { name: 'Experience', href: '#experience' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'Achievements', href: '#achievements' },
   { name: 'Contact', href: '#contact' }
 ];
 
@@ -38,7 +41,7 @@ const Navbar: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           <a href="#home" className="text-xl md:text-2xl font-bold text-white">
-            <span className="text-blue-400">Name </span>Portfolio
+            <span className="text-blue-400">First&nbsp;</span>Last
           </a>
 
           {/* Desktop Navigation */}
