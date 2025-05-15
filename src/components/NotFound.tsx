@@ -8,7 +8,7 @@ const NotFound: React.FC = () => {
       <p className="text-gray-400 max-w-md text-center mb-8">
         The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
       </p>
-      <a 
+      <a
         href="/"
         className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md transition-colors"
       >

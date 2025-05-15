@@ -47,21 +47,3 @@
     animation: logo-spin infinite 20s linear;
   }
 }
-
-/* 
-  Chapter 5 Notes:
-  
-  This file contains component-specific styles for the App component.
-  While Tailwind CSS encourages utility classes in your JSX/TSX files,
-  sometimes you'll need custom CSS for:
-  
-  1. Animations and keyframes
-  2. Third-party component styling
-  3. Complex selectors and edge cases
-  
-  In this chapter, you'll learn how to:
-  - Migrate traditional CSS to Tailwind utilities
-  - Use @apply to extract repetitive utility patterns
-  - Balance component CSS files with utility-first approaches
-  - Create a consistent design system across your application
-*/

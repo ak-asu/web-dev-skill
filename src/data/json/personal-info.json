@@ -4,5 +4,6 @@
   "description": "Passionate web developer with a strong focus on creating responsive, accessible, and performant web applications. I enjoy working with modern technologies and continuously learning new skills to improve my craft. I specialize in JavaScript frameworks such as React and Node.js and embrace robust tooling and testing practices to deliver scalable, maintainable code.",
   "location": "Phoenix, AZ",
   "email": "contact@patrickjane.com",
+  "imageUrl": "/images/patrick-jane.jpg",
   "resumeUrl": "/resume.pdf"
 }

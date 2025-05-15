@@ -23,16 +23,14 @@ const Navbar: React.FC = () => {
         setIsScrolled(false);
       }
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-gray-900/90 backdrop-blur-sm shadow-lg' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/90 backdrop-blur-sm shadow-lg' : 'bg-transparent'
+        }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
@@ -42,7 +40,6 @@ const Navbar: React.FC = () => {
           <a href="#home" className="text-xl md:text-2xl font-bold text-white">
             <span className="text-blue-400">Portfolio</span>
           </a>
-
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map(link => (
@@ -55,7 +52,6 @@ const Navbar: React.FC = () => {
               </a>
             ))}
           </div>
-
           {/* Mobile Menu Button */}
           <button
             className="md:hidden text-gray-300 focus:outline-none"
@@ -87,12 +83,11 @@ const Navbar: React.FC = () => {
           </button>
         </div>
       </div>
-
       {/* Mobile Menu */}
       <motion.div
         className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'}`}
         initial={{ opacity: 0, height: 0 }}
-        animate={{ 
+        animate={{
           opacity: isMobileMenuOpen ? 1 : 0,
           height: isMobileMenuOpen ? 'auto' : 0
         }}

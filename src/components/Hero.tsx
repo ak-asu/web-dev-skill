@@ -1,21 +1,20 @@
 import React from 'react';
-import { personalInfo } from '../data';
 import { motion } from 'framer-motion';
+import { personalInfo } from '../data';
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
 
 const Hero: React.FC = () => {
   return (
     <section id="home" className="min-h-screen flex items-center justify-center py-16 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
       <div className="container px-4 mx-auto">
-        <motion.div 
+        <motion.div
           className="flex flex-col items-center text-center"
           initial="hidden"
           animate="visible"
-          variants={fadeIn}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+          }}
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
             Hi, I'm <span className="text-blue-400">{personalInfo.name}</span>
@@ -27,17 +26,17 @@ const Hero: React.FC = () => {
             {personalInfo.description}
           </p>
           <div className="flex gap-4">
-            <a 
-              href="#contact" 
+            <a
+              href="#contact"
               className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md transition-colors"
             >
               Contact Me
             </a>
             {personalInfo.resumeUrl && (
-              <a 
-                href={personalInfo.resumeUrl} 
+              <a
+                href={personalInfo.resumeUrl}
                 className="px-8 py-3 bg-transparent border border-blue-500 hover:bg-blue-500/10 text-blue-400 font-semibold rounded-md transition-colors"
-                target="_blank" 
+                target="_blank"
                 rel="noopener noreferrer"
               >
                 View Resume

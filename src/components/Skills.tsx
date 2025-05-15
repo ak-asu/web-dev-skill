@@ -1,7 +1,38 @@
 import React, { useState } from 'react';
 import { skills } from '../data';
 import { motion } from 'framer-motion';
-import './Skills.css';
+
+// Custom animations that can't be handled directly by Tailwind
+const customStyles = {
+  skillCarousel: {
+    animation: 'scroll 40s linear infinite',
+  },
+  skillCarouselPaused: {
+    animationPlayState: 'paused',
+  },
+  '@keyframes scroll': {
+    '0%': {
+      transform: 'translateX(0)',
+    },
+    '100%': {
+      transform: 'translateX(-50%)',
+    },
+  },
+};
+
+// Add keyframes to document
+const createKeyframes = () => {
+  if (typeof document !== 'undefined') {
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      @keyframes scroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+  }
+};
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -10,6 +41,11 @@ const fadeIn = {
 
 const Skills: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
+
+  // Create keyframes when component mounts
+  React.useEffect(() => {
+    createKeyframes();
+  }, []);
 
   // Flatten all skills into a single array
   const allSkills = [...skills];
@@ -46,27 +82,37 @@ const Skills: React.FC = () => {
           className="max-w-full mx-auto overflow-hidden flex items-center"
         >
           <div 
-            className="skill-carousel-container"
+            className="w-full overflow-hidden py-5 flex items-center"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            <div className={`skill-carousel ${isPaused ? 'paused' : ''}`}>
+            <div 
+              className="flex w-fit items-center"
+              style={{
+                ...customStyles.skillCarousel,
+                ...(isPaused ? customStyles.skillCarouselPaused : {})
+              }}
+            >
               {/* First set of skills */}
               {allSkills.map((skill, index) => (
-                <div key={`skill-1-${index}`} className="skill-item">
-                  <div className={`skill-icon-container border-2 ${categoryColors[skill.category] || 'border-gray-400'}`}>
+                <div key={`skill-1-${index}`} className="flex flex-col items-center mx-5 relative group">
+                  <div className={`w-[60px] h-[60px] rounded-full bg-gray-800 flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>
                     <skill.icon />
                   </div>
-                  <span className="skill-name">{skill.name}</span>
+                  <span className="text-sm opacity-0 absolute top-full whitespace-nowrap transition-opacity duration-200 bg-gray-800 bg-opacity-90 px-2 py-0.5 rounded pointer-events-none group-hover:opacity-100">
+                    {skill.name}
+                  </span>
                 </div>
               ))}
               {/* Duplicate skills to create infinite scrolling effect */}
               {allSkills.map((skill, index) => (
-                <div key={`skill-2-${index}`} className="skill-item">
-                  <div className={`skill-icon-container border-2 ${categoryColors[skill.category] || 'border-gray-400'}`}>
+                <div key={`skill-2-${index}`} className="flex flex-col items-center mx-5 relative group">
+                  <div className={`w-[60px] h-[60px] rounded-full bg-gray-800 flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>
                     <skill.icon />
                   </div>
-                  <span className="skill-name">{skill.name}</span>
+                  <span className="text-sm opacity-0 absolute top-full whitespace-nowrap transition-opacity duration-200 bg-gray-800 bg-opacity-90 px-2 py-0.5 rounded pointer-events-none group-hover:opacity-100">
+                    {skill.name}
+                  </span>
                 </div>
               ))}
             </div>

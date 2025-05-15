@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-8 pt-6 text-center text-gray-400 text-sm">
           <p>© {currentYear} {personalInfo.name}. All rights reserved.</p>
           <p className="mt-2">
-            Built with React, TypeScript, Tailwind CSS, and Vite
+            Built with React, TypeScript, Tailwind CSS and Vite
           </p>
         </div>
       </div>

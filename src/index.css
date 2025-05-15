@@ -16,22 +16,6 @@
   }
 }
 
-/* 
-  In Chapter 5, you'll learn how to:
-  - Customize Tailwind through @layer directives
-  - Create responsive designs using Tailwind's utility classes
-  - Implement dark mode with the dark: prefix
-  - Build a cohesive design system for your portfolio
-*/
-
-/* 
-  In Chapter 5, you'll learn how to:
-  - Customize Tailwind through @layer directives
-  - Create responsive designs using Tailwind's utility classes
-  - Implement dark mode with the dark: prefix
-  - Build a cohesive design system for your portfolio
-*/
-
 /* Component styles - reusable UI elements */
 @layer components {
   button {
@@ -81,11 +65,3 @@
     }
   }
 }
-
-/* 
-  In Chapter 5, you'll learn how to:
-  - Customize Tailwind through @layer directives
-  - Create responsive designs using Tailwind's utility classes
-  - Implement dark mode with the dark: prefix
-  - Build a cohesive design system for your portfolio
-*/

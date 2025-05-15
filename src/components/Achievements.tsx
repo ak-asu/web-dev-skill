@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaTrophy, FaMedal, FaAward, FaCertificate } from 'react-icons/fa';
-import { achievements as achievementData } from '../data/resume';
+import { achievements as achievementData } from '../data';
 
 const getIcon = (iconType: 'trophy' | 'medal' | 'award' | 'certificate', className: string = '') => {
   switch (iconType) {

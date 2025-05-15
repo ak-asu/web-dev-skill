@@ -1,11 +1,7 @@
 import React from 'react';
-import { personalInfo } from '../data';
 import { motion } from 'framer-motion';
+import { personalInfo } from '../data';
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
 
 const About: React.FC = () => {
   return (
@@ -16,14 +12,17 @@ const About: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          variants={fadeIn}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+          }}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">About Me</h2>
           <div className="flex flex-col md:flex-row gap-10 items-center">
             <div className="md:w-1/3">
               <div className="w-60 h-60 mx-auto rounded-full overflow-hidden border-4 border-blue-500">
                 <img
-                  src="https://placehold.co/400x400"
+                  src={personalInfo.imageUrl}
                   alt={personalInfo.name}
                   className="w-full h-full object-cover"
                 />

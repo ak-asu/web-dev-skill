@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaBuilding, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
-import { experiences } from '../data/resume';
+import { experiences } from '../data';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
