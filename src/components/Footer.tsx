@@ -1,6 +1,7 @@
 import React from 'react';
 import { personalInfo } from '../data';
 
+
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 

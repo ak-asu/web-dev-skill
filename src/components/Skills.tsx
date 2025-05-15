@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { skills } from '../data';
 
+
 // Custom animations that can't be handled directly by Tailwind
-// You can also use CSS file for this
+// These styles define the infinite scrolling animation for the skills carousel
 const customStyles = {
   skillCarousel: {
     animation: 'scroll 40s linear infinite',
@@ -22,7 +23,8 @@ const customStyles = {
 };
 
 // Add keyframes to document
-// You can also use CSS file for this
+// This function dynamically injects CSS animation keyframes when the component mounts
+// This approach is used instead of static CSS to ensure the animations work with SSR
 const createKeyframes = () => {
   if (typeof document !== 'undefined') {
     const styleSheet = document.createElement('style');
@@ -36,23 +38,27 @@ const createKeyframes = () => {
   }
 };
 
+// Animation variant for the fade-in effect used throughout the component
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 
 const Skills: React.FC = () => {
+  // State to control whether the carousel animation is paused (on hover)
   const [isPaused, setIsPaused] = useState(false);
 
   // Create keyframes when component mounts
+  // This ensures the animation styles are added to the document once the component is rendered
   React.useEffect(() => {
     createKeyframes();
   }, []);
 
-  // Flatten all skills into a single array
+  // Flatten all skills into a single array for rendering in the carousel
   const allSkills = [...skills];
 
-  // Category-based border colors
+  // Define different border colors based on skill category
+  // This creates visual distinction between different types of skills
   const categoryColors = {
     frontend: 'border-blue-400',
     backend: 'border-green-400',
@@ -63,6 +69,7 @@ const Skills: React.FC = () => {
   return (
     <section id="skills" className="py-20 bg-gray-800 text-white flex flex-col justify-center">
       <div className="container mx-auto px-4">
+        {/* Section heading with fade-in animation */}
         <motion.div
           className="text-center mb-12"
           initial="hidden"
@@ -75,6 +82,7 @@ const Skills: React.FC = () => {
             These are the technologies and tools I work with to build web applications.
           </p>
         </motion.div>
+        {/* Skills carousel container with fade-in animation */}
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -82,11 +90,13 @@ const Skills: React.FC = () => {
           variants={fadeIn}
           className="max-w-full mx-auto overflow-hidden flex items-center"
         >
+          {/* Outer container with mouse event handlers to pause animation on hover */}
           <div
             className="w-full overflow-hidden py-5 flex items-center"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
+            {/* Inner container with the scrolling animation applied */}
             <div
               className="flex w-fit items-center"
               style={{
@@ -94,7 +104,7 @@ const Skills: React.FC = () => {
                 ...(isPaused ? customStyles.skillCarouselPaused : {})
               }}
             >
-              {/* First set of skills */}
+              {/* First set of skills for continuous scrolling effect */}
               {allSkills.map((skill, index) => (
                 <div key={`skill-1-${index}`} className="flex flex-col items-center mx-5 relative group">
                   <div className={`w-[60px] h-[60px] rounded-full bg-gray-800 flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>
@@ -105,7 +115,7 @@ const Skills: React.FC = () => {
                   </span>
                 </div>
               ))}
-              {/* Duplicate skills to create infinite scrolling effect */}
+              {/* Duplicate skills to create seamless infinite scrolling effect */}
               {allSkills.map((skill, index) => (
                 <div key={`skill-2-${index}`} className="flex flex-col items-center mx-5 relative group">
                   <div className={`w-[60px] h-[60px] rounded-full bg-gray-800 flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>

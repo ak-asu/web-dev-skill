@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { FaTrophy, FaMedal, FaAward, FaCertificate } from 'react-icons/fa';
 import { achievements as achievementData } from '../data';
 
+
+// Helper function to get the appropriate icon based on achievement type
 const getIcon = (iconType: 'trophy' | 'medal' | 'award' | 'certificate', className: string = '') => {
   switch (iconType) {
     case 'trophy':
@@ -18,37 +20,47 @@ const getIcon = (iconType: 'trophy' | 'medal' | 'award' | 'certificate', classNa
   }
 };
 
+// Animation variants for achievement cards
 const cardVariants = {
+  // Initial hidden state
   hidden: { opacity: 0, scale: 0.9 },
+  // Visible state when in viewport
   visible: {
     opacity: 1,
     scale: 1,
   },
+  // Hover state animation
   hover: {
     scale: 1.03,
     boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
   },
+  // Animation when card is tapped/clicked
   tap: {
     scale: 0.98,
   },
+  // Special celebration animation
   celebrate: {
     rotate: [0, 1, -1, 1, 0],
     transition: { duration: 1 },
   }
 };
 
+// Animation variants for confetti particles
 const confettiVariants = {
+  // Initial hidden state
   hidden: { opacity: 0, scale: 0, rotate: 0 },
+  // Complex animation sequence for confetti effect
   visible: {
-    opacity: [0, 1, 0.8, 0],
-    scale: [0, 1.2, 0.8, 0],
-    rotate: [0, Math.random() * 360],
-    y: [0, Math.random() * -100],
-    x: [0, Math.random() * 100 - 50],
+    opacity: [0, 1, 0.8, 0], // Fade in then out
+    scale: [0, 1.2, 0.8, 0],  // Grow then shrink
+    rotate: [0, Math.random() * 360], // Random rotation
+    y: [0, Math.random() * -100], // Float upward randomly
+    x: [0, Math.random() * 100 - 50], // Move sideways randomly
     transition: { duration: 2, ease: "easeOut" }
   }
 };
 
+// Helper function to generate different confetti shapes
 const getConfettiShape = (index: number) => {
   switch (index % 2) {
     case 0: return "rounded-full"; // Circle

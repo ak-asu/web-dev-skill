@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 const NotFound: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center text-white p-4">
