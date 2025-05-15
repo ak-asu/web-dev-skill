@@ -1,0 +1,74 @@
+[
+  {
+    "name": "HTML5",
+    "iconName": "SiHtml5",
+    "level": 5,
+    "category": "frontend"
+  },
+  {
+    "name": "CSS3",
+    "iconName": "SiCss3",
+    "level": 5,
+    "category": "frontend"
+  },
+  {
+    "name": "JavaScript",
+    "iconName": "SiJavascript",
+    "level": 5,
+    "category": "frontend"
+  },
+  {
+    "name": "TypeScript",
+    "iconName": "SiTypescript",
+    "level": 4,
+    "category": "frontend"
+  },
+  {
+    "name": "React",
+    "iconName": "SiReact",
+    "level": 4,
+    "category": "frontend"
+  },
+  {
+    "name": "Tailwind CSS",
+    "iconName": "SiTailwindcss",
+    "level": 4,
+    "category": "frontend"
+  },
+  {
+    "name": "Vite",
+    "iconName": "SiVite",
+    "level": 3,
+    "category": "tools"
+  },
+  {
+    "name": "Node.js",
+    "iconName": "SiNodedotjs",
+    "level": 4,
+    "category": "backend"
+  },
+  {
+    "name": "Express",
+    "iconName": "SiExpress",
+    "level": 4,
+    "category": "backend"
+  },
+  {
+    "name": "MongoDB",
+    "iconName": "SiMongodb",
+    "level": 3,
+    "category": "backend"
+  },
+  {
+    "name": "Git",
+    "iconName": "SiGit",
+    "level": 4,
+    "category": "tools"
+  },
+  {
+    "name": "Docker",
+    "iconName": "SiDocker",
+    "level": 3,
+    "category": "tools"
+  }
+]

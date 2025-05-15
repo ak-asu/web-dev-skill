@@ -1,0 +1,44 @@
+[
+  {
+    "id": "exp-1",
+    "role": "Senior Frontend Developer",
+    "company": "Tech Solutions Inc.",
+    "location": "Phoenix, AZ",
+    "period": "January 2023 - Present",
+    "description": [
+      "Led a team of 5 developers to build a responsive dashboard application using React and TypeScript",
+      "Implemented state management with Redux Toolkit, reducing code complexity by 30%",
+      "Established code quality standards with ESLint and Jest, achieving 90% test coverage",
+      "Collaborated with UX designers to implement an accessible UI system using Tailwind CSS"
+    ],
+    "technologies": ["React", "TypeScript", "Redux", "Tailwind CSS", "Jest", "CI/CD"]
+  },
+  {
+    "id": "exp-2",
+    "role": "Frontend Developer",
+    "company": "Digital Innovations",
+    "location": "Remote",
+    "period": "June 2020 - December 2022",
+    "description": [
+      "Developed and maintained multiple client websites using React and Next.js",
+      "Built reusable component libraries that reduced development time by 40%",
+      "Optimized site performance, improving Lighthouse scores by an average of 25 points",
+      "Integrated third-party APIs for payment processing and user authentication"
+    ],
+    "technologies": ["React", "Next.js", "JavaScript", "SCSS", "REST APIs", "Firebase"]
+  },
+  {
+    "id": "exp-3",
+    "role": "Web Developer Intern",
+    "company": "StartUp Hub",
+    "location": "Tempe, AZ",
+    "period": "January 2020 - May 2020",
+    "description": [
+      "Assisted in developing landing pages and marketing sites for early-stage startups",
+      "Gained experience with modern JavaScript frameworks and responsive design principles",
+      "Participated in daily stand-ups and agile development processes",
+      "Contributed to open-source projects to improve coding skills"
+    ],
+    "technologies": ["HTML", "CSS", "JavaScript", "Bootstrap", "Git", "WordPress"]
+  }
+]
