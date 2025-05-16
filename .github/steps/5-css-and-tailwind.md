@@ -435,15 +435,17 @@ export default defineConfig({
 })
 ```
 
+These files are essential for setting up Tailwind CSS in your Vite + React project. The `package.json` file includes the necessary dependencies, while the `vite.config.ts` file configures Vite to use the Tailwind plugin.
+
 ### Tailwind Configuration
 
-Here's a sample example of an [`tailwind.config.js`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/tailwind.config.js) file with all required elements.
+Here's a sample example of an [`tailwind.config.js`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/tailwind.config.js) file with all required elements. It is used to configure Tailwind CSS for your project. It contains the content paths, theme settings, and plugins.
 
 ### CSS Files
 
-Here's a sample example of an [`src/index.css`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/index.css) file with all required elements.
+Here's a sample example of an [`src/index.css`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/index.css) file with all required elements. This file is responsible for importing Tailwind CSS and defining global styles.
 
-Here's a sample example of an [`src/App.css`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.css) file with all required elements.
+Here's a sample example of an [`src/App.css`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.css) file with all required elements. This file is responsible for defining component-specific styles.
 
 ## Quiz Instructions
 

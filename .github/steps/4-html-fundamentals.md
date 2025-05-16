@@ -322,7 +322,7 @@ For proper routing in single-page applications, include this script in your `<he
 
 ## Example index.html
 
-Here's a sample example of an [`index.html`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/index.html) file with all required elements.
+`index.html` is the entry point for your React application. It should include all necessary elements to ensure proper functionality and SEO. Here's a sample example of an [`index.html`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/index.html) file with all required elements.
 
 ## Quiz Instructions
 

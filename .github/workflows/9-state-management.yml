@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -25,6 +26,89 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '9' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 9: Complete the Redux Quiz',
+                body: `
+                # Complete the Redux State Management Quiz
+                
+                1. Navigate to the \`quizzes/Chapter9.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter9-task', 'quiz']
+              });
+            }
+            
+      - name: Create Redux Implementation Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,redux',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 9: Implement Redux State Management',
+                body: `
+                # Implement Redux State Management
+                
+                1. Install Redux Toolkit and React Redux:
+                   - Add \`@reduxjs/toolkit\` and \`react-redux\` to your package.json
+                
+                2. Create your Redux store:
+                   - Set up a Redux store file (e.g., \`src/app/store.ts\` or \`src/store/index.ts\`)
+                   - Use \`configureStore\` to create the store
+                
+                3. Create at least one Redux slice:
+                   - Use \`createSlice\` to define reducers and actions
+                   - Implement state management for theme or projects data
+                
+                4. Connect Redux to your React application:
+                   - Wrap your application with the Redux \`Provider\`
+                   - Use Redux hooks (\`useSelector\` and \`useDispatch\`) in components
+                
+                This issue will automatically close when you successfully complete all the required tasks.
+                `,
+                labels: ['chapter9-task', 'redux']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step
@@ -70,8 +154,22 @@ jobs:
         if: steps.quiz.outputs.quiz_ok == 'true' && steps.redux_deps_check.outputs.redux_deps_ok == 'true'
         run: |
           # Check for Redux store configuration
-          if ! find src -name "store.ts" > /dev/null && ! find src -path "*/app/store.ts" > /dev/null; then
-            echo "::error::No Redux store configuration found."
+          STORE_FILE_FOUND=false
+          for path in "src/app/store.ts" "src/store/index.ts" "src/store.ts"; do
+            if [ -f "$path" ]; then
+              STORE_FILE_FOUND=true
+              break
+            fi
+          done
+          
+          if [ "$STORE_FILE_FOUND" = false ]; then
+            echo "::error::No Redux store configuration file found. Expected src/app/store.ts, src/store/index.ts, or src/store.ts."
+            exit 1
+          fi
+          
+          # Check for configureStore usage
+          if ! grep -r "configureStore" --include="*.ts" --include="*.tsx" src > /dev/null; then
+            echo "::error::No configureStore usage found in Redux configuration."
             exit 1
           fi
           
@@ -94,8 +192,8 @@ jobs:
           fi
           
           # Check for Provider
-          if ! grep -r "Provider" --include="*.tsx" src > /dev/null; then
-            echo "::error::No Redux Provider component found."
+          if ! grep -r "Provider.*store" --include="*.tsx" --include="*.ts" src > /dev/null; then
+            echo "::error::No Redux Provider component with store prop found."
             exit 1
           fi
           
@@ -137,6 +235,53 @@ jobs:
             echo "::error::Build failed. Please fix the issues."
             exit 1
           fi
+
+      - name: Close Completed Quiz Issue
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,quiz',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Redux Implementation Issue
+        if: >
+          steps.redux_deps_check.outputs.redux_deps_ok == 'true' && 
+          steps.redux_store_check.outputs.redux_store_ok == 'true' && 
+          steps.redux_integration_check.outputs.redux_integration_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,redux',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
 
       - name: Ensure All Chapter-9 Tasks Are Closed
         if: >

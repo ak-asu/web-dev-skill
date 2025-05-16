@@ -11,6 +11,7 @@ on:
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -24,6 +25,90 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '8' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter8-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 8: Complete the React Advanced Patterns Quiz',
+                body: `
+                # Complete the React Advanced Patterns Quiz
+                
+                1. Navigate to the \`quizzes/Chapter8.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter8-task', 'quiz']
+              });
+            }
+            
+      - name: Create Advanced Patterns Components Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter8-task,advanced-patterns',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 8: Implement Advanced React Patterns',
+                body: `
+                # Implement Advanced React Patterns
+                
+                Create or update the following React components in the \`src/components\` folder with advanced patterns:
+                
+                1. \`Navbar.tsx\`: Implement a Navbar component that:
+                   - Uses \`useEffect\` for scroll-based navigation highlighting
+                   - Connects to a theme context for light/dark mode toggling
+                
+                2. \`Projects.tsx\`: Create a Projects component that:
+                   - Uses performance optimizations like \`React.memo\` or \`useMemo\`
+                   - Implements lazy loading for project items or images
+                
+                3. \`Skills.tsx\`: Create a Skills component that:
+                   - Leverages at least one advanced React pattern
+                   - Optimizes rendering with useCallback or React.memo
+                
+                Each component should demonstrate at least one advanced React pattern from the chapter.
+                
+                This issue will automatically close when you successfully complete all the required tasks.
+                `,
+                labels: ['chapter8-task', 'advanced-patterns']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step
@@ -52,13 +137,43 @@ jobs:
           fi
           echo "quiz_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check useEffect Usage
-        id: useeffect_check
+      - name: Check Required Components
+        id: components_check
         if: steps.quiz.outputs.quiz_ok == 'true'
         run: |
+          if [ ! -d "src/components" ]; then
+            mkdir -p src/components
+            echo "::warning::Created missing components directory."
+          fi
+          
+          # Check for required React components
+          REQUIRED_COMPONENTS=(
+            "Navbar"
+            "Projects"
+            "Skills"
+          )
+          
+          MISSING_COMPONENTS=""
+          for comp in "${REQUIRED_COMPONENTS[@]}"; do
+            if ! find src/components -name "${comp}.tsx" > /dev/null; then
+              MISSING_COMPONENTS="$MISSING_COMPONENTS\n- $comp"
+            fi
+          done
+          
+          if [ ! -z "$MISSING_COMPONENTS" ]; then
+            echo "::error::Missing required React components:$MISSING_COMPONENTS"
+            exit 1
+          fi
+          
+          echo "components_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check useEffect Usage
+        id: useeffect_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.components_check.outputs.components_ok == 'true'
+        run: |
           # Check for useEffect hook
-          if ! grep -r "useEffect" --include="*.tsx" src > /dev/null; then
-            echo "::error::No useEffect hook found in the components."
+          if ! grep -r "useEffect" --include="*.tsx" src/components/Navbar.tsx > /dev/null; then
+            echo "::error::No useEffect hook found in Navbar.tsx. This component should implement useEffect for scroll behavior."
             exit 1
           fi
           
@@ -66,9 +181,9 @@ jobs:
 
       - name: Check Context API Usage
         id: context_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.useeffect_check.outputs.useeffect_ok == 'true'
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.components_check.outputs.components_ok == 'true'
         run: |
-          # Check for createContext and useContext
+          # Check for createContext or useContext
           if ! grep -r "createContext\|useContext" --include="*.tsx" --include="*.ts" src > /dev/null; then
             echo "::error::No Context API usage found (createContext/useContext)."
             exit 1
@@ -78,11 +193,17 @@ jobs:
 
       - name: Check Code Splitting or Performance Optimization
         id: optimization_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.context_check.outputs.context_ok == 'true'
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.components_check.outputs.components_ok == 'true'
         run: |
           # Check for React.lazy, Suspense, useMemo, useCallback or memo
           if ! grep -r "React.lazy\|lazy\|Suspense\|useMemo\|useCallback\|memo" --include="*.tsx" --include="*.ts" src > /dev/null; then
             echo "::error::No code splitting or performance optimization found (React.lazy, Suspense, useMemo, useCallback, memo)."
+            exit 1
+          fi
+          
+          # Check specifically for optimizations in Projects.tsx
+          if ! grep -r "React.lazy\|lazy\|Suspense\|useMemo\|useCallback\|memo" src/components/Projects.tsx > /dev/null; then
+            echo "::error::Projects.tsx should implement performance optimizations like React.memo, useMemo, or lazy loading."
             exit 1
           fi
           
@@ -124,6 +245,54 @@ jobs:
             echo "::error::Build failed. Please fix the issues."
             exit 1
           fi
+
+      - name: Close Completed Quiz Issue
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter8-task,quiz',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Advanced Patterns Issue
+        if: >
+          steps.components_check.outputs.components_ok == 'true' && 
+          steps.useeffect_check.outputs.useeffect_ok == 'true' &&
+          steps.context_check.outputs.context_ok == 'true' &&
+          steps.optimization_check.outputs.optimization_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter8-task,advanced-patterns',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
 
       - name: Ensure All Chapter-8 Tasks Are Closed
         if: >

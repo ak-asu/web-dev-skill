@@ -1,6 +1,18 @@
 # Chapter 7: React Fundamentals
 
-This chapter guides beginners through building a portfolio site as a React single-page application (SPA). You’ll learn React’s core concepts—functional components, JSX, props, state, event handling, list rendering, and navigation—while creating interactive components like About, Skills, Projects, and a Navbar. Practical examples, including a “Show More” button and scroll-based navigation highlighting, ensure you apply these concepts effectively. Tailored for your Vite + React + TypeScript project, this guide uses Tailwind CSS for styling and focuses on a single-page scroll layout, with an optional introduction to React Router.
+This chapter guides beginners through building a portfolio site as a React single-page application (SPA). You'll learn React's core concepts—functional components, JSX, props, state, event handling, list rendering, and navigation—while creating interactive components like About, Skills, Projects, and a Navbar. Practical examples, including a "Show More" button and scroll-based navigation highlighting, ensure you apply these concepts effectively. Tailored for your Vite + React + TypeScript project, this guide uses Tailwind CSS for styling and focuses on a single-page scroll layout, with an optional introduction to React Router.
+
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the React Quiz**: Answer 5 questions correctly in the `quizzes/Chapter7.md` file
+2. **Create React Components**:
+   - Build `About.tsx`, `Hero.tsx`, `Footer.tsx`, and `NotFound.tsx` components
+   - Add proper TypeScript typing and styling
+   - Implement React hooks like useState where appropriate
+3. **Update App.tsx**:
+   - Import and use the components you created
 
 ## 1. Introduction to React and Single-Page Applications
 
@@ -8,7 +20,7 @@ React, developed by Facebook, is a JavaScript library for building user interfac
 
 ### Why Use React?
 - **Component-Based**: Break your UI into reusable components, like a Navbar or Skills list.
-- **Efficient Updates**: React’s virtual DOM minimizes browser updates, improving performance.
+- **Efficient Updates**: React's virtual DOM minimizes browser updates, improving performance.
 - **Rich Ecosystem**: Integrates with tools like Vite, TypeScript, and Tailwind CSS.
 
 For more details, visit the [React Documentation](https://react.dev/).
@@ -108,7 +120,7 @@ const Input: React.FC = () => {
 };
 ```
 
-In your portfolio, event handling will power features like the “Show More” button or form submissions.
+In your portfolio, event handling will power features like the "Show More" button or form submissions.
 
 ## 5. Rendering Lists and Conditional Rendering
 
@@ -174,261 +186,41 @@ const Navbar: React.FC = () => {
 ```
 
 ### Scroll-Based Highlighting
-Use `useState` and `use
+Use `useState` and `useEffect` to highlight the current section based on scroll position.
 
-Effect` to highlight the current section based on scroll position.
+## 10. Required Tasks and Examples
 
-```tsx
-import { useState, useEffect } from 'react';
+For the tasks in this chapter, you need to create or update the following components:
 
-const Navbar: React.FC = () => {
-  const [activeSection, setActiveSection] = useState('about');
+### 1. Hero.tsx Component
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['about', 'skills', 'projects'];
-      const scrollPosition = window.scrollY;
+Create a hero section for the landing page. This section should introduce you and your portfolio. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/Hero.tsx).
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const offsetTop = element.offsetTop;
-          const offsetHeight = element.offsetHeight;
-          if (scrollPosition >= offsetTop - 50 && scrollPosition < offsetTop + offsetHeight - 50) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-    };
+### 2. About.tsx Component
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+Create a component that displays information about yourself, including your background, interests and more. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/About.tsx).
 
-  return (
-    <nav className="bg-gray-800 text-white p-4 fixed w-full top-0 z-10">
-      <div className="container mx-auto flex justify-between">
-        <a href="#about" className={activeSection === 'about' ? 'font-bold text-blue-500' : 'hover:text-blue-500'}>About</a>
-        <a href="#skills" className={activeSection === 'skills' ? 'font-bold text-blue-500' : 'hover:text-blue-500'}>Skills</a>
-        <a href="#projects" className={activeSection === 'projects' ? 'font-bold text-blue-500' : 'hover:text-blue-500'}>Projects</a>
-      </div>
-    </nav>
-  );
-};
+### 3. Footer.tsx Component
 
-export default Navbar;
+Create a footer component for the site which will be displayed at the bottom of the page. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/Footer.tsx).
+
+### 4. NotFound.tsx Component
+
+Create a 404 page component which will be displayed when a user navigates to a non-existent route. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/NotFound.tsx).
+
+### 5. App.tsx Updates
+
+Update your App.tsx to include the new components. This file manages the overall layout and routing of your application. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.tsx).
+
+## Quiz Instructions
+
+Complete the quiz in `quizzes/Chapter7.md` by marking exactly 5 correct answers with [X]. For example:
+```
+- [ ] This is an incorrect answer
+- [X] This is a correct answer
 ```
 
-### Optional: React Router
-For multi-page navigation, React Router manages routes. Install it:
-
-```bash
-npm install react-router-dom
-```
-
-Set up routes in `App.tsx`:
-
-```tsx
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import About from './components/About';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Navbar from './components/Navbar';
-
-const App: React.FC = () => {
-  return (
-    <Router>
-      <Navbar />
-      <main className="pt-16">
-        <Routes>
-          <Route path="/" element={<About />} />
-          <Route path="/skills" element={<Skills />} />
-          <Route path="/projects" element={<Projects />} />
-        </Routes>
-      </main>
-    </Router>
-  );
-};
-
-export default App;
-```
-
-Update `Navbar.tsx` with `Link`:
-
-```tsx
-import { Link } from 'react-router-dom';
-
-const Navbar: React.FC = () => {
-  return (
-    <nav className="bg-gray-800 text-white p-4">
-      <Link to="/" className="mr-4 hover:text-blue-500">About</Link>
-      <Link to="/skills" className="mr-4 hover:text-blue-500">Skills</Link>
-      <Link to="/projects" className="hover:text-blue-500">Projects</Link>
-    </nav>
-  );
-};
-```
-
-For a simple portfolio, anchor links suffice, but React Router is useful for larger projects. See [React Router Documentation](https://reactrouter.com/en/main).
-
-## 7. Building Portfolio Components
-
-Let’s create the core components for your portfolio site, applying the concepts above.
-
-### About Component
-The About section displays a bio with a “Show More” button to toggle extra text.
-
-```tsx
-import { useState } from 'react';
-
-const About: React.FC = () => {
-  const [showMore, setShowMore] = useState(false);
-
-  return (
-    <section id="about" className="p-4 bg-gray-100 dark:bg-gray-900">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">About Me</h2>
-      <p className="text-gray-600 dark:text-gray-300">
-        I am a web developer with experience in React and TypeScript.
-      </p>
-      {showMore && (
-        <p className="text-gray-600 dark:text-gray-300">
-          I have worked on various projects, including e-commerce sites and personal blogs. I am passionate about creating user-friendly interfaces.
-        </p>
-      )}
-      <button
-        onClick={() => setShowMore(!showMore)}
-        className="mt-2 text-blue-500 hover:underline"
-      >
-        {showMore ? 'Show Less' : 'Show More'}
-      </button>
-    </section>
-  );
-};
-
-export default About;
-```
-
-**Features**:
-- Uses `useState` for toggling visibility.
-- Conditionally renders extra text with `&&`.
-- Styled with Tailwind CSS for responsiveness and dark mode.
-
-### Skills Component
-The Skills section lists skills using `.map()`.
-
-```tsx
-const Skills: React.FC = () => {
-  const skills = ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Tailwind CSS'];
-
-  return (
-    <section id="skills" className="p-4 bg-gray-100 dark:bg-gray-900">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Skills</h2>
-      <ul className="list-disc list-inside text-gray-600 dark:text-gray-300">
-        {skills.map((skill, index) => (
-          <li key={index}>{skill}</li>
-        ))}
-      </ul>
-    </section>
-  );
-};
-
-export default Skills;
-```
-
-**Features**:
-- Renders a dynamic list with `.map()`.
-- Uses unique keys for efficient rendering.
-- Applies Tailwind classes for styling.
-
-### Projects Component
-The Projects section displays a grid of projects, receiving data via props.
-
-```tsx
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  link: string;
-}
-
-interface ProjectsProps {
-  projects: Project[];
-}
-
-const Projects: React.FC<ProjectsProps> = ({ projects }) => {
-  return (
-    <section id="projects" className="p-4 bg-gray-100 dark:bg-gray-900">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Projects</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {projects.map((project) => (
-          <div key={project.id} className="border p-4 rounded bg-white dark:bg-gray-800">
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white">{project.title}</h3>
-            <p className="text-gray-600 dark:text-gray-300">{project.description}</p>
-            <a href={project.link} className="text-blue-500 hover:underline">
-              View Project
-            </a>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
-
-export default Projects;
-```
-
-**Features**:
-- Receives `projects` array via props.
-- Uses `.map()` for list rendering with unique `id` keys.
-- Responsive grid layout with Tailwind.
-
-### Assembling the App
-Combine components in `App.tsx`:
-
-```tsx
-import About from './components/About';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Navbar from './components/Navbar';
-
-const projects = [
-  {
-    id: 1,
-    title: 'E-commerce Site',
-    description: 'A fully functional online store built with React and Stripe.',
-    link: 'https://example.com/ecommerce',
-  },
-  {
-    id: 2,
-    title: 'Personal Blog',
-    description: 'A blog platform with Markdown support and dark mode.',
-    link: 'https://example.com/blog',
-  },
-];
-
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <Navbar />
-      <main className="pt-16">
-        <About />
-        <Skills />
-        <Projects projects={projects} />
-      </main>
-    </div>
-  );
-};
-
-export default App;
-```
-
-**Features**:
-- Passes `projects` array as props to `Projects`.
-- Uses `pt-16` to offset content below the fixed Navbar.
-- Organizes sections for smooth scrolling.
-
-## 8. Best Practices and Tips
+## 7. Best Practices and Tips
 
 | **Practice** | **Description** |
 |--------------|-----------------|
@@ -438,13 +230,8 @@ export default App;
 | **Clean JSX** | Keep JSX concise; extract complex logic to functions or hooks. |
 | **Accessibility** | Use semantic HTML and ARIA attributes, e.g., `aria-current` for active nav links. |
 
-**Common Pitfalls**:
-- Avoid missing `key` props in lists, which can cause rendering issues.
-- Don’t overuse state; use props for static data.
-- Test scroll highlighting to ensure accurate section detection.
+## 8. Conclusion
 
-## 9. Conclusion
-
-This chapter has equipped you with React fundamentals to build a dynamic portfolio site. You’ve created functional components, managed state and props, handled events, rendered lists, and implemented navigation. The About, Skills, Projects, and Navbar components demonstrate these concepts in action, forming a solid foundation for your SPA. Next, consider adding a Contact form or exploring advanced React features like context or custom hooks to enhance your site.
+This chapter has equipped you with React fundamentals to build a dynamic portfolio site. You've created functional components, managed state and props, handled events, rendered lists, and implemented navigation. The About, Skills, Projects, and Navbar components demonstrate these concepts in action, forming a solid foundation for your SPA. Next, consider adding a Contact form or exploring advanced React features like context or custom hooks to enhance your site.
 
 For further learning, explore the [React Documentation](https://react.dev/) or build additional features like a theme toggle.

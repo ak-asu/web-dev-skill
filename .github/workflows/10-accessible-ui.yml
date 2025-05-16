@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -25,6 +26,92 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '10' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter10-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 10: Complete the Accessible UI Quiz',
+                body: `
+                # Complete the Accessible UI Components Quiz
+                
+                1. Navigate to the \`quizzes/Chapter10.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter10-task', 'quiz']
+              });
+            }
+            
+      - name: Create Accessible UI Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter10-task,accessible-ui',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 10: Implement Accessible UI Components',
+                body: `
+                # Implement Accessible UI Components
+                
+                Enhance your portfolio with accessible UI components by completing these tasks:
+                
+                1. Install required packages:
+                   - Add \`@radix-ui/react-dropdown-menu\` or another Radix UI component
+                   - Add \`react-icons\` for icon components
+                   - Optionally set up \`shadcn/ui\` using their CLI tool
+                
+                2. Implement at least two of the following:
+                   - An accessible dropdown menu for navigation
+                   - Properly styled and accessible buttons using shadcn or Radix
+                   - Social media icons with proper accessibility attributes
+                   - Any other accessible component from Radix or shadcn
+                
+                3. Ensure accessibility best practices:
+                   - Add appropriate ARIA attributes (\`aria-label\`, \`role\`, etc.)
+                   - Ensure keyboard navigation works
+                   - Make sure focus states are visible
+                
+                This issue will automatically close when you successfully complete all the requirements.
+                `,
+                labels: ['chapter10-task', 'accessible-ui']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step
@@ -154,6 +241,54 @@ jobs:
             echo "::error::Build failed. Please fix the issues."
             exit 1
           fi
+
+      - name: Close Completed Quiz Issue
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter10-task,quiz',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Accessible UI Issue
+        if: >
+          steps.package_check.outputs.package_ok == 'true' &&
+          steps.component_check.outputs.component_ok == 'true' &&
+          steps.icons_check.outputs.icons_ok == 'true' &&
+          steps.accessibility_check.outputs.accessibility_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter10-task,accessible-ui',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
 
       - name: Ensure All Chapter-10 Tasks Are Closed
         if: >

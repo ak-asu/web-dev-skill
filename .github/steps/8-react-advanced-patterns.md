@@ -1,17 +1,27 @@
 # Chapter 8: React Advanced Patterns
 
-This chapter dives into advanced React patterns to optimize and organize your portfolio site, built as a single-page application (SPA) with Vite, React, TypeScript, and Tailwind CSS. Designed for beginners, it covers sophisticated techniques like `useEffect` for side effects, Context API for global state, code splitting with `React.lazy` and `Suspense`, and performance optimizations using `useMemo`, `useCallback`, and `React.memo`. You’ll implement a global theme toggle, lazy-load the Projects section, enhance navigation with scroll-based highlighting, and optimize rendering to ensure a fast, user-friendly experience. Practical examples and clear explanations make these concepts accessible, empowering you to elevate your portfolio site.
+This chapter dives into advanced React patterns to optimize and organize your portfolio site, built as a single-page application (SPA) with Vite, React, TypeScript, and Tailwind CSS. Designed for beginners, it covers sophisticated techniques like `useEffect` for side effects, Context API for global state, code splitting with `React.lazy` and `Suspense`, and performance optimizations using `useMemo`, `useCallback`, and `React.memo`. You'll implement a global theme toggle, lazy-load the Projects section, enhance navigation with scroll-based highlighting, and optimize rendering to ensure a fast, user-friendly experience. Practical examples and clear explanations make these concepts accessible, empowering you to elevate your portfolio site.
+
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the React Advanced Patterns Quiz**: Answer 5 questions correctly in the `quizzes/Chapter8.md` file
+2. **Implement Advanced React Patterns in Components**:
+   - Create or update `Navbar.tsx` with scroll-based highlighting using `useEffect`
+   - Create or update `Projects.tsx` with performance optimizations
+   - Create or update `Skills.tsx` with at least one advanced pattern
 
 ## 1. Introduction to Advanced React Patterns
 
-Advanced React patterns enhance your portfolio site by improving performance, scalability, and code organization. These techniques address common challenges in SPAs, such as managing global state, reducing load times, and preventing unnecessary re-renders. By mastering these patterns, you’ll create a professional site that showcases your skills effectively to potential employers or clients.
+Advanced React patterns enhance your portfolio site by improving performance, scalability, and code organization. These techniques address common challenges in SPAs, such as managing global state, reducing load times, and preventing unnecessary re-renders. By mastering these patterns, you'll create a professional site that showcases your skills effectively to potential employers or clients.
 
 This chapter covers:
 - **Advanced Hooks**: Using `useEffect` for side effects like scroll listeners and document updates.
 - **Context API**: Managing global state, such as a light/dark theme toggle.
 - **Code Splitting and Lazy Loading**: Loading components on demand to improve initial load times.
 - **Performance Optimizations**: Minimizing re-renders with `useMemo`, `useCallback`, and `React.memo`.
-- **Practical Implementation**: Applying these techniques to your portfolio’s Navbar, Projects, and theme system.
+- **Practical Implementation**: Applying these techniques to your portfolio's Navbar, Projects, and theme system.
 
 These patterns build on the foundational React concepts from Chapter 7, preparing you for more complex projects.
 
@@ -81,7 +91,7 @@ export default Navbar;
 
 **Explanation**:
 - **useEffect**: Adds a scroll event listener on mount and removes it on unmount to prevent memory leaks.
-- **Scroll Logic**: Checks which section is in view by comparing `scrollY` to each section’s position.
+- **Scroll Logic**: Checks which section is in view by comparing `scrollY` to each section's position.
 - **State Update**: Sets `activeSection` to highlight the current link with Tailwind classes.
 
 ### Optimization: Debouncing Scroll Events
@@ -287,17 +297,17 @@ const Navbar: React.FC = () => {
 
 **Explanation**:
 - **Context**: `ThemeContext` provides `theme` and `toggleTheme` to all components.
-- **useEffect**: Updates the `dark` class on the HTML element, enabling Tailwind’s `dark:` classes.
+- **useEffect**: Updates the `dark` class on the HTML element, enabling Tailwind's `dark:` classes.
 - **Accessibility**: `aria-label` improves screen reader support for the toggle button.
 
 Components can now use `dark:` classes, e.g., `bg-white dark:bg-gray-800`, to adapt to the theme. Learn more at the [React Context Documentation](https://react.dev/reference/react/createContext).
 
 ## 4. Code Splitting and Lazy Loading
 
-Code splitting reduces initial load times by loading only the necessary code. React’s `React.lazy` and `Suspense` enable dynamic imports, ideal for heavy components like Projects, which may include images or complex UI.
+Code splitting reduces initial load times by loading only the necessary code. React's `React.lazy` and `Suspense` enable dynamic imports, ideal for heavy components like Projects, which may include images or complex UI.
 
 ### Implementing Lazy Loading
-Lazy-load the Projects section to defer its loading until it’s visible.
+Lazy-load the Projects section to defer its loading until it's visible.
 
 ```tsx
 import React, { Suspense } from 'react';
@@ -512,7 +522,7 @@ const ProjectCard = memo(({ project, onClick }: { project: Project; onClick: (id
 export default ProjectCard;
 ```
 
-**Explanation**: `React.memo` checks if `project` or `onClick` has changed, skipping re-renders if they’re the same. Combined with `useCallback`, this optimizes performance.
+**Explanation**: `React.memo` checks if `project` or `onClick` has changed, skipping re-renders if they're the same. Combined with `useCallback`, this optimizes performance.
 
 ### Optimization Checklist
 | **Technique** | **Use Case** | **Portfolio Example** |
@@ -523,27 +533,32 @@ export default ProjectCard;
 
 For advanced profiling, use [React Developer Tools](https://react.dev/learn/react-developer-tools).
 
-## 6. Practical Implementation
+## 10. Required Tasks and Examples
 
-Apply these patterns to your portfolio site for a polished result.
+For the tasks in this chapter, you need to create or update the following components:
 
-### Theme Toggle with Context API
-- **Setup**: Use `ThemeContext` and `ThemeProvider` to manage light/dark modes.
-- **Integration**: Add `ThemeToggle` to the Navbar and apply `dark:` classes across components.
-- **Testing**: Verify theme changes in browser developer tools, ensuring accessibility with ARIA labels.
+### Navbar.tsx
 
-### Lazy Loading Projects
-- **Setup**: Use `React.lazy` and `Suspense` with `react-intersection-observer` to load Projects on scroll.
-- **Testing**: Check initial bundle size with `npm run build` and confirm Projects loads only when visible.
+Create a Navbar component that implements scroll-based navigation highlighting using useEffect. A sample implementation is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/Navbar.tsx).
 
-### Scroll-Based Navigation
-- **Setup**: Implement `useEffect` in Navbar with a debounced scroll listener.
-- **Optimization**: Use `lodash.debounce` to limit updates.
-- **Testing**: Scroll through sections to ensure accurate highlighting.
+### Projects.tsx
 
-### Optimizing ProjectCard
-- **Setup**: Wrap `ProjectCard` with `React.memo` and use `useCallback` for its `onClick` prop.
-- **Testing**: Use React Developer Tools to confirm `ProjectCard` only re-renders when props change.
+Create a Projects component that uses performance optimizations like React.memo or useMemo. A sample implementation is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/Projects.tsx).
+
+### Skills.tsx
+
+Create a Skills component that leverages at least one advanced React pattern. Employ an infinite horizontal scrolling technique to load skills dynamically. A sample implementation is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/Skills.tsx).
+
+### App.tsx
+Update your `App.tsx` to include the new components. A sample implementation is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.tsx).
+
+## Quiz Instructions
+
+Complete the quiz in `quizzes/Chapter8.md` by marking exactly 5 correct answers with [X]. For example:
+```
+- [ ] This is an incorrect answer
+- [X] This is a correct answer
+```
 
 ## 7. Best Practices and Tips
 
@@ -560,7 +575,7 @@ Apply these patterns to your portfolio site for a polished result.
 
 ## 8. Conclusion
 
-This chapter has equipped you with advanced React patterns to optimize your portfolio site. By leveraging `useEffect` for side effects, Context API for global state, `React.lazy` for code splitting, and `useMemo`, `useCallback`, and `React.memo` for performance, you’ve built a fast, maintainable SPA. These techniques—applied to a theme toggle, lazy-loaded Projects, and optimized components—demonstrate professional React development. Continue experimenting with these patterns and explore tools like React Query for data fetching in future projects.
+This chapter has equipped you with advanced React patterns to optimize your portfolio site. By leveraging `useEffect` for side effects, Context API for global state, `React.lazy` for code splitting, and `useMemo`, `useCallback`, and `React.memo` for performance, you've built a fast, maintainable SPA. These techniques—applied to a theme toggle, lazy-loaded Projects, and optimized components—demonstrate professional React development. Continue experimenting with these patterns and explore tools like React Query for data fetching in future projects.
 
 ## Key Citations
 - [React Hooks Documentation: useEffect and useState](https://react.dev/reference/react)

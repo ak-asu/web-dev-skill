@@ -531,6 +531,8 @@ Create or update your TypeScript configuration files.
 
 ### Type Definitions
 
+Create a data index file to import and export your data with proper typing. The types are used throughout your application to ensure consistent data handling. A sample is provided in [`src/data/index.ts`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/data/index.ts).
+
 Create `src/types/index.ts` with these interfaces for your portfolio data:
 - `Project`
 - `Certification`
@@ -540,8 +542,6 @@ Create `src/types/index.ts` with these interfaces for your portfolio data:
 - `Achievement`
 - `Social`
 - `PersonalInfo`
-
-A sample is provided in [`src/types/index.ts`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/types/index.ts).
 
 ### Data Files
 
@@ -555,11 +555,21 @@ Create the following data files in the `src/data/json/` directory:
 - `skills.json`
 - `experience.json`
 
+Add your data in JSON format. Each file should contain an array of objects representing the respective data type. For example, `projects.json` might look like this:
+
+```json
+[
+  {
+    "id": 1,
+    "title": "E-commerce Site",
+    "description": "A responsive online store built with React.",
+    "imageUrl": "/images/project1.jpg",
+    "link": "https://example.com"
+  }
+]
+```
+
 A sample is provided in [`src/data/json/`](https://github.com/ak-asu/web-dev-skill/tree/main/resources/example/src/data/json/).
-
-#### src/data/index.ts
-
-Create a data index file to import and export your data with proper typing. A sample is provided in [`src/data/index.ts`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/data/index.ts).
 
 ### Assets
 
@@ -568,7 +578,7 @@ Create an assets folder at `src/assets/` and add placeholder images for:
 - Project thumbnails
 - Logo (if needed)
 
-You can use SVG files, placeholder images, or your own images. A sample is provided in [`src/assets/`](https://github.com/ak-asu/web-dev-skill/tree/main/resources/example/src/assets/).
+You can use SVG files, placeholder images, or your own images. An assets folder is used for storing all static files like images, fonts, and icons. A sample is provided in [`src/assets/`](https://github.com/ak-asu/web-dev-skill/tree/main/resources/example/src/assets/).
 
 ## Quiz Instructions
 

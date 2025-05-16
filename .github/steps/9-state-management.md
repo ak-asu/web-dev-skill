@@ -1,15 +1,26 @@
 # Chapter 9: State Management with Redux Toolkit
 
-This chapter explores state management in your React portfolio site using Redux Toolkit, a powerful toolset designed to simplify Redux for managing complex or cross-cutting state. Tailored for beginners, it covers the essentials of Redux, the advantages of Redux Toolkit, and practical steps to implement it in your Vite + React + TypeScript project. You’ll learn to manage global state for theme toggling and project data, replacing the Context API approach from Chapter 8 and enhancing scalability. The chapter includes code examples, best practices, and a brief look at state persistence, ensuring your portfolio site is robust and maintainable.
+This chapter explores state management in your React portfolio site using Redux Toolkit, a powerful toolset designed to simplify Redux for managing complex or cross-cutting state. Tailored for beginners, it covers the essentials of Redux, the advantages of Redux Toolkit, and practical steps to implement it in your Vite + React + TypeScript project. You'll learn to manage global state for theme toggling and project data, replacing the Context API approach from Chapter 8 and enhancing scalability. The chapter includes code examples, best practices, and a brief look at state persistence, ensuring your portfolio site is robust and maintainable.
+
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the Redux State Management Quiz**: Answer 5 questions correctly in the `quizzes/Chapter9.md` file
+2. **Implement Redux State Management**:
+   - Install the required Redux packages
+   - Create a Redux store configuration
+   - Define at least one Redux slice (e.g., for theme or projects)
+   - Connect Redux to your React application
 
 ## 1. Introduction to State Management in React
 
 State management is crucial in React applications as they grow in complexity. Local state, managed with `useState` or `useReducer`, works well for individual components, but sharing state across multiple components often leads to "prop drilling," where data is passed through many layers, making code hard to maintain.
 
-React’s Context API, used in Chapter 8 for theme management, provides a global state solution, allowing components to access data without prop drilling. However, for applications with intricate state logic, frequent updates, or performance requirements, Redux offers a more robust alternative.
+React's Context API, used in Chapter 8 for theme management, provides a global state solution, allowing components to access data without prop drilling. However, for applications with intricate state logic, frequent updates, or performance requirements, Redux offers a more robust alternative.
 
 ### Why Redux?
-Redux centralizes the application’s state in a single store, making it easier to manage, debug, and test. It enforces predictable state updates through actions and reducers, which is particularly valuable for complex applications. Key benefits include:
+Redux centralizes the application's state in a single store, making it easier to manage, debug, and test. It enforces predictable state updates through actions and reducers, which is particularly valuable for complex applications. Key benefits include:
 - **Centralized State**: All state lives in one place, simplifying access and updates.
 - **Predictability**: Pure reducers ensure consistent state changes.
 - **Debugging**: Redux DevTools enable time-travel debugging and state inspection.
@@ -48,7 +59,7 @@ Traditional Redux setup involves significant boilerplate, such as manually creat
 - **Best Practices**: Encourages standard patterns, avoiding common pitfalls.
 - **Efficiency**: Streamlines development, letting you focus on app logic.
 
-For your portfolio, Redux Toolkit makes it easier to manage theme toggKits and project data, aligning with the [Redux Toolkit Documentation](https://redux-toolkit.js.org/).
+For your portfolio, Redux Toolkit makes it easier to manage theme toggles and project data, aligning with the [Redux Toolkit Documentation](https://redux-toolkit.js.org/).
 
 ## 4. Setting Up Redux Toolkit in Your Project
 
@@ -201,7 +212,7 @@ export default ThemeToggle;
 ```
 
 ### Applying the Theme
-In `src/App.tsx`, apply the theme to the document’s root element to enable Tailwind’s `dark:` classes.
+In `src/App.tsx`, apply the theme to the document's root element to enable Tailwind's `dark:` classes.
 
 ```typescript
 import { useSelector } from 'react-redux';
@@ -269,7 +280,7 @@ export default Projects;
 
 ## 6. Persisting State
 
-Persisting state ensures user preferences, like theme choice, are retained across sessions. A simple approach is to use local storage, though it’s best handled outside reducers to keep them pure.
+Persisting state ensures user preferences, like theme choice, are retained across sessions. A simple approach is to use local storage, though it's best handled outside reducers to keep them pure.
 
 ### Example: Persisting Theme
 Modify `ThemeToggle.tsx` to save the theme to local storage.
@@ -311,7 +322,7 @@ const initialState: ThemeState = {
 };
 ```
 
-For more robust persistence, consider [redux-persist](https://github.com/rt2zz/redux-persist), which automatically saves and restores state. Due to its complexity, it’s recommended for advanced use cases.
+For more robust persistence, consider [redux-persist](https://github.com/rt2zz/redux-persist), which automatically saves and restores state. Due to its complexity, it's recommended for advanced use cases.
 
 ## 7. Best Practices and Tips
 
@@ -328,6 +339,198 @@ For more robust persistence, consider [redux-persist](https://github.com/rt2zz/r
 - Missing cleanup in `useEffect` for side effects like local storage.
 - Incorrect TypeScript types, leading to runtime errors.
 
+## 10. Examples for Your Portfolio
+
+To implement Redux in your portfolio website, you should set up the following files:
+
+### Store Configuration
+
+Create a Redux store configuration file. You can place it in one of these locations:
+- `src/app/store.ts`
+- `src/store/index.ts`
+- `src/store.ts`
+
+Here's a sample implementation:
+
+```typescript
+// src/app/store.ts
+import { configureStore } from '@reduxjs/toolkit';
+import themeReducer from '../features/theme/themeSlice';
+import portfolioReducer from '../features/portfolio/portfolioSlice';
+
+export const store = configureStore({
+  reducer: {
+    theme: themeReducer,
+    portfolio: portfolioReducer,
+  },
+  // Optional: Add middleware or devTools configuration
+});
+
+// Export types for TypeScript usage
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+```
+
+### Redux Slice Implementation
+
+Create a theme slice for managing light/dark mode:
+
+```typescript
+// src/features/theme/themeSlice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+// Get initial theme from localStorage if available
+const getInitialTheme = (): 'light' | 'dark' => {
+  if (typeof window !== 'undefined') {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      return savedTheme;
+    }
+    // Check user preference
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+  }
+  return 'light';
+};
+
+interface ThemeState {
+  mode: 'light' | 'dark';
+}
+
+const initialState: ThemeState = {
+  mode: getInitialTheme(),
+};
+
+const themeSlice = createSlice({
+  name: 'theme',
+  initialState,
+  reducers: {
+    toggleTheme: (state) => {
+      state.mode = state.mode === 'light' ? 'dark' : 'light';
+      // Note: Side effects like localStorage should ideally be handled outside reducers
+      // This is just for demonstration
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', state.mode);
+      }
+    },
+    setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
+      state.mode = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('theme', state.mode);
+      }
+    },
+  },
+});
+
+export const { toggleTheme, setTheme } = themeSlice.actions;
+export default themeSlice.reducer;
+```
+
+### Connect Redux to React
+
+Update your main entry file to provide the Redux store to your application:
+
+```typescript
+// src/main.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>
+);
+```
+
+### Using Redux in Components
+
+Create a theme toggle component that uses Redux:
+
+```typescript
+// src/components/ThemeToggle.tsx
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleTheme } from '../features/theme/themeSlice';
+import { RootState } from '../app/store';
+
+const ThemeToggle: React.FC = () => {
+  const dispatch = useDispatch();
+  const themeMode = useSelector((state: RootState) => state.theme.mode);
+
+  return (
+    <button
+      onClick={() => dispatch(toggleTheme())}
+      className={`p-2 rounded-full transition-colors ${
+        themeMode === 'dark' 
+          ? 'bg-gray-800 text-white hover:bg-gray-700' 
+          : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+      }`}
+      aria-label={`Switch to ${themeMode === 'light' ? 'dark' : 'light'} mode`}
+    >
+      {themeMode === 'light' ? '🌙' : '☀️'}
+    </button>
+  );
+};
+
+export default ThemeToggle;
+```
+
+Apply the theme in your App component:
+
+```typescript
+// src/App.tsx
+import { useSelector } from 'react-redux';
+import { RootState } from './app/store';
+import { useEffect } from 'react';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import About from './components/About';
+import Projects from './components/Projects';
+import Footer from './components/Footer';
+
+function App() {
+  const themeMode = useSelector((state: RootState) => state.theme.mode);
+
+  // Apply theme to HTML element for Tailwind dark mode
+  useEffect(() => {
+    const root = document.documentElement;
+    if (themeMode === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [themeMode]);
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+      <Navbar />
+      <main>
+        <Hero />
+        <About />
+        <Projects />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Quiz Instructions
+
+Complete the quiz in `quizzes/Chapter9.md` by marking exactly 5 correct answers with [X]. For example:
+```
+- [ ] This is an incorrect answer
+- [X] This is a correct answer
+```
+
 ## 8. When to Use Redux Toolkit
 
 Redux Toolkit shines in scenarios with:
@@ -335,11 +538,11 @@ Redux Toolkit shines in scenarios with:
 - Asynchronous data fetching (e.g., using RTK Query).
 - Need for advanced debugging or middleware.
 
-For your portfolio, Redux may be overkill if state remains simple, but it’s a valuable learning exercise and prepares you for larger applications. Compare it with Context API or alternatives like Zustand for simpler use cases.
+For your portfolio, Redux may be overkill if state remains simple, but it's a valuable learning exercise and prepares you for larger applications. Compare it with Context API or alternatives like Zustand for simpler use cases.
 
 ## 9. Conclusion
 
-By integrating Redux Toolkit, you’ve enhanced your portfolio site’s state management, replacing Context API for theme toggling and centralizing project data. This setup improves scalability, making it easier to add features like dynamic project filtering or user settings. The skills learned—creating stores, slices, and using Redux hooks—equip you for building complex React applications. Next, consider exploring RTK Query for API data fetching or optimizing performance with memoized selectors.
+By integrating Redux Toolkit, you've enhanced your portfolio site's state management, replacing Context API for theme toggling and centralizing project data. This setup improves scalability, making it easier to add features like dynamic project filtering or user settings. The skills learned—creating stores, slices, and using Redux hooks—equip you for building complex React applications. Next, consider exploring RTK Query for API data fetching or optimizing performance with memoized selectors.
 
 ## Key Citations
 - [Redux Toolkit Official Documentation for Setup and Usage](https://redux-toolkit.js.org/)

@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -25,6 +26,89 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '7' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter7-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 7: Complete the React Quiz',
+                body: `
+                # Complete the React Fundamentals Quiz
+                
+                1. Navigate to the \`quizzes/Chapter7.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter7-task', 'quiz']
+              });
+            }
+            
+      - name: Create React Components Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter7-task,components',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 7: Create React Components',
+                body: `
+                # Create React Components
+                
+                Create or update the following React components in the \`src/components\` folder:
+                
+                1. \`About.tsx\`: A component to display information about yourself
+                2. \`Hero.tsx\`: A hero section component for the landing page
+                3. \`Footer.tsx\`: A footer component for your portfolio
+                4. \`NotFound.tsx\`: A 404 page component for handling missing routes
+                
+                Each component should:
+                - Be properly typed with TypeScript
+                - Use data from your portfolio data files
+                - Include appropriate styling with Tailwind CSS
+                - Implement at least one React hook (like useState)
+                
+                After creating these components, update your \`App.tsx\` to include them.
+                
+                This issue will automatically close when you successfully complete all component tasks.
+                `,
+                labels: ['chapter7-task', 'components']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step
@@ -65,14 +149,14 @@ jobs:
           # Check for required React components
           REQUIRED_COMPONENTS=(
             "About"
-            "Skills"
-            "Projects"
-            "Navbar"
+            "Hero"
+            "Footer"
+            "NotFound"
           )
           
           MISSING_COMPONENTS=""
           for comp in "${REQUIRED_COMPONENTS[@]}"; do
-            if ! find src/components -name "${comp}*.tsx" > /dev/null; then
+            if ! find src/components -name "${comp}.tsx" > /dev/null; then
               MISSING_COMPONENTS="$MISSING_COMPONENTS\n- $comp"
             fi
           done
@@ -84,13 +168,68 @@ jobs:
           
           echo "components_ok=true" >> $GITHUB_OUTPUT
 
+      - name: Check App.tsx Usage
+        id: app_check
+        if: steps.components_check.outputs.components_ok == 'true'
+        run: |
+          if [ ! -f "src/App.tsx" ]; then
+            echo "::error::src/App.tsx file is missing."
+            exit 1
+          fi
+          
+          # Check if App.tsx imports the required components
+          REQUIRED_IMPORTS=(
+            "import.*About.*from"
+            "import.*Hero.*from"
+            "import.*Footer.*from"
+            "import.*NotFound.*from"
+          )
+          
+          MISSING_IMPORTS=""
+          for import in "${REQUIRED_IMPORTS[@]}"; do
+            if ! grep -q "$import" "src/App.tsx"; then
+              MISSING_IMPORTS="$MISSING_IMPORTS\n- $import"
+            fi
+          done
+          
+          if [ ! -z "$MISSING_IMPORTS" ]; then
+            echo "::error::App.tsx is missing required component imports:$MISSING_IMPORTS"
+            exit 1
+          fi
+          
+          # Check if App.tsx renders the required components
+          REQUIRED_RENDERS=(
+            "<About"
+            "<Hero"
+            "<Footer"
+          )
+          
+          MISSING_RENDERS=""
+          for render in "${REQUIRED_RENDERS[@]}"; do
+            if ! grep -q "$render" "src/App.tsx"; then
+              MISSING_RENDERS="$MISSING_RENDERS\n- $render"
+            fi
+          done
+          
+          if [ ! -z "$MISSING_RENDERS" ]; then
+            echo "::error::App.tsx is not rendering all required components:$MISSING_RENDERS"
+            exit 1
+          fi
+          
+          echo "app_ok=true" >> $GITHUB_OUTPUT
+
       - name: Check React Hooks Usage
         id: hooks_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.components_check.outputs.components_ok == 'true'
+        if: steps.components_check.outputs.components_ok == 'true'
         run: |
-          # Check for useState hook
-          if ! grep -r "useState" --include="*.tsx" src > /dev/null; then
-            echo "::error::No useState hook found in the components."
+          # Check for React hooks in components
+          HOOKS_USAGE=""
+          if ! grep -r "useState\|useEffect\|useContext\|useReducer" --include="*.tsx" src/components > /dev/null; then
+            HOOKS_USAGE="No React hooks (useState, useEffect, etc.) found in the components."
+          fi
+          
+          if [ ! -z "$HOOKS_USAGE" ]; then
+            echo "::error::$HOOKS_USAGE You must use at least one React hook."
             exit 1
           fi
           
@@ -133,10 +272,58 @@ jobs:
             exit 1
           fi
 
+      - name: Close Completed Quiz Issue
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter7-task,quiz',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Components Issue
+        if: >
+          steps.components_check.outputs.components_ok == 'true' && 
+          steps.app_check.outputs.app_ok == 'true' &&
+          steps.hooks_check.outputs.hooks_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter7-task,components',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
       - name: Ensure All Chapter-7 Tasks Are Closed
         if: >
           steps.quiz.outputs.quiz_ok == 'true' && 
           steps.components_check.outputs.components_ok == 'true' &&
+          steps.app_check.outputs.app_ok == 'true' &&
           steps.hooks_check.outputs.hooks_ok == 'true' &&
           steps.type_check.outputs.type_check_ok == 'true' &&
           steps.lint_check.outputs.lint_ok == 'true' &&
