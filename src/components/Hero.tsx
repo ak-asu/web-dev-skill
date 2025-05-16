@@ -7,7 +7,7 @@ import personalResume from '../assets/resume.pdf';
 const Hero: React.FC = () => {
   return (
     // Hero section spans full viewport height with gradient background
-    <section id="home" className="min-h-screen flex items-center justify-center py-16 bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <section id="home" className="min-h-screen flex items-center justify-center py-16 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 bg-gradient-to-b from-white to-gray-100 dark:text-white text-gray-900">
       <div className="container px-4 mx-auto">
         {/* Animated content container with entrance animation */}
         <motion.div
@@ -24,11 +24,11 @@ const Hero: React.FC = () => {
             Hi, I'm <span className="text-blue-400">{personalInfo.name}</span>
           </h1>
           {/* Professional title/role */}
-          <h2 className="text-2xl md:text-3xl mb-8 text-gray-300">
+          <h2 className="text-2xl md:text-3xl mb-8 dark:text-gray-300 text-gray-600">
             {personalInfo.title}
           </h2>
           {/* Brief introduction paragraph */}
-          <p className="text-lg md:text-xl max-w-2xl mb-10 text-gray-400">
+          <p className="text-lg md:text-xl max-w-2xl mb-10 dark:text-gray-400 text-gray-700">
             {personalInfo.description}
           </p>
           {/* Call-to-action buttons */}

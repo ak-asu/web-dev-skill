@@ -8,24 +8,27 @@ import Skills from './components/Skills'
 import Achievements from './components/Achievements'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import { ThemeProvider } from './context/ThemeProvider'
 import './App.css'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <Education />
-        <Skills />
-        <Experience />
-        <Projects />
-        <Achievements />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <ThemeProvider>
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
+        <Navbar />
+        <main>
+          <Hero />
+          <About />
+          <Education />
+          <Skills />
+          <Experience />
+          <Projects />
+          <Achievements />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
+    </ThemeProvider>
   )
 }
 

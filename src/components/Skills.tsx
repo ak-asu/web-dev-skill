@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { skills } from '../data';
 
-
 // Custom animations that can't be handled directly by Tailwind
 // These styles define the infinite scrolling animation for the skills carousel
 const customStyles = {
@@ -44,8 +43,7 @@ const fadeIn = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
 };
 
-const Skills: React.FC = () => {
-  // State to control whether the carousel animation is paused (on hover)
+const Skills: React.FC = () => {  // State to control whether the carousel animation is paused (on hover)
   const [isPaused, setIsPaused] = useState(false);
 
   // Create keyframes when component mounts
@@ -67,7 +65,7 @@ const Skills: React.FC = () => {
   };
 
   return (
-    <section id="skills" className="py-20 bg-gray-800 text-white flex flex-col justify-center">
+    <section id="skills" className="py-20 dark:bg-gray-800 bg-gray-100 dark:text-white text-gray-900 flex flex-col justify-center">
       <div className="container mx-auto px-4">
         {/* Section heading with fade-in animation */}
         <motion.div
@@ -78,7 +76,7 @@ const Skills: React.FC = () => {
           variants={fadeIn}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Skills & Technologies</h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg dark:text-gray-400 text-gray-600 max-w-2xl mx-auto">
             These are the technologies and tools I work with to build web applications.
           </p>
         </motion.div>
@@ -107,21 +105,21 @@ const Skills: React.FC = () => {
               {/* First set of skills for continuous scrolling effect */}
               {allSkills.map((skill, index) => (
                 <div key={`skill-1-${index}`} className="flex flex-col items-center mx-5 relative group">
-                  <div className={`w-[60px] h-[60px] rounded-full bg-gray-800 flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>
+                  <div className={`w-[60px] h-[60px] rounded-full dark:bg-gray-800 bg-white flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>
                     <skill.icon />
                   </div>
-                  <span className="text-sm opacity-0 absolute top-full whitespace-nowrap transition-opacity duration-200 bg-gray-800 bg-opacity-90 px-2 py-0.5 rounded pointer-events-none group-hover:opacity-100">
+                  <span className="text-sm opacity-0 absolute top-full whitespace-nowrap transition-opacity duration-200 dark:bg-gray-800 bg-white dark:text-white text-gray-900 dark:bg-opacity-90 bg-opacity-90 px-2 py-0.5 rounded pointer-events-none group-hover:opacity-100">
                     {skill.name}
                   </span>
                 </div>
               ))}
-              {/* Duplicate skills to create seamless infinite scrolling effect */}
+              {/* Second set of identical skills to create the infinite scrolling effect */}
               {allSkills.map((skill, index) => (
                 <div key={`skill-2-${index}`} className="flex flex-col items-center mx-5 relative group">
-                  <div className={`w-[60px] h-[60px] rounded-full bg-gray-800 flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>
+                  <div className={`w-[60px] h-[60px] rounded-full dark:bg-gray-800 bg-white flex items-center justify-center text-2xl text-blue-400 transition-all duration-300 border-2 ${categoryColors[skill.category] || 'border-gray-400'} group-hover:-translate-y-2 group-hover:shadow-lg`}>
                     <skill.icon />
                   </div>
-                  <span className="text-sm opacity-0 absolute top-full whitespace-nowrap transition-opacity duration-200 bg-gray-800 bg-opacity-90 px-2 py-0.5 rounded pointer-events-none group-hover:opacity-100">
+                  <span className="text-sm opacity-0 absolute top-full whitespace-nowrap transition-opacity duration-200 dark:bg-gray-800 bg-white dark:text-white text-gray-900 dark:bg-opacity-90 bg-opacity-90 px-2 py-0.5 rounded pointer-events-none group-hover:opacity-100">
                     {skill.name}
                   </span>
                 </div>
