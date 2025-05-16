@@ -1,142 +1,55 @@
-# Portfolio Website
+# Web Development Skill Tutorial
 
-A modern, responsive, single-page portfolio website built with React, TypeScript, Tailwind CSS, and Vite.
+_Learn the fundamentals of modern web development by building your very own portfolio website! This hands-on tutorial covers project planning, setting up a React + TypeScript project with Vite, styling with Tailwind CSS, and more._
 
-![Portfolio Preview](https://via.placeholder.com/1200x600)
+## Welcome
 
-## Features
+- **Who is this for**: Developers who want to improve their web development skills, learn best practices, and build a professional portfolio website.
+- **What you'll learn**: 
+  - How to plan a web project and define requirements
+  - Setting up a Vite project with React and TypeScript
+  - Styling with Tailwind CSS and responsive design techniques
+  - Building reusable React components and implementing state management
+  - Integrating external APIs, error handling, and CI/CD deployment workflows
+- **What you'll build**: A basic portfolio website that showcases your skills, projects, and experience.
+- **Prerequisites**: Basic programming knowledge and familiarity with HTML, CSS, and JavaScript.
+- **Estimated Time**: This exercise typically takes at least one day to complete.
 
-- ✨ Modern UI with smooth animations
-- 📱 Fully responsive design 
-- 🚀 Built with React and TypeScript
-- 🎨 Styled with Tailwind CSS
-- ⚡ Fast development with Vite
-- 🔄 Framer Motion animations
-- 📊 Skill progress visualization
-- 📝 Contact form
-- 🚀 Automatic deployment to GitHub Pages
+In this exercise, you will:
 
-## Getting Started
+1. Set up a React + TypeScript project with Vite.
+2. Plan your project by defining requirements and user stories.
+3. Build and style a portfolio website using Tailwind CSS.
+4. Implement fundamental and advanced React patterns, including state management.
+5. Integrate APIs and configure environment variables for dynamic content.
+6. Set up GitHub Actions for testing, building, and automated deployment.
 
-### Prerequisites
+### How to Start This Exercise
 
-- Node.js (v14 or higher)
-- npm or yarn
+> [!IMPORTANT]
+> This exercise assumes basic programming knowledge.
 
-### Installation
+Simply copy the exercise to your account and then refresh the page after a brief wait.
 
-1. Clone this repository
-   ```bash
-   git clone https://github.com/yourusername/web-dev-skill.git
-   cd web-dev-skill
-   ```
+[![](https://img.shields.io/badge/Copy%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/new?template_owner=ak-asu&template_name=web-dev-skill&owner=%40me&name=web-dev&description=Exercise:+Web+Development+Beginner&visibility=public)
 
-2. Install dependencies
-   ```bash
-   npm install
-   # or
-   yarn
-   ```
+<details>
+<summary>Having trouble? 🤷</summary><br/>
 
-3. Start the development server
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
+When copying the exercise, we recommend the following settings:
 
-4. Open http://localhost:5173 in your browser
+- For owner, choose your personal account or an organization to host the repository.
 
-## Project Structure
+- We recommend creating a public repository, since private repositories will use Actions minutes.
 
-```
-/
-├── public/              # Static files
-├── src/
-│   ├── assets/          # Images and other assets
-│   ├── components/      # React components
-│   ├── data/            # Data files for projects, skills, etc.
-│   ├── hooks/           # Custom React hooks
-│   ├── types/           # TypeScript type definitions
-│   ├── App.css          # App-specific styles
-│   ├── App.tsx          # Main App component
-│   ├── index.css        # Global styles
-│   └── main.tsx         # Entry point
-├── .github/             # GitHub configuration
-│   └── workflows/       # GitHub Actions workflows
-├── tailwind.config.js   # Tailwind CSS configuration
-├── postcss.config.js    # PostCSS configuration
-├── vite.config.ts       # Vite configuration
-└── package.json         # Project dependencies and scripts
-```
+If the exercise isn't ready in 20 seconds, please check the [Actions](../../actions) tab.
 
-## Deployment
+- Check to see if a job is running. Sometimes it simply takes a bit longer.
 
-This portfolio is set up for automatic deployment to GitHub Pages when pushing to the main branch.
+- If the page shows a failed job, please submit an issue. Nice, you found a bug! 🐛
 
-### Manual Deployment
-
-You can also deploy manually with:
-
-```bash
-npm run build
-npm run deploy
-```
-
-## Customization
-
-To customize the portfolio for your own use:
-
-1. Update `src/data/index.ts` with your personal information, projects, and skills
-2. Replace images in the `public` directory with your own
-3. Modify the color scheme in `tailwind.config.js`
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- React
-- TypeScript
-- Tailwind CSS
-- Vite
-- Framer Motion
-- GitHub Pages
-
-### Getting Started:
-
-Click the "Start Course" button above to create your own copy of this repository. Once created, you'll automatically be directed to Chapter 1 to begin your learning journey.
-
-### Course Navigation:
-
-You can view all chapters and track your progress in the [NAVIGATION.md](./NAVIGATION.md) file, which will automatically update as you complete each chapter.
-
-### Course Flow:
-
-This chart illustrates how you'll progress through the course:
-
-![Course Flow](https://mermaid.ink/img/pako:eNptks1uwjAQhF9l5TMgJRBI4FIou1SpbXqlh4Zd4kK82D-yHVIi3r2OExAUcsnKM9-sZr3eGnklgXPoxNi82dZl-5Qr1uxRWHM_M2qHVcVGiCXabwRWLrDKHYPu9TWVWOpfZXDQNL1PW1jHZHcMv3N_IxUYuBwDQe-xZHiL0bFWoYm6DHT55NOVFfDkxJdG1bOVvhLZcmexD4XiHAXSHFzA7UoY3uBFkzj_FJvODFXYp5sWbvxCpbH0J9TM4mlCQoGQRjRf7BuQzlypMB8c9ZE8gUGUjrY3C-4RtYGWqHR5KktpUJ3A9uQXpWqtO9A9jOSsNpAKRbjQzUftAxm6EwTyEo6V7dI0j3I2lM2Fuw1ry6_vW-zAdSwsqX_wd9qQNvDMNTkbsRYcxQ4sxqPww5C8Pff7L8uAz4Y?type=png)
-
-<p align="center">
-  <a href="./resources/chapter1.md">
-    <img src="https://img.shields.io/badge/-Take%20the%20Quiz-blue?style=for-the-badge" alt="Take the Quiz">
-  </a>
-</p>
-
-Remember: There's no need to create a new branch - simply edit the quiz file, commit your changes, and push them to the main branch.
-
-<footer>
-
-<!--
-  <<< Author notes: Footer >>>
-  Add a link to get support, GitHub status page, code of conduct, license link.
--->
+</details>
 
 ---
 
-Get help: [Open an issue](../../issues) &bull; [Review the GitHub status page](https://www.githubstatus.com/)
-
-&copy; 2023 TBD-copyright-holder &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
-
-</footer>
+&copy; 2025 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)

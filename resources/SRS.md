@@ -44,16 +44,25 @@
 ##### 3.1.1 Home/Landing Page
 <!-- Describe requirements for the home page -->
 
-##### 3.1.2 Projects Section
-<!-- Describe requirements for the projects showcase -->
-
-##### 3.1.3 Skills/Technologies Section
-<!-- Describe requirements for displaying skills and technologies -->
-
-##### 3.1.4 About Me Section
+##### 3.1.2 About Me Section
 <!-- Describe requirements for personal information -->
 
-##### 3.1.5 Contact Section
+##### 3.1.3 Education Section
+<!-- Describe requirements for education information -->
+
+##### 3.1.4 Skills/Technologies Section
+<!-- Describe requirements for displaying skills and technologies -->
+
+##### 3.1.5 Experience Section
+<!-- Describe requirements for displaying experience information -->
+
+##### 3.1.6 Projects Section
+<!-- Describe requirements for the projects showcase -->
+
+##### 3.1.7 Achievements Section
+<!-- Describe requirements for displaying achievements -->
+
+##### 3.1.8 Contact Section
 <!-- Describe requirements for contact information and form -->
 
 #### 3.2 Non-Functional Requirements

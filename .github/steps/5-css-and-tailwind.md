@@ -1,6 +1,19 @@
 # Chapter 5: CSS and Tailwind
 
-This chapter provides a comprehensive guide to styling your portfolio site using CSS and Tailwind CSS within a React and Vite project. CSS is the backbone of web styling, controlling layout, colors, and typography, while Tailwind CSS offers a utility-first approach to streamline development. We’ll cover CSS fundamentals, Tailwind’s integration, and practical examples to create a responsive, visually appealing portfolio site. All styling will be managed through Tailwind classes in JSX and the `index.css` file, adhering to the requirement to avoid additional CSS files.
+This chapter provides a comprehensive guide to styling your portfolio site using CSS and Tailwind CSS within a React and Vite project. CSS is the backbone of web styling, controlling layout, colors, and typography, while Tailwind CSS offers a utility-first approach to streamline development. We'll cover CSS fundamentals, Tailwind's integration, and practical examples to create a responsive, visually appealing portfolio site. All styling will be managed through Tailwind classes in JSX and the `index.css` file, adhering to the requirement to avoid additional CSS files.
+
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the CSS and Tailwind Quiz**: Answer 5 questions correctly in the `quizzes/Chapter5.md` file
+2. **Set up Tailwind CSS 4**:
+   - Update `package.json` with Tailwind 4 and related packages
+   - Configure `vite.config.ts` to use the Tailwind plugin
+3. **Prepare CSS Files**:
+   - Set up `tailwind.config.js` with proper content, theme, and plugins
+   - Create `src/index.css` with Tailwind imports and layer definitions
+   - Create `src/App.css` with component-specific styles
 
 ## 1. Introduction to CSS and Tailwind CSS
 
@@ -384,17 +397,61 @@ export default ThemeToggle;
 
 Add this component to your layout, e.g., in the navigation bar or footer.
 
-## 5. Best Practices and Tips
+## 10. Required Tasks for Your Portfolio Styling
 
-- **Consistency**: Use Tailwind’s design tokens (e.g., `text-sm`, `bg-blue-500`) for uniform styling.
-- **Minimize Custom CSS**: Rely on Tailwind classes to avoid maintenance issues; use `index.css` only for global or component styles.
-- **Componentization**: Create reusable React components with predefined Tailwind classes.
-- **Developer Tools**: Regularly inspect elements to test Tailwind classes and ensure responsiveness.
-- **IntelliSense**: Install the [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss) VSCode extension for class auto-completion.
-- **Common Mistakes**:
-  - Ensure all JSX files are included in `tailwind.config.js`’s `content` array to generate classes.
-  - Use correct responsive prefixes (e.g., `md:` for ≥768px, not `lg:`).
-  - Test dark mode thoroughly to ensure all elements adapt correctly.
+For your portfolio website built with React, Vite, and Tailwind CSS 4, you need to set up the following files:
+
+### Tailwind CSS 4 Setup
+
+Update your `package.json` to include Tailwind 4 and related packages:
+
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.0",
+    "@tailwindcss/typography": "^0.5.0",
+    "@tailwindcss/vite": "^1.0.0",
+    "tailwindcss": "^4.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  }
+}
+```
+
+Update your `vite.config.ts` to use the Tailwind plugin:
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+})
+```
+
+### Tailwind Configuration
+
+Here's a sample example of an [`tailwind.config.js`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/tailwind.config.js) file with all required elements.
+
+### CSS Files
+
+Here's a sample example of an [`src/index.css`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/index.css) file with all required elements.
+
+Here's a sample example of an [`src/App.css`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.css) file with all required elements.
+
+## Quiz Instructions
+
+Complete the quiz in `quizzes/Chapter5.md` by marking exactly 5 correct answers with [X]. For example:
+```
+- [ ] This is an incorrect answer
+- [X] This is a correct answer
+```
 
 ## 6. Conclusion
 

@@ -11,6 +11,7 @@ on:
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -24,6 +25,105 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '4' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter4-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 4: Complete the HTML Quiz',
+                body: `
+                # Complete the HTML Fundamentals Quiz
+                
+                1. Navigate to the \`quizzes/Chapter4.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter4-task', 'quiz']
+              });
+            }
+            
+      - name: Create HTML Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter4-task,html',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 4: Complete the index.html file',
+                body: `
+                # Complete the index.html File
+                
+                Create or update your \`index.html\` file with the following elements:
+                
+                1. Basic HTML structure with proper doctype, html, head, and body tags
+                2. Meta tags:
+                   - \`<meta name="description" content="Your portfolio description">\`
+                   - \`<meta name="keywords" content="relevant keywords">\`
+                   - \`<meta name="author" content="Your name">\`
+                   - \`<meta property="og:title" content="Your portfolio title">\`
+                   - \`<meta property="og:description" content="Your portfolio description">\`
+                3. Title tag: \`<title>Your Portfolio Title</title>\`
+                4. Icon link: \`<link rel="icon" type="image/svg+xml" href="/vite.svg" />\`
+                5. Add the following redirect script in the head:
+                
+                \`\`\`html
+                <script>
+                  (function() {
+                    // Redirect for GitHub Pages SPA
+                    if (sessionStorage.redirect) {
+                      const redirect = sessionStorage.redirect;
+                      delete sessionStorage.redirect;
+                      if (redirect && redirect !== location.href) {
+                        history.replaceState(null, null, redirect);
+                      }
+                    }
+                  })();
+                </script>
+                \`\`\`
+                
+                6. Add div with id="root" in the body for React mounting
+                7. Include a script tag to load your React application
+                
+                This issue will automatically close when you successfully complete all HTML requirements.
+                `,
+                labels: ['chapter4-task', 'html']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step
@@ -75,14 +175,18 @@ jobs:
             "<div id=\"root\""
             "<script.*src=\".*main.*\""
             
-            # Meta tags for SEO
+            # Required meta tags for SEO
             "<meta name=\"description\""
+            "<meta name=\"keywords\""
+            "<meta name=\"author\""
+            "<meta property=\"og:title\""
+            "<meta property=\"og:description\""
             
-            # Core elements usage
-            "<h1"
+            # Icon link
+            "<link.*rel=\"icon\".*href=\".*\""
             
-            # Links and resources
-            "<link.*rel=\".*\""
+            # Redirect script
+            "<script>.*sessionStorage\.redirect.*</script>"
           )
           
           MISSING=""
@@ -138,6 +242,50 @@ jobs:
             exit 1
           fi
 
+      - name: Close Completed Quiz Issue
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter4-task,quiz',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed HTML Issue
+        if: steps.html_check.outputs.html_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter4-task,html',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
       - name: Ensure All Chapter-4 Tasks Are Closed
         if: >
           steps.quiz.outputs.quiz_ok == 'true' && 
@@ -155,6 +303,7 @@ jobs:
             });
             if (open.data.length > 0) {
               core.setFailed(`There are still ${open.data.length} open chapter4-task issues.`);
+            }
 
       - name: Advance to Step 5
         if: success()

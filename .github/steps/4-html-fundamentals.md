@@ -1,6 +1,20 @@
 # Chapter 4: HTML Fundamentals
 
-This chapter introduces HTML (HyperText Markup Language), the foundation of web development, tailored for beginners building a portfolio site with React and Vite. We’ll explore core HTML elements, semantic HTML for better structure, accessibility practices, SEO essentials, and how HTML integrates with React. By mastering these concepts, you’ll create structured, accessible, and search-friendly web pages.
+This chapter introduces HTML (HyperText Markup Language), the foundation of web development, tailored for beginners building a portfolio site with React and Vite. We'll explore core HTML elements, semantic HTML for better structure, accessibility practices, SEO essentials, and how HTML integrates with React. By mastering these concepts, you'll create structured, accessible, and search-friendly web pages.
+
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the HTML Quiz**: Answer 5 questions correctly in the `quizzes/Chapter4.md` file
+2. **Create/Update Your index.html**: Build a properly structured HTML file with all required elements:
+   - Basic HTML structure (doctype, html, head, body)
+   - Required meta tags for SEO and social sharing
+   - Title tag for your portfolio
+   - Icon link for the browser tab favicon
+   - Redirect script for single-page applications
+   - Root div for React mounting
+   - Script to load your React application
 
 ## 1. Introduction to HTML
 
@@ -247,9 +261,80 @@ For React-specific HTML usage, see [React: JSX Documentation](https://react.dev/
 - **Test Accessibility**: Use screen readers or tools like [Lighthouse](https://developers.google.com/web/tools/lighthouse) to verify accessibility.
 - **Optimize SEO**: Regularly update meta descriptions and ensure fast load times.
 
+## 10. Required Tasks for Your Portfolio Index.html
+
+For your portfolio website built with React and Vite, you'll need to set up a proper `index.html` file with all necessary elements:
+
+### Basic Structure
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta tags, title, links, and scripts go here -->
+</head>
+<body>
+  <div id="root"></div>
+  <!-- Script to load your React app -->
+</body>
+</html>
+```
+
+### Required Meta Tags
+Your `index.html` must include these meta tags for SEO and social sharing:
+```html
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Your portfolio description" />
+<meta name="keywords" content="web developer, portfolio, react, your skills" />
+<meta name="author" content="Your Name" />
+<meta property="og:title" content="Your Portfolio Title" />
+<meta property="og:description" content="Your portfolio description for social sharing" />
+```
+
+### Title and Icon
+```html
+<title>Your Portfolio Title</title>
+<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+```
+
+### SPA Redirect Script
+For proper routing in single-page applications, include this script in your `<head>`:
+```html
+<script>
+  (function() {
+    // Redirect for GitHub Pages SPA
+    if (sessionStorage.redirect) {
+      const redirect = sessionStorage.redirect;
+      delete sessionStorage.redirect;
+      if (redirect && redirect !== location.href) {
+        history.replaceState(null, null, redirect);
+      }
+    }
+  })();
+</script>
+```
+
+### React Mounting Point and Script
+```html
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+```
+
+## Example index.html
+
+Here's a sample example of an [`index.html`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/index.html) file with all required elements.
+
+## Quiz Instructions
+
+Complete the quiz in `quizzes/Chapter4.md` by marking exactly 5 correct answers with [X]. For example:
+```
+- [ ] This is an incorrect answer
+- [X] This is a correct answer
+```
+
 ## Conclusion
 
-HTML is the cornerstone of web development, providing structure for both static sites and dynamic React applications. By mastering core elements, semantic HTML, accessibility, SEO, and React integration, you’ll build a professional portfolio site that’s accessible, discoverable, and engaging. The next chapter will explore CSS for styling your site.
+HTML is the cornerstone of web development, providing structure for both static sites and dynamic React applications. By mastering core elements, semantic HTML, accessibility, SEO, and React integration, you'll build a professional portfolio site that's accessible, discoverable, and engaging. The next chapter will explore CSS for styling your site.
 
 ## Key Citations
 - [Wikipedia: HTML History and Overview](https://en.wikipedia.org/wiki/HTML)

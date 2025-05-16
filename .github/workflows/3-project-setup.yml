@@ -63,14 +63,12 @@ jobs:
           REQUIRED_FILES=(
             "vite.config.ts"
             "tsconfig.json"
-            "tsconfig.app.json"
-            "tsconfig.node.json"
             "package.json"
-            ".prettierrc"
             "eslint.config.js"
             "index.html"
             "src/main.tsx"
             "src/App.tsx"
+            "src/index.css"
           )
           
           MISSING_FILES=""

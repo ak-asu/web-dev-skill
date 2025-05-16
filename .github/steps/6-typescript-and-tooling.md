@@ -1,10 +1,26 @@
 # Chapter 6: TypeScript & Tooling
 
-This chapter provides a comprehensive guide to using TypeScript in your React portfolio site, built with Vite, to enhance code quality and maintainability. TypeScript, a statically typed superset of JavaScript, adds type safety, catching errors early and improving developer productivity. We’ll explore TypeScript’s core concepts, its application in React, common types, project configuration, linting and formatting tools, and how to define interfaces for your portfolio’s data structures. Designed for beginners, this guide uses clear explanations and practical examples to help you strengthen your codebase.
+This chapter provides a comprehensive guide to using TypeScript in your React portfolio site, built with Vite, to enhance code quality and maintainability. TypeScript, a statically typed superset of JavaScript, adds type safety, catching errors early and improving developer productivity. We'll explore TypeScript's core concepts, its application in React, common types, project configuration, linting and formatting tools, and how to define interfaces for your portfolio's data structures. Designed for beginners, this guide uses clear explanations and practical examples to help you strengthen your codebase.
+
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the TypeScript Quiz**: Answer 5 questions correctly in the `quizzes/Chapter6.md` file
+2. **Configure TypeScript Files**:
+   - Set up `tsconfig.json`, `tsconfig.app.json`, and `tsconfig.node.json`
+   - Configure proper settings for React and TypeScript
+3. **Define TypeScript Types**:
+   - Create interfaces for portfolio data in `src/types/index.ts`
+4. **Prepare Data Files**:
+   - Set up structured JSON data files in `src/data/json/`
+   - Create the data index file with proper typing
+5. **Prepare Asset Files**:
+   - Add necessary images and assets to `src/assets/`
 
 ## 1. Understanding TypeScript
 
-TypeScript extends JavaScript by adding optional static types, which are checked during compilation. Developed by Microsoft, it’s widely used in modern web development for its ability to improve code reliability and tooling support.
+TypeScript extends JavaScript by adding optional static types, which are checked during compilation. Developed by Microsoft, it's widely used in modern web development for its ability to improve code reliability and tooling support.
 
 ### What is TypeScript?
 - A superset of JavaScript, meaning all valid JavaScript code is also valid TypeScript code.
@@ -166,7 +182,7 @@ For beginners, `React.FC` is simpler, but explicit typing offers more control. S
 
 ## 3. Common TypeScript Types
 
-TypeScript provides a range of types to model your portfolio site’s data.
+TypeScript provides a range of types to model your portfolio site's data.
 
 ### Primitive Types
 - `string`: Text, e.g., `let title: string = "Project 1";`
@@ -269,7 +285,7 @@ The `tsconfig.json` file configures the TypeScript compiler. Your Vite project i
 | **Option**                | **Purpose**                                                                 |
 |---------------------------|-----------------------------------------------------------------------------|
 | `target`                  | Sets the JavaScript version (e.g., `"ESNext"`) for compiled output.         |
-| `module`                  | Specifies module system (e.g., `"ESNext"`) for Vite’s ES modules.           |
+| `module`                  | Specifies module system (e.g., `"ESNext"`) for Vite's ES modules.           |
 | `jsx`                     | Enables JSX support (e.g., `"react-jsx"`) for React components.             |
 | `strict`                  | Enforces strict type checking for better code quality.                      |
 | `noEmit`                  | Prevents TypeScript from emitting JavaScript, as Vite handles builds.       |
@@ -309,7 +325,7 @@ Ensure VSCode uses the workspace TypeScript version (check the status bar). For 
 
 ## 5. Linting and Formatting for TypeScript
 
-Linting and formatting ensure consistent, error-free code. Your project (from Chapter 3) includes ESLint and Prettier, which we’ll extend for TypeScript.
+Linting and formatting ensure consistent, error-free code. Your project (from Chapter 3) includes ESLint and Prettier, which we'll extend for TypeScript.
 
 ### Extending ESLint with @typescript-eslint
 Install TypeScript-specific ESLint plugins:
@@ -379,7 +395,7 @@ Verify `.prettierrc`:
 }
 ```
 
-Enable format-on-save in VSCode’s `settings.json`:
+Enable format-on-save in VSCode's `settings.json`:
 
 ```json
 {
@@ -392,7 +408,7 @@ For more on linting, see [ESLint Documentation](https://eslint.org/docs/latest/)
 
 ## 6. Defining Interfaces for the Portfolio Site
 
-Interfaces ensure type safety for your portfolio’s data, such as projects or form inputs.
+Interfaces ensure type safety for your portfolio's data, such as projects or form inputs.
 
 ### Project Interface
 For a project card displaying title, description, image, and link:
@@ -502,15 +518,75 @@ interface Project {
 }
 ```
 
+## 10. Required Tasks and Examples
+
+For the tasks in this chapter, you'll need to create several key files:
+
+### TypeScript Configuration Files
+
+Create or update your TypeScript configuration files.
+- `tsconfig.json`: Base configuration for TypeScript. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/tsconfig.json).
+- `tsconfig.app.json`: App-specific configuration for React and TypeScript. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/tsconfig.app.json).
+- `tsconfig.node.json`: Configuration for Vite's Node environment. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/tsconfig.node.json).
+
+### Type Definitions
+
+Create `src/types/index.ts` with these interfaces for your portfolio data:
+- `Project`
+- `Certification`
+- `Education`
+- `Experience`
+- `Skill`
+- `Achievement`
+- `Social`
+- `PersonalInfo`
+
+A sample is provided in [`src/types/index.ts`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/types/index.ts).
+
+### Data Files
+
+Create the following data files in the `src/data/json/` directory:
+- `education.json`
+- `certifications.json`
+- `achievements.json`
+- `personal-info.json`
+- `socials.json`
+- `projects.json`
+- `skills.json`
+- `experience.json`
+
+A sample is provided in [`src/data/json/`](https://github.com/ak-asu/web-dev-skill/tree/main/resources/example/src/data/json/).
+
+#### src/data/index.ts
+
+Create a data index file to import and export your data with proper typing. A sample is provided in [`src/data/index.ts`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/data/index.ts).
+
+### Assets
+
+Create an assets folder at `src/assets/` and add placeholder images for:
+- Profile image
+- Project thumbnails
+- Logo (if needed)
+
+You can use SVG files, placeholder images, or your own images. A sample is provided in [`src/assets/`](https://github.com/ak-asu/web-dev-skill/tree/main/resources/example/src/assets/).
+
+## Quiz Instructions
+
+Complete the quiz in `quizzes/Chapter6.md` by marking exactly 5 correct answers with [X]. For example:
+```
+- [ ] This is an incorrect answer
+- [X] This is a correct answer
+```
+
 ## 7. Best Practices and Tips
 - **Start Small**: Begin with simple types and gradually add complexity.
-- **Leverage IDE Features**: Use VSCode’s TypeScript support for quick fixes and suggestions.
+- **Leverage IDE Features**: Use VSCode's TypeScript support for quick fixes and suggestions.
 - **Run Linting Regularly**: Catch issues early with `npm run lint`.
 - **Avoid `any` Type**: Be explicit to maximize type safety.
 - **Test Components**: Ensure typed props and state work as expected in your UI.
 
 ## 8. Conclusion
-TypeScript transforms your React development by adding type safety, reducing errors, and enhancing tooling. By typing props, state, and events, configuring your project with `tsconfig.json`, and using ESLint and Prettier, you create a robust codebase for your portfolio site. Defining interfaces for projects and forms ensures consistent data handling. As you build, experiment with TypeScript’s features to write cleaner, more maintainable code.
+TypeScript transforms your React development by adding type safety, reducing errors, and enhancing tooling. By typing props, state, and events, configuring your project with `tsconfig.json`, and using ESLint and Prettier, you create a robust codebase for your portfolio site. Defining interfaces for projects and forms ensures consistent data handling. As you build, experiment with TypeScript's features to write cleaner, more maintainable code.
 
 The next chapter will explore JavaScript and interactivity, building on this foundation to add dynamic features to your site.
 

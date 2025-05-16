@@ -11,11 +11,15 @@ on:
       - 'eslint.config.js'
       - '.prettierrc'
       - 'src/**/*.{ts,tsx}'
+      - 'src/data/**/*'
+      - 'src/types/**/*'
+      - 'src/assets/**/*'
   workflow_dispatch:
 
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -29,6 +33,207 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '6' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 6: Complete the TypeScript Quiz',
+                body: `
+                # Complete the TypeScript & Tooling Quiz
+                
+                1. Navigate to the \`quizzes/Chapter6.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter6-task', 'quiz']
+              });
+            }
+            
+      - name: Create TypeScript Config Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,tsconfig',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 6: Configure TypeScript',
+                body: `
+                # Configure TypeScript Files
+                
+                1. Create or update your TypeScript configuration files:
+                   - \`tsconfig.json\`: Base configuration extending app and node configs
+                   - \`tsconfig.app.json\`: React application config
+                   - \`tsconfig.node.json\`: Node/Vite config
+                
+                2. Key settings to include:
+                   - Strict type checking
+                   - JSX React support
+                   - Modern ECMAScript target
+                   - Type definition inclusions
+                
+                See the examples in Chapter 6 documentation for reference.
+                
+                This issue will automatically close when you successfully complete the task.
+                `,
+                labels: ['chapter6-task', 'tsconfig']
+              });
+            }
+            
+      - name: Create Data Files Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,data-files',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 6: Prepare Portfolio Data Files',
+                body: `
+                # Prepare Portfolio Data Files
+                
+                Create or update data files in the \`src/data\` folder:
+                
+                1. Set up the data index file: \`src/data/index.ts\`
+                2. Create JSON data files in \`src/data/json/\` for:
+                   - Skills
+                   - Projects
+                   - Experience
+                   - Education
+                   - Certifications
+                   - Achievements
+                   - Personal info
+                   - Social media links
+                
+                Make sure each file contains properly structured data matching the defined TypeScript interfaces.
+                
+                This issue will automatically close when you successfully complete all data file tasks.
+                `,
+                labels: ['chapter6-task', 'data-files']
+              });
+            }
+            
+      - name: Create Types Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,types',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 6: Define TypeScript Types',
+                body: `
+                # Define TypeScript Types
+                
+                Create or update the types file in \`src/types/index.ts\` with interfaces for:
+                
+                1. \`Social\`: For social media links
+                2. \`PersonalInfo\`: For personal information
+                3. \`EducationItem\`: For education entries
+                4. \`Certification\`: For certifications and credentials
+                5. \`Skill\`: For skills with level and category
+                6. \`ExperienceItem\`: For work experience entries
+                7. \`Project\`: For portfolio projects
+                8. \`Achievement\`: For awards and achievements
+                
+                Each interface should define all necessary properties with appropriate types.
+                
+                This issue will automatically close when you successfully complete the types task.
+                `,
+                labels: ['chapter6-task', 'types']
+              });
+            }
+            
+      - name: Create Assets Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,assets',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 6: Prepare Portfolio Assets',
+                body: `
+                # Prepare Portfolio Assets
+                
+                Set up the assets folder at \`src/assets\` with:
+                
+                1. Create an images folder with placeholder images for:
+                   - Profile picture
+                   - Project thumbnails
+                   - Logo (if needed)
+                
+                2. Add asset reference files if needed, such as:
+                   - Asset import files
+                   - SVG definitions
+                   - Icon mappings
+                
+                All assets should be properly organized and typed if necessary.
+                
+                This issue will automatically close when you successfully complete the assets task.
+                `,
+                labels: ['chapter6-task', 'assets']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step
@@ -61,8 +266,8 @@ jobs:
         id: ts_config
         if: steps.quiz.outputs.quiz_ok == 'true'
         run: |
-          if [ ! -f "tsconfig.json" ]; then
-            echo "::error::tsconfig.json file is missing."
+          if [ ! -f "tsconfig.json" ] || [ ! -f "tsconfig.app.json" ] || [ ! -f "tsconfig.node.json" ]; then
+            echo "::error::One or more tsconfig files are missing."
             exit 1
           fi
           
@@ -86,6 +291,92 @@ jobs:
           fi
           
           echo "ts_config_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Types Files
+        id: types_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if [ ! -f "src/types/index.ts" ]; then
+            echo "::error::src/types/index.ts file is missing."
+            exit 1
+          fi
+          
+          # Check for required interfaces
+          TYPE_CHECKS=(
+            "interface Social"
+            "interface PersonalInfo"
+            "interface EducationItem"
+            "interface Certification"
+            "interface Skill"
+            "interface ExperienceItem"
+            "interface Project"
+            "interface Achievement"
+          )
+          
+          MISSING=""
+          for check in "${TYPE_CHECKS[@]}"; do
+            if ! grep -q "$check" "src/types/index.ts"; then
+              MISSING="$MISSING\n- $check"
+            fi
+          done
+          
+          if [ ! -z "$MISSING" ]; then
+            echo "::error::src/types/index.ts is missing required interfaces:$MISSING"
+            exit 1
+          fi
+          
+          echo "types_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Data Files
+        id: data_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.types_check.outputs.types_ok == 'true'
+        run: |
+          if [ ! -f "src/data/index.ts" ]; then
+            echo "::error::src/data/index.ts file is missing."
+            exit 1
+          fi
+          
+          # Check for required data files
+          DATA_FILES=(
+            "src/data/json/skills.json"
+            "src/data/json/projects.json"
+            "src/data/json/experience.json"
+            "src/data/json/education.json"
+            "src/data/json/certifications.json"
+            "src/data/json/achievements.json"
+          )
+          
+          MISSING=""
+          for file in "${DATA_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              MISSING="$MISSING\n- $file"
+            fi
+          done
+          
+          if [ ! -z "$MISSING" ]; then
+            echo "::error::Required data files are missing:$MISSING"
+            exit 1
+          fi
+          
+          echo "data_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Assets
+        id: assets_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if [ ! -d "src/assets" ]; then
+            echo "::error::src/assets directory is missing."
+            exit 1
+          fi
+          
+          # Check for at least some assets
+          ASSET_COUNT=$(find src/assets -type f | wc -l)
+          if [ "$ASSET_COUNT" -lt 1 ]; then
+            echo "::error::No asset files found in src/assets directory."
+            exit 1
+          fi
+          
+          echo "assets_ok=true" >> $GITHUB_OUTPUT
 
       - name: Check ESLint Configuration
         id: eslint_check
@@ -142,6 +433,116 @@ jobs:
             exit 1
           fi
 
+      - name: Close Completed Quiz Issue
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,quiz',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed TypeScript Config Issue
+        if: steps.ts_config.outputs.ts_config_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,tsconfig',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Data Files Issue
+        if: steps.data_check.outputs.data_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,data-files',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Types Issue
+        if: steps.types_check.outputs.types_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,types',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Assets Issue
+        if: steps.assets_check.outputs.assets_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter6-task,assets',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
       - name: Ensure All Chapter-6 Tasks Are Closed
         if: >
           steps.quiz.outputs.quiz_ok == 'true' && 
@@ -149,7 +550,10 @@ jobs:
           steps.eslint_check.outputs.eslint_ok == 'true' &&
           steps.ts_usage.outputs.ts_usage_ok == 'true' &&
           steps.type_check.outputs.type_check_ok == 'true' &&
-          steps.lint_check.outputs.lint_ok == 'true'
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.data_check.outputs.data_ok == 'true' &&
+          steps.types_check.outputs.types_ok == 'true' &&
+          steps.assets_check.outputs.assets_ok == 'true'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
