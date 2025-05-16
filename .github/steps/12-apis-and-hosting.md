@@ -2,6 +2,20 @@
 
 This chapter guides you through configuring your React portfolio site, built with Vite, TypeScript, and Tailwind CSS, for production, integrating external data via APIs, and automating deployment with continuous integration and continuous deployment (CI/CD). Designed for beginners, it covers environment variables, REST API consumption, secret management, dynamic content loading, error handling, and hosting on platforms like GitHub Pages or Vercel. Practical examples, such as fetching GitHub repositories for the Projects section and setting up GitHub Actions, ensure your site is scalable, secure, and maintainable, showcasing your skills professionally.
 
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the APIs and Hosting Quiz**: Answer 5 questions correctly in the `quizzes/Chapter12.md` file
+2. **Implement Contact Component and API Integration**:
+   - Create or update `src/components/Contact.tsx` with a functional contact form
+   - Configure API handling for the contact form in `src/api/contact.ts`
+   - Use environment variables to store configuration securely
+3. **Setup Deployment Workflow**:
+   - Create a deployment workflow in `.github/workflows/deploy.yml`
+   - Configure GitHub Pages for automated deployment
+   - Test that your site builds and deploys correctly
+
 ## 1. Introduction
 
 Modern web applications require robust configuration, secure data integration, and automated workflows to ensure reliability and ease of maintenance. This chapter equips you with the skills to:

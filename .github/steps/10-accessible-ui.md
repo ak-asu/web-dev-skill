@@ -1,6 +1,20 @@
 # Chapter 10: Accessible UI Components (shadcn/ui, Radix, React Icons)
 
-This chapter enhances your React portfolio site, built with Vite, TypeScript, and Tailwind CSS, by integrating accessible UI components and icons using Radix UI, shadcn/ui, and React Icons. Accessibility ensures your site is usable by all, including those with disabilities, aligning with professional standards. We’ll cover accessibility fundamentals, introduce these libraries, and implement practical features like a dropdown navigation menu, styled buttons, and social media icons. By replacing custom elements with accessible components and testing for compliance, you’ll create a polished, inclusive portfolio that stands out.
+This chapter enhances your React portfolio site, built with Vite, TypeScript, and Tailwind CSS, by integrating accessible UI components and icons using Radix UI, shadcn/ui, and React Icons. Accessibility ensures your site is usable by all, including those with disabilities, aligning with professional standards. We'll cover accessibility fundamentals, introduce these libraries, and implement practical features like a dropdown navigation menu, styled buttons, and social media icons. By replacing custom elements with accessible components and testing for compliance, you'll create a polished, inclusive portfolio that stands out.
+
+## Chapter Tasks
+
+To complete this chapter, you need to:
+
+1. **Complete the Accessible UI Quiz**: Answer 5 questions correctly in the `quizzes/Chapter10.md` file
+2. **Install Required Packages**:
+   - Add `@radix-ui/react-dropdown-menu` or another Radix UI component
+   - Add `react-icons` for icon components
+   - Optionally set up `shadcn/ui` using their CLI tool
+3. **Implement Accessible UI Components**:
+   - Create at least two accessible components (dropdown menu, buttons, etc.)
+   - Add proper ARIA attributes and ensure keyboard navigation
+   - Use React Icons with accessibility attributes
 
 ## 1. Introduction to Accessible UI Components
 

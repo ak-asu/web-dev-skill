@@ -14,6 +14,7 @@ on:
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -27,6 +28,129 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '12' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter12-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 12: Complete the APIs and Hosting Quiz',
+                body: `
+                # Complete the APIs and Hosting Quiz
+                
+                1. Navigate to the \`quizzes/Chapter12.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter12-task', 'quiz']
+              });
+            }
+            
+      - name: Create API Integration Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter12-task,api-integration',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 12: Implement API Integration and Contact Component',
+                body: `
+                # Implement API Integration and Contact Component
+                
+                Implement the following for your portfolio:
+                
+                1. Create or update \`src/components/Contact.tsx\`:
+                   - Add a contact form with name, email, and message fields
+                   - Implement form validation
+                   - Add API integration to handle form submission
+                   - Include error handling and success states
+                
+                2. Configure API handling for the contact form:
+                   - Create or update \`src/api/contact.ts\` to handle form submission
+                   - Implement proper error handling
+                   - Use environment variables for configuration
+                
+                3. Add a deployment workflow:
+                   - Create \`.github/workflows/deploy.yml\` for automated deployment
+                   - Configure it to deploy to GitHub Pages
+                
+                This issue will automatically close when you successfully complete all the required tasks.
+                `,
+                labels: ['chapter12-task', 'api-integration']
+              });
+            }
+      
+      - name: Create GitHub Pages Setup Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter12-task,github-pages',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 12: Configure GitHub Pages for Deployment',
+                body: `
+                # Configure GitHub Pages for Deployment
+                
+                1. Setup environment variables:
+                   - Create \`.env.example\` file with necessary environment variables (prefixed with VITE_)
+                   - Add any required environment variables to GitHub repository secrets
+                
+                2. Configure GitHub Pages in repository settings:
+                   - Go to repository Settings > Pages
+                   - Set deployment source to GitHub Actions
+                
+                3. Test deployment workflow:
+                   - Run the deployment workflow to ensure your site builds correctly
+                   - Verify your site is accessible at the GitHub Pages URL
+                
+                This issue will automatically close when you successfully complete the GitHub Pages configuration.
+                `,
+                labels: ['chapter12-task', 'github-pages']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step

@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
   issues: read
+  issues: write
 
 jobs:
   get_current_step:
@@ -25,6 +26,90 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '11' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter11-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 11: Complete the Animations and Transitions Quiz',
+                body: `
+                # Complete the Animations and Transitions Quiz
+                
+                1. Navigate to the \`quizzes/Chapter11.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter11-task', 'quiz']
+              });
+            }
+            
+      - name: Create Animation Components Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter11-task,animation-components',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 11: Implement Animated Components',
+                body: `
+                # Implement Animated Components
+                
+                Create the following animated React components in the \`src/components\` folder:
+                
+                1. \`Achievements.tsx\`: Create a component that displays your achievements with animations.
+                   - Use motion components for animations
+                   - Implement at least one advanced animation feature (like whileHover, AnimatePresence, or staggered animations)
+                
+                2. \`Education.tsx\`: Create a component that displays your education history with animations.
+                   - Use variants for coordinated animations
+                   - Implement fade-in effects for visual appeal
+                
+                3. \`Experience.tsx\`: Create a component that displays your work experience with animations.
+                   - Create a timeline with staggered animations
+                   - Implement hover effects for interactive elements
+                
+                Each component should demonstrate motion animations while maintaining good performance and accessibility.
+                
+                This issue will automatically close when you successfully complete all the required tasks.
+                `,
+                labels: ['chapter11-task', 'animation-components']
+              });
+            }
 
   validate_and_progress:
     needs: get_current_step
