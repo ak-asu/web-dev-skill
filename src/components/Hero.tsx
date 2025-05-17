@@ -7,7 +7,7 @@ import personalResume from '../assets/resume.pdf';
 const Hero: React.FC = () => {
   return (
     // Hero section spans full viewport height with gradient background
-    <section id="home" className="min-h-screen flex items-center justify-center py-16 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 bg-gradient-to-b from-white to-gray-100 dark:text-white text-gray-900">
+    <section id="home" className="min-h-screen flex items-center justify-center py-16 dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 bg-gradient-to-b from-white to-gray-100">
       <div className="container px-4 mx-auto">
         {/* Animated content container with entrance animation */}
         <motion.div

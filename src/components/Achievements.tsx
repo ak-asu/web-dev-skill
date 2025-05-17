@@ -94,7 +94,7 @@ const Achievements: React.FC = () => {
   };
 
   return (
-    <section id="achievements" className="py-20 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <section id="achievements" className="py-20">
       <div className="container mx-auto px-4">
         <motion.div
           className="text-center mb-12"
@@ -106,7 +106,8 @@ const Achievements: React.FC = () => {
             visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
           }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Achievements & Recognition</h2>          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Achievements & Recognition</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Milestones and acknowledgements received throughout my professional journey.
           </p>
         </motion.div>
@@ -134,11 +135,11 @@ const Achievements: React.FC = () => {
                       <motion.div
                         key={i}
                         custom={i}
-                        className={`absolute ${getConfettiShape(i)} ${i % 5 === 0 ? "bg-yellow-300" :
-                          i % 5 === 1 ? "bg-blue-300" :
-                            i % 5 === 2 ? "bg-purple-300" :
-                              i % 5 === 3 ? "bg-green-300" :
-                                "bg-pink-300"
+                        className={`absolute ${getConfettiShape(i)} ${i % 5 === 0 ? "bg-yellow-600 dark:bg-yellow-300" :
+                          i % 5 === 1 ? "bg-blue-600 dark:bg-blue-300" :
+                            i % 5 === 2 ? "bg-purple-600 dark:bg-purple-300" :
+                              i % 5 === 3 ? "bg-green-600 dark:bg-green-300" :
+                                "bg-pink-600 dark:bg-pink-300"
                           }`}
                         style={{
                           width: `${Math.random() * 10 + 6}px`,
@@ -155,20 +156,20 @@ const Achievements: React.FC = () => {
                 )}
                 <div className="p-6 flex-grow backdrop-blur-sm backdrop-filter">
                   <div className="flex items-center mb-4">
-                    <div className={`w-12 h-12 flex items-center justify-center rounded-full mr-4 
-                      ${achievement.icon === 'trophy' ? 'bg-yellow-500/30 text-yellow-300' :
-                        achievement.icon === 'medal' ? 'bg-blue-500/30 text-blue-300' :
-                          achievement.icon === 'award' ? 'bg-purple-500/30 text-purple-300' :
-                            'bg-green-500/30 text-green-300'}`}>
+                    <div className={`w-12 h-12 flex items-center justify-center rounded-full mr-4
+                      ${achievement.icon === 'trophy' ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-300' :
+                        achievement.icon === 'medal' ? 'bg-blue-500/20 text-blue-600 dark:text-blue-300' :
+                          achievement.icon === 'award' ? 'bg-purple-500/20 text-purple-600 dark:text-purple-300' :
+                            'bg-green-500/20 text-green-600 dark:text-green-300'}`}>
                       {getIcon(achievement.icon, 'text-2xl')}
                     </div>
-                    <h3 className="text-lg font-bold">{achievement.title}</h3>
+                    <h3 className="text-md font-bold">{achievement.title}</h3>
                   </div>
                   <div className="mb-3 text-sm">
-                    <p className="text-gray-300">{achievement.organization}</p>
-                    <p className="text-gray-400">{achievement.date}</p>
+                    <p className="text-gray-600 dark:text-gray-300">{achievement.organization}</p>
+                    <p className="text-gray-500 dark:text-gray-400">{achievement.date}</p>
                   </div>
-                  <p className="text-gray-300 text-sm">{achievement.description}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">{achievement.description}</p>
                 </div>
                 <div className={`h-1 w-full 
                   ${achievement.icon === 'trophy' ? 'bg-gradient-to-r from-yellow-600 to-yellow-300' :

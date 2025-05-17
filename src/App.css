@@ -64,18 +64,7 @@
   border-radius: 0.5rem;
 }
 
-.cert-card-front {
-  background-color: #374151;
-  /* bg-gray-700 */
-  border: 1px solid #4B5563;
-  /* border-gray-600 */
-}
-
 .cert-card-back {
-  background-color: #4B5563;
-  /* bg-gray-600 */
-  border: 1px solid #6B7280;
-  /* border-gray-500 */
   transform: rotateX(180deg);
   /* Changed from rotateY to rotateX for vertical flip */
 }

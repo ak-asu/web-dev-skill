@@ -12,7 +12,7 @@ const fadeIn = {
 
 const Education: React.FC = () => {
   return (
-    <section id="education" className="py-20 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+    <section id="education" className="py-20">
       <div className="container mx-auto px-4">
         {/* Section heading with animation */}
         <motion.div
@@ -22,7 +22,8 @@ const Education: React.FC = () => {
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeIn}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Education</h2>          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Education</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             My academic background and continuous learning journey.
           </p>
         </motion.div>
@@ -48,13 +49,13 @@ const Education: React.FC = () => {
                     <div>
                       <h3 className="text-xl font-bold text-blue-400">{edu.degree}</h3>
                       <div className="flex items-center">
-                        <FaUniversity className="mr-1 text-gray-400" />
+                        <FaUniversity className="mr-1 text-gray-500 dark:text-gray-400" />
                         <span className="font-medium">{edu.institution}</span>
                       </div>
                     </div>
                   </div>
                   {/* Location and time period metadata */}
-                  <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-400">
+                  <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center">
                       <FaMapMarkerAlt className="mr-1" />
                       <span>{edu.location}</span>
@@ -67,7 +68,8 @@ const Education: React.FC = () => {
                   {/* Education description */}
                   <p className="text-gray-700 dark:text-gray-300 mb-4">{edu.description}</p>
                   {/* Academic achievements section */}
-                  <div className="mb-4">                    <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Achievements</h4>
+                  <div className="mb-4">
+                    <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Achievements</h4>
                     <ul className="space-y-1 text-gray-700 dark:text-gray-300">
                       {edu.achievements.map((achievement, i) => (
                         <li key={i} className="flex">
@@ -121,14 +123,14 @@ const Education: React.FC = () => {
                   onClick={() => cert.credentialUrl && window.open(cert.credentialUrl, '_blank')}
                 >
                   {/* Front side of card - displays name and credential ID */}
-                  <div className="cert-card-front shadow-lg">
+                  <div className="cert-card-front shadow-lg bg-gray-100 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600">
                     <span className="font-semibold text-blue-400">{cert.name}</span>
-                    <span className="text-gray-400 text-xs">{cert.credentialId}</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-xs">{cert.credentialId}</span>
                   </div>
                   {/* Back side of card - displays issuer and date */}
-                  <div className="cert-card-back shadow-lg">
-                    <span className="text-gray-300">{cert.issuer}</span>
-                    <span className="text-gray-300 text-sm">{cert.date}</span>
+                  <div className="cert-card-back shadow-lg bg-gray-100 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600">
+                    <span className="text-gray-600 dark:text-gray-300">{cert.issuer}</span>
+                    <span className="text-gray-600 dark:text-gray-300 text-sm">{cert.date}</span>
                   </div>
                 </div>
               </div>

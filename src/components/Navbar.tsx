@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/useTheme';
-import { HiMoon } from "react-icons/hi";
-import { HiSun } from "react-icons/hi";
+import { HiMoon, HiSun } from "react-icons/hi";
+import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 
 
 // Navigation links for the website
@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo/home link */}
           <a href="#home" className="text-xl md:text-2xl font-bold dark:text-white text-gray-900 mr-4">
-            <span className="text-blue-400">Portfolio</span>
+            <span className="text-blue-500 dark:text-blue-400">Portfolio</span>
           </a>{/* Desktop Navigation - hidden on mobile */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map(link => (
@@ -75,41 +75,23 @@ const Navbar: React.FC = () => {
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === 'dark' ? (
-                <HiSun className="text-yellow-300" />
+                <HiSun className="text-yellow-400" />
               ) : (
-                <HiMoon className=" text-gray-600" />
+                <HiMoon className="text-gray-500" />
               )}
             </button>
           </div>
           {/* Mobile Menu Toggle Button - visible only on mobile */}
           <button
-            className="md:hidden dark:text-gray-300 text-gray-700 focus:outline-none"
+            className="md:hidden bg-transparent dark:text-gray-300 text-gray-700 focus:outline-none"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {/* Dynamic icon changes between hamburger and close X based on menu state */}
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {isMobileMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              )}
-            </svg>
+            {isMobileMenuOpen ? (
+              <AiOutlineClose className="w-6 h-6" />
+            ) : (
+              <AiOutlineMenu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
@@ -144,9 +126,9 @@ const Navbar: React.FC = () => {
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === 'dark' ? (
-                <span className="text-yellow-300" >Light</span>
+                <span className="text-yellow-400">Light</span>
               ) : (
-                <span className="text-gray-600">Dark</span>
+                <span className="text-gray-500">Dark</span>
               )}
             </button>
           </div>

@@ -148,7 +148,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <section id="contact" className="py-20">
       <div className="container mx-auto px-4">
         {/* Section heading with animation */}
         <motion.div
@@ -159,7 +159,7 @@ const Contact: React.FC = () => {
           variants={fadeIn}
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Get In Touch</h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
             Have a question or want to work together? Feel free to contact me.
           </p>
         </motion.div>
@@ -177,7 +177,8 @@ const Contact: React.FC = () => {
             {/* Contact details with icons */}
             <div className="space-y-4">
               {/* Location information */}
-              <div className="flex items-center">                <div className="w-10 h-10 flex items-center justify-center bg-blue-500/20 text-blue-400 rounded-full mr-3">
+              <div className="flex items-center">
+                <div className="w-10 h-10 flex items-center justify-center bg-blue-500/20 text-blue-500 dark:text-blue-400 rounded-full mr-3">
                   📍
                 </div>
                 <div>
@@ -187,7 +188,7 @@ const Contact: React.FC = () => {
               </div>
               {/* Email information */}
               <div className="flex items-center">
-                <div className="w-10 h-10 flex items-center justify-center bg-blue-500/20 text-blue-400 rounded-full mr-3">
+                <div className="w-10 h-10 flex items-center justify-center bg-blue-500/20 text-blue-500 dark:text-blue-400 rounded-full mr-3">
                   📧
                 </div>
                 <div>
@@ -233,8 +234,7 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    }`}
+                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                 />
                 {errors.name && (
                   <p className="mt-1 text-red-500 text-sm">{errors.name}</p>
@@ -252,8 +252,7 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    }`}
+                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                 />
                 {errors.email && (
                   <p className="mt-1 text-red-500 text-sm">{errors.email}</p>
@@ -271,8 +270,7 @@ const Contact: React.FC = () => {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                    }`}
+                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
                 />
                 {errors.message && (
                   <p className="mt-1 text-red-500 text-sm">{errors.message}</p>
@@ -295,8 +293,7 @@ const Contact: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md transition-colors w-full flex items-center justify-center ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-                  }`}
+                className={`px-6 py-3 bg-blue-400 dark:bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md transition-colors w-full flex items-center justify-center ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {/* Show spinner during submission */}
                 {isSubmitting ? (
@@ -313,7 +310,7 @@ const Contact: React.FC = () => {
               </button>
               {/* Success/error message after submission attempt */}
               {submitMessage.text && (
-                <div className={`mt-4 p-3 rounded-md ${submitMessage.isError ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'}`}>
+                <div className={`mt-4 p-3 rounded-md ${submitMessage.isError ? 'bg-red-500/20 text-red-600 dark:text-red-300' : 'bg-green-500/20 text-gray-600 dark:text-green-300'}`}>
                   {submitMessage.text}
                 </div>
               )}
