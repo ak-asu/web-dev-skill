@@ -148,7 +148,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-gray-900 text-white">
+    <section id="contact" className="py-20 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="container mx-auto px-4">
         {/* Section heading with animation */}
         <motion.div
@@ -177,12 +177,11 @@ const Contact: React.FC = () => {
             {/* Contact details with icons */}
             <div className="space-y-4">
               {/* Location information */}
-              <div className="flex items-center">
-                <div className="w-10 h-10 flex items-center justify-center bg-blue-500/20 text-blue-400 rounded-full mr-3">
+              <div className="flex items-center">                <div className="w-10 h-10 flex items-center justify-center bg-blue-500/20 text-blue-400 rounded-full mr-3">
                   📍
                 </div>
                 <div>
-                  <p className="text-gray-400">Location</p>
+                  <p className="text-gray-500 dark:text-gray-400">Location</p>
                   <p>{personalInfo.location}</p>
                 </div>
               </div>
@@ -192,7 +191,7 @@ const Contact: React.FC = () => {
                   📧
                 </div>
                 <div>
-                  <p className="text-gray-400">Email</p>
+                  <p className="text-gray-500 dark:text-gray-400">Email</p>
                   <p>{personalInfo.email}</p>
                 </div>
               </div>
@@ -206,7 +205,7 @@ const Contact: React.FC = () => {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 flex items-center justify-center bg-gray-700 hover:bg-blue-500 text-white rounded-full transition-colors"
+                  className="w-10 h-10 flex items-center justify-center bg-gray-200 dark:bg-gray-700 hover:bg-blue-500 text-gray-700 dark:text-white rounded-full transition-colors"
                 >
                   <social.icon />
                 </a>
@@ -224,7 +223,7 @@ const Contact: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name input field with validation */}
               <div>
-                <label htmlFor="name" className="block mb-2 text-gray-400">
+                <label htmlFor="name" className="block mb-2 text-gray-500 dark:text-gray-400">
                   Your Name
                 </label>
                 <input
@@ -234,7 +233,7 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className={`w-full p-3 bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-600'
+                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                     }`}
                 />
                 {errors.name && (
@@ -243,7 +242,7 @@ const Contact: React.FC = () => {
               </div>
               {/* Email input field with validation */}
               <div>
-                <label htmlFor="email" className="block mb-2 text-gray-400">
+                <label htmlFor="email" className="block mb-2 text-gray-500 dark:text-gray-400">
                   Your Email
                 </label>
                 <input
@@ -253,7 +252,7 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className={`w-full p-3 bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-600'
+                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                     }`}
                 />
                 {errors.email && (
@@ -262,7 +261,7 @@ const Contact: React.FC = () => {
               </div>
               {/* Message textarea with validation */}
               <div>
-                <label htmlFor="message" className="block mb-2 text-gray-400">
+                <label htmlFor="message" className="block mb-2 text-gray-500 dark:text-gray-400">
                   Your Message
                 </label>
                 <textarea
@@ -272,7 +271,7 @@ const Contact: React.FC = () => {
                   onChange={handleChange}
                   required
                   rows={5}
-                  className={`w-full p-3 bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.message ? 'border-red-500' : 'border-gray-600'
+                  className={`w-full p-3 bg-white dark:bg-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.message ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                     }`}
                 />
                 {errors.message && (

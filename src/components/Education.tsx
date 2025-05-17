@@ -12,7 +12,7 @@ const fadeIn = {
 
 const Education: React.FC = () => {
   return (
-    <section id="education" className="py-20 bg-gray-800 text-white">
+    <section id="education" className="py-20 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
       <div className="container mx-auto px-4">
         {/* Section heading with animation */}
         <motion.div
@@ -22,8 +22,7 @@ const Education: React.FC = () => {
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeIn}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Education</h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Education</h2>          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             My academic background and continuous learning journey.
           </p>
         </motion.div>
@@ -38,7 +37,7 @@ const Education: React.FC = () => {
               viewport={{ once: true, margin: "-100px" }}
               variants={fadeIn}
             >
-              <div className="bg-gray-700 rounded-lg overflow-hidden shadow-lg">
+              <div className="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden shadow-lg">
                 <div className="p-6">
                   {/* Education header with degree and institution */}
                   <div className="flex items-center mb-3">
@@ -66,11 +65,10 @@ const Education: React.FC = () => {
                     </div>
                   </div>
                   {/* Education description */}
-                  <p className="text-gray-300 mb-4">{edu.description}</p>
+                  <p className="text-gray-700 dark:text-gray-300 mb-4">{edu.description}</p>
                   {/* Academic achievements section */}
-                  <div className="mb-4">
-                    <h4 className="text-lg font-semibold mb-2 text-white">Achievements</h4>
-                    <ul className="space-y-1 text-gray-300">
+                  <div className="mb-4">                    <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Achievements</h4>
+                    <ul className="space-y-1 text-gray-700 dark:text-gray-300">
                       {edu.achievements.map((achievement, i) => (
                         <li key={i} className="flex">
                           <span className="mr-2">•</span>
@@ -82,12 +80,12 @@ const Education: React.FC = () => {
                   {/* Relevant coursework section - conditionally rendered if courses exist */}
                   {edu.courses && (
                     <div>
-                      <h4 className="text-lg font-semibold mb-2 text-white">Relevant Coursework</h4>
+                      <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Relevant Coursework</h4>
                       <div className="flex flex-wrap gap-2">
                         {edu.courses.map(course => (
                           <span
                             key={course}
-                            className="px-3 py-1 bg-gray-600 text-blue-300 text-xs rounded-full"
+                            className="px-3 py-1 bg-gray-200 dark:bg-gray-600 text-blue-800 dark:text-blue-300 text-xs rounded-full"
                           >
                             {course}
                           </span>

@@ -12,7 +12,7 @@ const fadeIn = {
 
 const Experience: React.FC = () => {
   return (
-    <section id="experience" className="py-20 bg-gray-900 text-white">
+    <section id="experience" className="py-20 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="container mx-auto px-4">
         {/* Section heading with animation */}
         <motion.div
@@ -22,8 +22,7 @@ const Experience: React.FC = () => {
           viewport={{ once: true, margin: "-100px" }}
           variants={fadeIn}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Professional Experience</h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Professional Experience</h2>          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             My professional journey and the companies I've had the pleasure to work with.
           </p>
         </motion.div>
@@ -45,7 +44,7 @@ const Experience: React.FC = () => {
                 {/* Timeline dot and connector - central decoration elements */}
                 <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-8 z-10">
                   {/* The dot with pulse effect */}
-                  <div className="w-6 h-6 rounded-full bg-blue-500 border-4 border-gray-900 shadow-lg shadow-blue-500/50 relative">
+                  <div className="w-6 h-6 rounded-full bg-blue-500 border-4 border-white dark:border-gray-900 shadow-lg shadow-blue-500/50 relative">
                     {/* Inner glow/pulse animation effect */}
                     <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-30"></div>
                   </div>

@@ -94,7 +94,7 @@ const Achievements: React.FC = () => {
   };
 
   return (
-    <section id="achievements" className="py-20 bg-gray-900 text-white">
+    <section id="achievements" className="py-20 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="container mx-auto px-4">
         <motion.div
           className="text-center mb-12"
@@ -106,8 +106,7 @@ const Achievements: React.FC = () => {
             visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
           }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Achievements & Recognition</h2>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Achievements & Recognition</h2>          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Milestones and acknowledgements received throughout my professional journey.
           </p>
         </motion.div>
@@ -127,7 +126,7 @@ const Achievements: React.FC = () => {
                 onClick={() => handleCelebration(achievement.id)}
                 viewport={{ once: true, margin: "-50px" }}
                 variants={cardVariants}
-                className={`bg-gradient-to-br from-gray-700 to-gray-900 ${getCardStyle(achievement.icon)} rounded-lg overflow-hidden shadow-lg border-2 h-full flex flex-col transform transition-all cursor-pointer relative`}
+                className={`bg-gradient-to-br from-gray-100 to-white dark:from-gray-700 dark:to-gray-900 ${getCardStyle(achievement.icon)} rounded-lg overflow-hidden shadow-lg border-2 h-full flex flex-col transform transition-all cursor-pointer relative`}
               >
                 {celebrating === achievement.id && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">

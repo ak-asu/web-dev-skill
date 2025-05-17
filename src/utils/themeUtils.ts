@@ -35,14 +35,24 @@ export const getInitialTheme = (): 'dark' | 'light' => {
  */
 export const applyTheme = (theme: 'dark' | 'light'): void => {
   if (typeof document === 'undefined') return;  
+  
   // Update the data-theme attribute
-  document.documentElement.setAttribute('data-theme', theme);  
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  
   // Add or remove the dark class based on theme
   if (theme === 'dark') {
     document.documentElement.classList.add('dark');
+    document.body.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
-  }  
+    document.body.classList.remove('dark');
+  }
+  
+  // Dispatch a custom event to notify components that theme has changed
+  const themeChangeEvent = new CustomEvent('themechange', { detail: { theme } });
+  document.dispatchEvent(themeChangeEvent);
+  
   // Store in localStorage for persistence
   localStorage.setItem('theme', theme);
 };
