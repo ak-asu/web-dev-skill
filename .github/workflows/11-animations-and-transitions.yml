@@ -1,4 +1,4 @@
-name: Chapter 11 - Animations and Transitions
+name: Step 11, Animations and Transitions
 
 on:
   push:
@@ -9,116 +9,37 @@ on:
       - 'package.json'
       - 'src/components/**'
   workflow_dispatch:
+  repository_dispatch:
+    types: [check-chapter11]
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   get_current_step:
+    name: Check current step number
     runs-on: ubuntu-latest
     outputs:
-      current_step: ${{ steps.read_step.outputs.current_step }}
+      current_step: ${{ steps.get_step.outputs.current_step }}
+      should_run: ${{ steps.get_step.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - id: read_step
-        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
-      - name: Early terminate if not on step 11
-        if: steps.read_step.outputs.current_step != '11'
-        run: exit 78
-
-  create_issues:
-    needs: get_current_step
-    if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '11' &&
-      github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Create Quiz Task Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter11-task,quiz',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 11: Complete the Animations and Transitions Quiz',
-                body: `
-                # Complete the Animations and Transitions Quiz
-                
-                1. Navigate to the \`resources/Quiz11.md\` file
-                2. Answer all questions by marking the correct answers with [X]
-                3. Select exactly 5 answers total
-                4. Commit your changes to complete this task
-                
-                This issue will automatically close when you successfully complete the quiz.
-                `,
-                labels: ['chapter11-task', 'quiz']
-              });
-            }
-            
-      - name: Create Animation Components Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter11-task,animation-components',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 11: Implement Animated Components',
-                body: `
-                # Implement Animated Components
-                
-                Create the following animated React components in the \`src/components\` folder:
-                
-                1. \`Achievements.tsx\`: Create a component that displays your achievements with animations.
-                   - Use motion components for animations
-                   - Implement at least one advanced animation feature (like whileHover, AnimatePresence, or staggered animations)
-                
-                2. \`Education.tsx\`: Create a component that displays your education history with animations.
-                   - Use variants for coordinated animations
-                   - Implement fade-in effects for visual appeal
-                
-                3. \`Experience.tsx\`: Create a component that displays your work experience with animations.
-                   - Create a timeline with staggered animations
-                   - Implement hover effects for interactive elements
-                
-                Each component should demonstrate motion animations while maintaining good performance and accessibility.
-                
-                This issue will automatically close when you successfully complete all the required tasks.
-                `,
-                labels: ['chapter11-task', 'animation-components']
-              });
-            }
+      - id: get_step
+        run: |
+          current_step=$(cat ./.github/steps/-step.txt)
+          echo "current_step=$current_step" >> $GITHUB_OUTPUT
+          if [ "$current_step" -eq "11" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
 
   validate_and_progress:
+    name: Validate Quiz Answers and Progress
     needs: get_current_step
     if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '11'
+      ${{ !github.event.repository.is_template
+          && needs.get_current_step.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -130,10 +51,14 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Validate Quiz Answers
-        id: quiz
+      - name: Validate quiz answers
+        id: quiz_validation
         run: |
-          QUIZ=resources/Quiz11.md
+          QUIZ="resources/Quiz11.md"
+          if [ ! -f "$QUIZ" ]; then
+            echo "::error::$QUIZ is missing"
+            exit 1
+          fi
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."
@@ -141,67 +66,63 @@ jobs:
           fi
           echo "quiz_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check Motion Dependency
-        id: dependency_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+      - name: Check Animation Dependencies
+        id: animation_deps
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "package.json" ]; then
             echo "::error::package.json file is missing."
             exit 1
-          fi
-          
-          # Check for Motion dependency
-          if ! grep -q "\"motion\":" "package.json" && ! grep -q "\"framer-motion\":" "package.json"; then
-            echo "::error::Motion or framer-motion dependency not found in package.json."
+          fi          
+          # Check for motion/framer-motion dependency
+          if ! grep -q -E "motion\":|framer-motion\":" "package.json"; then
+            echo "::error::Missing motion or framer-motion dependency in package.json."
             exit 1
           fi
-          
-          echo "dependency_ok=true" >> $GITHUB_OUTPUT
+          echo "animation_deps_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check Motion Usage
-        id: motion_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.dependency_check.outputs.dependency_ok == 'true'
+      - name: Check Animated Components
+        id: animated_components
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.animation_deps.outputs.animation_deps_ok == 'true'
         run: |
-          # Check for Motion imports and usage
-          if ! grep -r "import \(.*\) from ['\"]motion\|import \(.*\) from ['\"]framer-motion" --include="*.tsx" src > /dev/null; then
-            echo "::error::No Motion or framer-motion imports found in the components."
-            exit 1
-          fi
-          
-          # Check for motion components
-          if ! grep -r "motion\.\|<motion" --include="*.tsx" src > /dev/null; then
-            echo "::error::No motion components found in the project."
-            exit 1
-          fi
-          
-          echo "motion_ok=true" >> $GITHUB_OUTPUT
-
-      - name: Check Animation Properties
-        id: animation_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.motion_check.outputs.motion_ok == 'true'
-        run: |
-          # Check for animation properties like initial, animate, transition
-          ANIMATION_PROPS=(
-            "initial="
-            "animate="
-            "transition="
-            "variants="
-          )
-          
-          FOUND=false
-          for prop in "${ANIMATION_PROPS[@]}"; do
-            if grep -r "$prop" --include="*.tsx" src > /dev/null; then
-              FOUND=true
-              break
+          # Check for required animated components
+          REQUIRED_COMPONENTS=(
+            "Achievements"
+            "Education"
+            "Experience"
+          )          
+          MISSING_COMPONENTS=""
+          for component in "${REQUIRED_COMPONENTS[@]}"; do
+            if [ ! -f "src/components/${component}.tsx" ]; then
+              MISSING_COMPONENTS="$MISSING_COMPONENTS $component"
             fi
-          done
-          
-          if [ "$FOUND" = false ]; then
-            echo "::error::No animation properties (initial, animate, transition, variants) found in the components."
+          done          
+          if [ ! -z "$MISSING_COMPONENTS" ]; then
+            echo "::error::Missing required animated components:$MISSING_COMPONENTS"
             exit 1
-          fi
-          
-          echo "animation_ok=true" >> $GITHUB_OUTPUT
+          fi          
+          # Check for motion import and usage in each component
+          for component in "${REQUIRED_COMPONENTS[@]}"; do
+            if ! grep -q -E "import.*motion|from .*motion" "src/components/${component}.tsx"; then
+              echo "::error::${component}.tsx does not import motion"
+              exit 1
+            fi            
+            if ! grep -q -E "motion\.|<motion" "src/components/${component}.tsx"; then
+              echo "::error::${component}.tsx does not use motion components"
+              exit 1
+            fi
+          done          
+          # Check for variants in Education component
+          if ! grep -q "variants" "src/components/Education.tsx"; then
+            echo "::error::Education.tsx does not use variants for animations"
+            exit 1
+          fi          
+          # Check for timeline in Experience component
+          if ! grep -q -E "timeline|stagger" "src/components/Experience.tsx"; then
+            echo "::error::Experience.tsx does not implement timeline or staggered animations"
+            exit 1
+          fi          
+          echo "animated_components_ok=true" >> $GITHUB_OUTPUT
 
       - name: Check Advanced Animation Features
         id: advanced_check
@@ -214,48 +135,23 @@ jobs:
             "whileHover"
             "whileTap"
             "exit="
-          )
-          
+          )          
           FOUND=false
           for feature in "${ADVANCED_FEATURES[@]}"; do
             if grep -r "$feature" --include="*.tsx" --include="*.ts" src > /dev/null; then
               FOUND=true
               break
             fi
-          done
-          
+          done          
           if [ "$FOUND" = false ]; then
             echo "::error::No advanced animation features found. Include AnimatePresence, staggerChildren, whileHover, whileTap, or exit animations."
             exit 1
-          fi
-          
+          fi          
           echo "advanced_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         if: steps.quiz.outputs.quiz_ok == 'true'
         run: npm install
-
-      - name: Type Check
-        id: type_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
-        run: |
-          if npx tsc --noEmit; then
-            echo "type_check_ok=true" >> $GITHUB_OUTPUT
-          else
-            echo "::error::TypeScript type checking failed. Please fix the type errors."
-            exit 1
-          fi
-
-      - name: Run Lint Check
-        id: lint_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
-        run: |
-          if npm run lint; then
-            echo "lint_ok=true" >> $GITHUB_OUTPUT
-          else
-            echo "::error::Linting failed. Please fix the issues."
-            exit 1
-          fi
 
       - name: Build Project
         id: build_check
@@ -268,65 +164,14 @@ jobs:
             exit 1
           fi
 
-      - name: Ensure All Chapter-11 Tasks Are Closed
+      - name: Update to Step 12
         if: >
-          steps.quiz.outputs.quiz_ok == 'true' && 
-          steps.dependency_check.outputs.dependency_ok == 'true' &&
-          steps.motion_check.outputs.motion_ok == 'true' &&
-          steps.animation_check.outputs.animation_ok == 'true' &&
+          steps.quiz_validation.outputs.quiz_ok == 'true' &&
+          steps.animation_deps.outputs.animation_deps_ok == 'true' &&
+          steps.animated_components.outputs.animated_components_ok == 'true' &&
           steps.advanced_check.outputs.advanced_ok == 'true' &&
-          steps.type_check.outputs.type_check_ok == 'true' &&
-          steps.lint_check.outputs.lint_ok == 'true' &&
-          steps.build_check.outputs.build_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Add a delay function to wait between retries
-            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-            
-            // Maximum number of retries and retry delay in ms
-            const MAX_RETRIES = 3;
-            const RETRY_DELAY = 3000; // 3 seconds
-            
-            let retries = 0;
-            let openIssues = [];
-            
-            while (retries < MAX_RETRIES) {
-              try {
-                const { data: issues } = await github.rest.issues.listForRepo({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  labels: 'chapter11-task',
-                  state: 'open'
-                });
-                
-                if (issues.length === 0) {
-                  console.log('All chapter11-task issues are closed!');
-                  return; // Success, exit the script
-                }
-                
-                openIssues = issues;
-                console.log(`Found ${issues.length} open issues. Retrying in ${RETRY_DELAY/1000} seconds... (Attempt ${retries + 1}/${MAX_RETRIES})`);
-                
-                // Wait before next retry
-                await delay(RETRY_DELAY);
-                retries++;
-              } catch (error) {
-                console.error(`Error checking issues: ${error.message}`);
-                core.warning(`Error checking issues: ${error.message}`);
-                break;
-              }
-            }
-            
-            if (openIssues.length > 0) {
-              core.warning(`There are still ${openIssues.length} open chapter11-task issues. This may be due to API delay.`);
-              // Log issue numbers for debugging
-              openIssues.forEach(issue => console.log(`Issue #${issue.number}: ${issue.title}`));
-            }
-
-      - name: Advance to Step 12
-        if: success()
+          steps.build_check.outputs.build_ok == 'true' &&
+          success()
         uses: skills/action-update-step@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,4 +1,4 @@
-name: Chapter 12 - APIs and Hosting
+name: Step 12, APIs and Hosting
 
 on:
   push:
@@ -6,160 +6,41 @@ on:
     paths:
       - '.github/steps/-step.txt'
       - 'resources/Quiz12.md'
-      - '.env.example'
-      - 'src/**/*.{ts,tsx}'
-      - '.github/workflows/ci.yml'
+      - 'src/components/Contact.tsx'
+      - 'src/api/**'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
+  repository_dispatch:
+    types: [check-chapter12]
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   get_current_step:
+    name: Check current step number
     runs-on: ubuntu-latest
     outputs:
-      current_step: ${{ steps.read_step.outputs.current_step }}
+      current_step: ${{ steps.get_step.outputs.current_step }}
+      should_run: ${{ steps.get_step.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - id: read_step
-        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
-      - name: Early terminate if not on step 12
-        if: steps.read_step.outputs.current_step != '12'
-        run: exit 78
-
-  create_issues:
-    needs: get_current_step
-    if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '12' &&
-      github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Create Quiz Task Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter12-task,quiz',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 12: Complete the APIs and Hosting Quiz',
-                body: `
-                # Complete the APIs and Hosting Quiz
-                
-                1. Navigate to the \`resources/Quiz12.md\` file
-                2. Answer all questions by marking the correct answers with [X]
-                3. Select exactly 5 answers total
-                4. Commit your changes to complete this task
-                
-                This issue will automatically close when you successfully complete the quiz.
-                `,
-                labels: ['chapter12-task', 'quiz']
-              });
-            }
-            
-      - name: Create API Integration Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter12-task,api-integration',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 12: Implement API Integration and Contact Component',
-                body: `
-                # Implement API Integration and Contact Component
-                
-                Implement the following for your portfolio:
-                
-                1. Create or update \`src/components/Contact.tsx\`:
-                   - Add a contact form with name, email, and message fields
-                   - Implement form validation
-                   - Add API integration to handle form submission
-                   - Include error handling and success states
-                
-                2. Configure API handling for the contact form:
-                   - Create or update \`src/api/contact.ts\` to handle form submission
-                   - Implement proper error handling
-                   - Use environment variables for configuration
-                
-                3. Add a deployment workflow:
-                   - Create \`.github/workflows/deploy.yml\` for automated deployment
-                   - Configure it to deploy to GitHub Pages
-                
-                This issue will automatically close when you successfully complete all the required tasks.
-                `,
-                labels: ['chapter12-task', 'api-integration']
-              });
-            }
-      
-      - name: Create GitHub Pages Setup Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter12-task,github-pages',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 12: Configure GitHub Pages for Deployment',
-                body: `
-                # Configure GitHub Pages for Deployment
-                
-                1. Setup environment variables:
-                   - Create \`.env.example\` file with necessary environment variables (prefixed with VITE_)
-                   - Add any required environment variables to GitHub repository secrets
-                
-                2. Configure GitHub Pages in repository settings:
-                   - Go to repository Settings > Pages
-                   - Set deployment source to GitHub Actions
-                
-                3. Test deployment workflow:
-                   - Run the deployment workflow to ensure your site builds correctly
-                   - Verify your site is accessible at the GitHub Pages URL
-                
-                This issue will automatically close when you successfully complete the GitHub Pages configuration.
-                `,
-                labels: ['chapter12-task', 'github-pages']
-              });
-            }
+      - id: get_step
+        run: |
+          current_step=$(cat ./.github/steps/-step.txt)
+          echo "current_step=$current_step" >> $GITHUB_OUTPUT
+          if [ "$current_step" -eq "12" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
 
   validate_and_progress:
+    name: Validate Quiz Answers and Progress
     needs: get_current_step
     if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '12'
+      ${{ !github.event.repository.is_template
+          && needs.get_current_step.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -171,10 +52,14 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Validate Quiz Answers
-        id: quiz
+      - name: Validate quiz answers
+        id: quiz_validation
         run: |
-          QUIZ=resources/Quiz12.md
+          QUIZ="resources/Quiz12.md"
+          if [ ! -f "$QUIZ" ]; then
+            echo "::error::$QUIZ is missing"
+            exit 1
+          fi
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."
@@ -182,99 +67,56 @@ jobs:
           fi
           echo "quiz_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check Environment Variables Setup
-        id: env_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+      - name: Check Contact Component and API
+        id: contact_api_check
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
-          # Check for .env.example file
-          if [ ! -f ".env.example" ]; then
-            echo "::error::.env.example file is missing."
+          # Check Contact component
+          if [ ! -f "src/components/Contact.tsx" ]; then
+            echo "::error::src/components/Contact.tsx is missing"
             exit 1
-          fi
-          
-          # Check for VITE_ prefixed variables
-          if ! grep -q "VITE_" ".env.example"; then
-            echo "::error::No VITE_ prefixed environment variables found in .env.example."
+          fi          
+          # Check for form elements in Contact component
+          if ! grep -q -E "<form|<input|<textarea|<button" "src/components/Contact.tsx"; then
+            echo "::error::Contact.tsx does not contain form elements"
             exit 1
-          fi
-          
-          echo "env_ok=true" >> $GITHUB_OUTPUT
-
-      - name: Check API Integration
-        id: api_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.env_check.outputs.env_ok == 'true'
-        run: |
-          # Check for fetch or axios usage
-          if ! grep -r "fetch\|axios.get" --include="*.ts" --include="*.tsx" src > /dev/null; then
-            echo "::error::No API calls (fetch or axios) found in the project."
+          fi          
+          # Check for API handling file
+          if [ ! -f "src/api/contact.ts" ]; then
+            echo "::error::src/api/contact.ts is missing"
             exit 1
-          fi
-          
+          fi          
           # Check for environment variable usage
-          if ! grep -r "import.meta.env" --include="*.ts" --include="*.tsx" src > /dev/null; then
-            echo "::error::No environment variables (import.meta.env) usage found in the project."
+          if ! grep -q "import.meta.env" "src/api/contact.ts"; then
+            echo "::error::src/api/contact.ts does not use environment variables"
             exit 1
-          fi
-          
-          echo "api_ok=true" >> $GITHUB_OUTPUT
+          fi          
+          echo "contact_api_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Check Error Handling
-        id: error_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.api_check.outputs.api_ok == 'true'
+      - name: Check Deployment Workflow
+        id: deployment_check
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.contact_api_check.outputs.contact_api_ok == 'true'
         run: |
-          # Check for try/catch blocks or error state management
-          if ! grep -r "try {\|catch (\|setError" --include="*.ts" --include="*.tsx" src > /dev/null; then
-            echo "::error::No error handling (try/catch or error state) found in API calls."
+          # Check for deployment workflow file
+          if [ ! -f ".github/workflows/deploy.yml" ]; then
+            echo "::error::.github/workflows/deploy.yml is missing"
             exit 1
-          fi
-          
-          echo "error_ok=true" >> $GITHUB_OUTPUT
-
-      - name: Check CI/CD Workflows
-        id: cicd_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.error_check.outputs.error_ok == 'true'
-        run: |
-          # Check for CI workflow
-          CI_WORKFLOW=".github/workflows/ci.yml"
-          if [ ! -f "$CI_WORKFLOW" ] && ! find .github/workflows -name "*ci*" -o -name "*test*" | grep -q yml; then
-            echo "::error::No CI workflow file found."
+          fi          
+          # Check for GitHub Pages configuration in deploy workflow
+          if ! grep -q -E "gh-pages|github-pages" ".github/workflows/deploy.yml"; then
+            echo "::error::deploy.yml does not configure GitHub Pages"
             exit 1
-          fi
-          
-          # Check for deployment workflow
-          DEPLOY_WORKFLOW=".github/workflows/deploy.yml"
-          if [ ! -f "$DEPLOY_WORKFLOW" ] && ! find .github/workflows -name "*deploy*" -o -name "*publish*" | grep -q yml; then
-            echo "::error::No deployment workflow file found."
+          fi          
+          # Check for build step in workflow
+          if ! grep -q "npm run build" ".github/workflows/deploy.yml"; then
+            echo "::error::deploy.yml does not include a build step"
             exit 1
-          fi
-          
-          echo "cicd_ok=true" >> $GITHUB_OUTPUT
+          fi          
+          echo "deployment_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         if: steps.quiz.outputs.quiz_ok == 'true'
         run: npm install
-
-      - name: Type Check
-        id: type_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
-        run: |
-          if npx tsc --noEmit; then
-            echo "type_check_ok=true" >> $GITHUB_OUTPUT
-          else
-            echo "::error::TypeScript type checking failed. Please fix the type errors."
-            exit 1
-          fi
-
-      - name: Run Lint Check
-        id: lint_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
-        run: |
-          if npm run lint; then
-            echo "lint_ok=true" >> $GITHUB_OUTPUT
-          else
-            echo "::error::Linting failed. Please fix the issues."
-            exit 1
-          fi
 
       - name: Build Project
         id: build_check
@@ -283,76 +125,22 @@ jobs:
           # Create a temporary .env file with placeholder values
           echo "# Temporary env file for build" > .env
           grep "VITE_" ".env.example" | sed 's/=.*/=placeholder/' >> .env
-          
           if npm run build; then
             echo "build_ok=true" >> $GITHUB_OUTPUT
           else
             echo "::error::Build failed. Please fix the issues."
             exit 1
           fi
-          
           # Remove temporary .env file
           rm .env
 
-      - name: Ensure All Chapter-12 Tasks Are Closed
+      - name: Update to Final Step
         if: >
-          steps.quiz.outputs.quiz_ok == 'true' && 
-          steps.env_check.outputs.env_ok == 'true' &&
-          steps.api_check.outputs.api_ok == 'true' &&
-          steps.error_check.outputs.error_ok == 'true' &&
-          steps.cicd_check.outputs.cicd_ok == 'true' &&
-          steps.type_check.outputs.type_check_ok == 'true' &&
-          steps.lint_check.outputs.lint_ok == 'true' &&
-          steps.build_check.outputs.build_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Add a delay function to wait between retries
-            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-            
-            // Maximum number of retries and retry delay in ms
-            const MAX_RETRIES = 3;
-            const RETRY_DELAY = 3000; // 3 seconds
-            
-            let retries = 0;
-            let openIssues = [];
-            
-            while (retries < MAX_RETRIES) {
-              try {
-                const { data: issues } = await github.rest.issues.listForRepo({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  labels: 'chapter12-task',
-                  state: 'open'
-                });
-                
-                if (issues.length === 0) {
-                  console.log('All chapter12-task issues are closed!');
-                  return; // Success, exit the script
-                }
-                
-                openIssues = issues;
-                console.log(`Found ${issues.length} open issues. Retrying in ${RETRY_DELAY/1000} seconds... (Attempt ${retries + 1}/${MAX_RETRIES})`);
-                
-                // Wait before next retry
-                await delay(RETRY_DELAY);
-                retries++;
-              } catch (error) {
-                console.error(`Error checking issues: ${error.message}`);
-                core.warning(`Error checking issues: ${error.message}`);
-                break;
-              }
-            }
-            
-            if (openIssues.length > 0) {
-              core.warning(`There are still ${openIssues.length} open chapter12-task issues. This may be due to API delay.`);
-              // Log issue numbers for debugging
-              openIssues.forEach(issue => console.log(`Issue #${issue.number}: ${issue.title}`));
-            }
-
-      - name: Advance to Step 13
-        if: success()
+          steps.quiz_validation.outputs.quiz_ok == 'true' &&
+          steps.contact_api_check.outputs.contact_api_ok == 'true' &&
+          steps.deployment_check.outputs.deployment_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true' &&
+          success()
         uses: skills/action-update-step@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

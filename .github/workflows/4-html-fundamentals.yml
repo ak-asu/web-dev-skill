@@ -1,4 +1,4 @@
-name: Chapter 4 - HTML Fundamentals
+name: Step 4, HTML Fundamentals
 
 on:
   push:
@@ -8,131 +8,38 @@ on:
       - 'resources/Quiz4.md'
       - 'index.html'
   workflow_dispatch:
+  repository_dispatch:
+    types: [check-chapter4]
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   get_current_step:
+    name: Check current step number
     runs-on: ubuntu-latest
     outputs:
-      current_step: ${{ steps.read_step.outputs.current_step }}
+      current_step: ${{ steps.get_step.outputs.current_step }}
+      should_run: ${{ steps.check_step.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - id: read_step
-        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
-      - name: Early terminate if not on step 4
-        if: steps.read_step.outputs.current_step != '4'
-        run: exit 78
-
-  create_issues:
-    needs: get_current_step
-    if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '4' &&
-      github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Create Quiz Task Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter4-task,quiz',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 4: Complete the HTML Quiz',
-                body: `
-                # Complete the HTML Fundamentals Quiz
-                
-                1. Navigate to the \`resources/Quiz4.md\` file
-                2. Answer all questions by marking the correct answers with [X]
-                3. Select exactly 5 answers total
-                4. Commit your changes to complete this task
-                
-                This issue will automatically close when you successfully complete the quiz.
-                `,
-                labels: ['chapter4-task', 'quiz']
-              });
-            }
-            
-      - name: Create HTML Task Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter4-task,html',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 4: Complete the index.html file',
-                body: `
-                # Complete the index.html File
-                
-                Create or update your \`index.html\` file with the following elements:
-                
-                1. Basic HTML structure with proper doctype, html, head, and body tags
-                2. Meta tags:
-                   - \`<meta name="description" content="Your portfolio description">\`
-                   - \`<meta name="keywords" content="relevant keywords">\`
-                   - \`<meta name="author" content="Your name">\`
-                   - \`<meta property="og:title" content="Your portfolio title">\`
-                   - \`<meta property="og:description" content="Your portfolio description">\`
-                3. Title tag: \`<title>Your Portfolio Title</title>\`
-                4. Icon link: \`<link rel="icon" type="image/svg+xml" href="/vite.svg" />\`
-                5. Add the following redirect script in the head:
-                
-                \`\`\`html
-                <script>
-                  (function() {
-                    // Redirect for GitHub Pages SPA
-                    if (sessionStorage.redirect) {
-                      const redirect = sessionStorage.redirect;
-                      delete sessionStorage.redirect;
-                      if (redirect && redirect !== location.href) {
-                        history.replaceState(null, null, redirect);
-                      }
-                    }
-                  })();
-                </script>
-                \`\`\`
-                
-                6. Add div with id="root" in the body for React mounting
-                7. Include a script tag to load your React application
-                
-                This issue will automatically close when you successfully complete all HTML requirements.
-                `,
-                labels: ['chapter4-task', 'html']
-              });
-            }
+      - id: get_step
+        run: |
+          current_step=$(cat ./.github/steps/-step.txt)
+          echo "current_step=$current_step" >> $GITHUB_OUTPUT
+          if [ "$current_step" -eq "4" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
 
   validate_and_progress:
+    name: Validate Quiz Answers and Progress
     needs: get_current_step
     if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '4'
+      ${{ !github.event.repository.is_template
+          && needs.get_current_step.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -144,10 +51,14 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Validate Quiz Answers
-        id: quiz
+      - name: Validate quiz answers
+        id: quiz_validation
         run: |
-          QUIZ=resources/Quiz4.md
+          QUIZ="resources/Quiz4.md"
+          if [ ! -f "$QUIZ" ]; then
+            echo "::error::$QUIZ is missing"
+            exit 1
+          fi
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."
@@ -163,8 +74,7 @@ jobs:
           if [ ! -f "index.html" ]; then
             echo "::error::index.html file is missing."
             exit 1
-          fi
-          
+          fi          
           # Check for required HTML elements and structure
           HTML_CHECKS=(
             # Basic HTML structure
@@ -190,44 +100,37 @@ jobs:
             
             # Redirect script
             "<script>.*sessionStorage\.redirect.*</script>"
-          )
-          
+          )          
           MISSING=""
           for check in "${HTML_CHECKS[@]}"; do
             if ! grep -qi "$check" "index.html"; then
               MISSING="$MISSING\n- $check"
             fi
-          done
-          
+          done          
           if [ ! -z "$MISSING" ]; then
             echo "::error::index.html is missing required elements:$MISSING"
             exit 1
-          fi
-          
+          fi          
           # Validate basic structure
           if ! grep -A1000 "<head>" "index.html" | grep -q "<body>"; then
             echo "::error::HTML structure is incorrect. The <body> tag should appear after the <head> tag."
             exit 1
-          fi
-          
+          fi          
           # Check for valid HTML syntax
           if ! grep -q "<html" "index.html" || ! grep -q "</html>" "index.html"; then
             echo "::error::HTML file missing opening or closing <html> tag."
             exit 1
-          fi
-          
+          fi          
           # Check if root div exists for React mounting
           if ! grep -q "<div.*id=\"root\"" "index.html"; then
             echo "::error::Missing root div element for React mounting."
             exit 1
-          fi
-          
+          fi          
           # Check for proper script inclusion
           if ! grep -q "<script.*src=\".*main.*\"" "index.html"; then
             echo "::error::Missing script tag to load React application."
             exit 1
-          fi
-          
+          fi          
           echo "html_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install HTML validator
@@ -245,104 +148,12 @@ jobs:
             exit 1
           fi
 
-      - name: Close Completed Quiz Issue
-        if: steps.quiz.outputs.quiz_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter4-task,quiz',
-              state: 'open'
-            });
-            
-            for (const issue of issues) {
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed'
-              });
-            }
-
-      - name: Close Completed HTML Issue
-        if: steps.html_check.outputs.html_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter4-task,html',
-              state: 'open'
-            });
-            
-            for (const issue of issues) {
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed'
-              });
-            }
-
-      - name: Ensure All Chapter-4 Tasks Are Closed
+      - name: Update to Step 5
         if: >
-          steps.quiz.outputs.quiz_ok == 'true' && 
+          steps.quiz.outputs.quiz_ok == 'true' &&
           steps.html_check.outputs.html_ok == 'true' &&
-          steps.html_lint.outputs.html_lint_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Add a delay function to wait between retries
-            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-            
-            // Maximum number of retries and retry delay in ms
-            const MAX_RETRIES = 3;
-            const RETRY_DELAY = 3000; // 3 seconds
-            
-            let retries = 0;
-            let openIssues = [];
-            
-            while (retries < MAX_RETRIES) {
-              try {
-                const { data: issues } = await github.rest.issues.listForRepo({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  labels: 'chapter4-task',
-                  state: 'open'
-                });
-                
-                if (issues.length === 0) {
-                  console.log('All chapter4-task issues are closed!');
-                  return; // Success, exit the script
-                }
-                
-                openIssues = issues;
-                console.log(`Found ${issues.length} open issues. Retrying in ${RETRY_DELAY/1000} seconds... (Attempt ${retries + 1}/${MAX_RETRIES})`);
-                
-                // Wait before next retry
-                await delay(RETRY_DELAY);
-                retries++;
-              } catch (error) {
-                console.error(`Error checking issues: ${error.message}`);
-                core.warning(`Error checking issues: ${error.message}`);
-                break;
-              }
-            }
-            
-            if (openIssues.length > 0) {
-              core.warning(`There are still ${openIssues.length} open chapter4-task issues. This may be due to API delay.`);
-              // Log issue numbers for debugging
-              openIssues.forEach(issue => console.log(`Issue #${issue.number}: ${issue.title}`));
-            }
-
-      - name: Advance to Step 5
-        if: success()
+          steps.html_lint.outputs.html_lint_ok == 'true' &&
+          success()
         uses: skills/action-update-step@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

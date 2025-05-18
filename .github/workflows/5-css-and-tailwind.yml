@@ -1,4 +1,4 @@
-name: Chapter 5 - CSS and Tailwind
+name: Step 5, CSS and Tailwind
 
 on:
   push:
@@ -12,152 +12,37 @@ on:
       - 'vite.config.ts'
       - 'src/App.css'
   workflow_dispatch:
+  repository_dispatch:
+    types: [check-chapter5]
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   get_current_step:
+    name: Check current step number
     runs-on: ubuntu-latest
     outputs:
-      current_step: ${{ steps.read_step.outputs.current_step }}
+      current_step: ${{ steps.get_step.outputs.current_step }}
+      should_run: ${{ steps.get_step.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - id: read_step
-        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
-      - name: Early terminate if not on step 5
-        if: steps.read_step.outputs.current_step != '5'
-        run: exit 78
-
-  create_issues:
-    needs: get_current_step
-    if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '5' &&
-      github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        
-      - name: Create Quiz Task Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter5-task,quiz',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 5: Complete the CSS and Tailwind Quiz',
-                body: `
-                # Complete the CSS and Tailwind Quiz
-                
-                1. Navigate to the \`resources/Quiz5.md\` file
-                2. Answer all questions by marking the correct answers with [X]
-                3. Select exactly 5 answers total
-                4. Commit your changes to complete this task
-                
-                This issue will automatically close when you successfully complete the quiz.
-                `,
-                labels: ['chapter5-task', 'quiz']
-              });
-            }
-            
-      - name: Create Tailwind Setup Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter5-task,tailwind-setup',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 5: Set up Tailwind CSS 4',
-                body: `
-                # Set up Tailwind CSS 4
-                
-                1. Update your \`package.json\` file to include:
-                   - Tailwind CSS 4: \`"tailwindcss": "^4.0.0"\`
-                   - Tailwind Vite plugin: \`"@tailwindcss/vite": "^1.0.0"\`
-                   - Tailwind plugins: \`"@tailwindcss/forms": "^0.5.0", "@tailwindcss/typography": "^0.5.0"\`
-                
-                2. Update your \`vite.config.ts\` file:
-                   - Add: \`import tailwindcss from "@tailwindcss/vite";\`
-                   - Add tailwindcss to plugins array: \`plugins: [react(), tailwindcss()]\`
-                
-                This issue will automatically close when you successfully complete the task.
-                `,
-                labels: ['chapter5-task', 'tailwind-setup']
-              });
-            }
-            
-      - name: Create CSS Files Issue
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: existingIssues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter5-task,css-files',
-              state: 'open'
-            });
-            
-            if (existingIssues.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: 'Chapter 5: Prepare CSS Files',
-                body: `
-                # Prepare CSS Files
-                
-                1. Prepare \`tailwind.config.js\` file with:
-                   - Content array including index.html and src files
-                   - Theme extensions with colors, fonts, and animations
-                   - Plugins array with forms and typography
-                
-                2. Prepare \`src/index.css\` file with:
-                   - Tailwind import: \`@import "tailwindcss";\`
-                   - Layer definitions for base, components, and utilities
-                   - Basic styles for html and body
-                
-                3. Prepare \`src/App.css\` file with:
-                   - Component-specific styles
-                   - Custom utilities
-                   - Animation definitions
-                
-                See the examples in Chapter 5 documentation for reference.
-                
-                This issue will automatically close when you successfully complete all CSS file tasks.
-                `,
-                labels: ['chapter5-task', 'css-files']
-              });
-            }
+      - id: get_step
+        run: |
+          current_step=$(cat ./.github/steps/-step.txt)
+          echo "current_step=$current_step" >> $GITHUB_OUTPUT
+          if [ "$current_step" -eq "5" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
 
   validate_and_progress:
+    name: Validate Quiz Answers and Progress
     needs: get_current_step
     if: >
-      !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '5'
+      ${{ !github.event.repository.is_template
+          && needs.get_current_step.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -169,10 +54,14 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Validate Quiz Answers
-        id: quiz
+      - name: Validate quiz answers
+        id: quiz_validation
         run: |
-          QUIZ=resources/Quiz5.md
+          QUIZ="resources/Quiz5.md"
+          if [ ! -f "$QUIZ" ]; then
+            echo "::error::$QUIZ is missing"
+            exit 1
+          fi
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."
@@ -187,19 +76,16 @@ jobs:
           if [ ! -f "vite.config.ts" ]; then
             echo "::error::vite.config.ts file is missing."
             exit 1
-          fi
-          
+          fi          
           # Check for Tailwind import and plugin
           if ! grep -q "import tailwindcss from \"@tailwindcss/vite\"" "vite.config.ts"; then
             echo "::error::vite.config.ts is missing Tailwind import."
             exit 1
-          fi
-          
+          fi          
           if ! grep -q "tailwindcss()" "vite.config.ts"; then
             echo "::error::vite.config.ts is missing Tailwind plugin in the plugins array."
             exit 1
-          fi
-          
+          fi          
           echo "vite_config_ok=true" >> $GITHUB_OUTPUT
 
       - name: Check Package.json
@@ -209,28 +95,24 @@ jobs:
           if [ ! -f "package.json" ]; then
             echo "::error::package.json file is missing."
             exit 1
-          fi
-          
+          fi          
           # Check for Tailwind 4 and required packages
           PACKAGE_CHECKS=(
             "\"tailwindcss\": \"\^4"
             "\"@tailwindcss/vite\":" 
             "\"@tailwindcss/forms\":" 
             "\"@tailwindcss/typography\":" 
-          )
-          
+          )          
           MISSING=""
           for check in "${PACKAGE_CHECKS[@]}"; do
             if ! grep -q "$check" "package.json"; then
               MISSING="$MISSING\n- $check"
             fi
-          done
-          
+          done          
           if [ ! -z "$MISSING" ]; then
             echo "::error::package.json is missing required dependencies:$MISSING"
             exit 1
-          fi
-          
+          fi          
           echo "package_ok=true" >> $GITHUB_OUTPUT
 
       - name: Check CSS File
@@ -240,26 +122,22 @@ jobs:
           if [ ! -f "src/index.css" ]; then
             echo "::error::src/index.css file is missing."
             exit 1
-          fi
-          
+          fi          
           # Check for required CSS elements
           CSS_CHECKS=( 
             "@import \"tailwindcss\"" 
             "@layer" 
-          )
-          
+          )          
           MISSING=""
           for check in "${CSS_CHECKS[@]}"; do
             if ! grep -q "$check" "src/index.css"; then
               MISSING="$MISSING\n- $check"
             fi
-          done
-          
+          done          
           if [ ! -z "$MISSING" ]; then
             echo "::error::index.css is missing required elements:$MISSING"
             exit 1
-          fi
-          
+          fi          
           echo "css_ok=true" >> $GITHUB_OUTPUT
 
       - name: Check App CSS File
@@ -269,26 +147,22 @@ jobs:
           if [ ! -f "src/App.css" ]; then
             echo "::error::src/App.css file is missing."
             exit 1
-          fi
-          
+          fi          
           # Check for required App.css elements
           APP_CSS_CHECKS=( 
             "@layer" 
             "utilities" 
-          )
-          
+          )          
           MISSING=""
           for check in "${APP_CSS_CHECKS[@]}"; do
             if ! grep -q "$check" "src/App.css"; then
               MISSING="$MISSING\n- $check"
             fi
-          done
-          
+          done          
           if [ ! -z "$MISSING" ]; then
             echo "::error::App.css is missing required elements:$MISSING"
             exit 1
-          fi
-          
+          fi          
           echo "app_css_ok=true" >> $GITHUB_OUTPUT
 
       - name: Check Tailwind Config
@@ -298,8 +172,7 @@ jobs:
           if [ ! -f "tailwind.config.js" ]; then
             echo "::error::tailwind.config.js file is missing."
             exit 1
-          fi
-          
+          fi          
           # Check for required Tailwind configuration
           TAILWIND_CHECKS=( 
             "content: \[" 
@@ -308,148 +181,28 @@ jobs:
             "theme: {" 
             "extend: {" 
             "plugins: \[" 
-          )
-          
+          )          
           MISSING=""
           for check in "${TAILWIND_CHECKS[@]}"; do
             if ! grep -q "$check" "tailwind.config.js"; then
               MISSING="$MISSING\n- $check"
             fi
-          done
-          
+          done          
           if [ ! -z "$MISSING" ]; then
             echo "::error::tailwind.config.js is missing required configuration:$MISSING"
             exit 1
           fi
-          
           echo "tailwind_ok=true" >> $GITHUB_OUTPUT
 
-      - name: Close Completed Quiz Issue
-        if: steps.quiz.outputs.quiz_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter5-task,quiz',
-              state: 'open'
-            });
-            
-            for (const issue of issues) {
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed'
-              });
-            }
-
-      - name: Close Completed Tailwind Setup Issue
-        if: steps.package_check.outputs.package_ok == 'true' && steps.vite_config.outputs.vite_config_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter5-task,tailwind-setup',
-              state: 'open'
-            });
-            
-            for (const issue of issues) {
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed'
-              });
-            }
-
-      - name: Close Completed CSS Files Issue
+      - name: Update to Step 6
         if: >
-          steps.css_check.outputs.css_ok == 'true' && 
-          steps.app_css_check.outputs.app_css_ok == 'true' && 
-          steps.tailwind_check.outputs.tailwind_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter5-task,css-files',
-              state: 'open'
-            });
-            
-            for (const issue of issues) {
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed'
-              });
-            }
-
-      - name: Ensure All Chapter-5 Tasks Are Closed
-        if: >
-          steps.quiz.outputs.quiz_ok == 'true' && 
-          steps.css_check.outputs.css_ok == 'true' && 
-          steps.app_css_check.outputs.app_css_ok == 'true' && 
+          steps.quiz_validation.outputs.quiz_ok == 'true' &&
+          steps.vite_config.outputs.vite_config_ok == 'true' &&
           steps.tailwind_check.outputs.tailwind_ok == 'true' &&
           steps.package_check.outputs.package_ok == 'true' &&
-          steps.vite_config.outputs.vite_config_ok == 'true'
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Add a delay function to wait between retries
-            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-            
-            // Maximum number of retries and retry delay in ms
-            const MAX_RETRIES = 3;
-            const RETRY_DELAY = 3000; // 3 seconds
-            
-            let retries = 0;
-            let openIssues = [];
-            
-            while (retries < MAX_RETRIES) {
-              try {
-                const { data: issues } = await github.rest.issues.listForRepo({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  labels: 'chapter5-task',
-                  state: 'open'
-                });
-                
-                if (issues.length === 0) {
-                  console.log('All chapter5-task issues are closed!');
-                  return; // Success, exit the script
-                }
-                
-                openIssues = issues;
-                console.log(`Found ${issues.length} open issues. Retrying in ${RETRY_DELAY/1000} seconds... (Attempt ${retries + 1}/${MAX_RETRIES})`);
-                
-                // Wait before next retry
-                await delay(RETRY_DELAY);
-                retries++;
-              } catch (error) {
-                console.error(`Error checking issues: ${error.message}`);
-                core.warning(`Error checking issues: ${error.message}`);
-                break;
-              }
-            }
-            
-            if (openIssues.length > 0) {
-              core.warning(`There are still ${openIssues.length} open chapter5-task issues. This may be due to API delay.`);
-              // Log issue numbers for debugging
-              openIssues.forEach(issue => console.log(`Issue #${issue.number}: ${issue.title}`));
-            }
-
-      - name: Advance to Step 6
-        if: success()
+          steps.css_check.outputs.css_ok == 'true' &&
+          steps.app_css_check.outputs.app_css_ok == 'true' &&
+          success()
         uses: skills/action-update-step@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

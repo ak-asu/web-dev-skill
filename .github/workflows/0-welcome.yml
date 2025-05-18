@@ -66,8 +66,6 @@ jobs:
         with:
           fetch-depth: 0 # Let's get all the branches.
 
-      # TBD-course-set-up
-
       # In README.md, switch step 0 for step 1.
       - name: Update to step 1 and trigger next workflow
         if: success()
@@ -83,13 +81,12 @@ jobs:
               toStep: "1",
               branchName: context.ref_name
             });
-            
-            // Then trigger the next chapter's workflow
-            await github.rest.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'check-chapter1',
-              client_payload: {
-                triggered_by: 'step_advancement'
-              }
-            });
+            // Then trigger the next chapter's workflow. No need for now as we are not creating Issues at the start of each chapter.
+            // await github.rest.repos.createDispatchEvent({
+            //   owner: context.repo.owner,
+            //   repo: context.repo.repo,
+            //   event_type: 'check-chapter1',
+            //   client_payload: {
+            //     triggered_by: 'step_advancement'
+            //   }
+            // });
