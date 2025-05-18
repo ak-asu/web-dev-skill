@@ -209,8 +209,7 @@ Browsers convert HTML, CSS, and JavaScript into visible web pages through a mult
 - CSS is the interior design (style).
 - JavaScript adds functionality (like lights turning on).
 - The browser assembles and paints the final house.
-
-![Browser Rendering Process Diagram](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work/High_level_browser_architecture.png)  
+  
 *Source: [MDN: How browsers work](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work)*
 
 For details, see [MDN: How browsers work](https://developer.mozilla.org/en-US/docs/Web/Performance/Guides/How_browsers_work).

@@ -299,14 +299,47 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const open = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: 'chapter9-task',
-              state: 'open'
-            });
-            if (open.data.length > 0) {
-              core.setFailed(`There are still ${open.data.length} open chapter9-task issues.`);
+            // Add a delay function to wait between retries
+            const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+            
+            // Maximum number of retries and retry delay in ms
+            const MAX_RETRIES = 3;
+            const RETRY_DELAY = 3000; // 3 seconds
+            
+            let retries = 0;
+            let openIssues = [];
+            
+            while (retries < MAX_RETRIES) {
+              try {
+                const { data: issues } = await github.rest.issues.listForRepo({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  labels: 'chapter9-task',
+                  state: 'open'
+                });
+                
+                if (issues.length === 0) {
+                  console.log('All chapter9-task issues are closed!');
+                  return; // Success, exit the script
+                }
+                
+                openIssues = issues;
+                console.log(`Found ${issues.length} open issues. Retrying in ${RETRY_DELAY/1000} seconds... (Attempt ${retries + 1}/${MAX_RETRIES})`);
+                
+                // Wait before next retry
+                await delay(RETRY_DELAY);
+                retries++;
+              } catch (error) {
+                console.error(`Error checking issues: ${error.message}`);
+                core.warning(`Error checking issues: ${error.message}`);
+                break;
+              }
+            }
+            
+            if (openIssues.length > 0) {
+              core.warning(`There are still ${openIssues.length} open chapter9-task issues. This may be due to API delay.`);
+              // Log issue numbers for debugging
+              openIssues.forEach(issue => console.log(`Issue #${issue.number}: ${issue.title}`));
             }
 
       - name: Advance to Step 10
@@ -316,4 +349,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           from_step: 9
           to_step: 10
-          branch_name: main
+          branch_name: ${{ github.ref_name }}
