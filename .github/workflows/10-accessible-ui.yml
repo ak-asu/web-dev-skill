@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github/steps/-step.txt'
       - 'resources/Quiz10.md'
       - 'package.json'
       - 'src/components/**'
@@ -11,7 +12,6 @@ on:
 
 permissions:
   contents: write
-  
   issues: write
 
 jobs:
@@ -26,6 +26,9 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+      - name: Early terminate if not on step 10
+        if: steps.read_step.outputs.current_step != '10'
+        run: exit 78
 
   create_issues:
     needs: get_current_step

@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github/steps/-step.txt'
       - 'resources/Quiz5.md'
       - 'src/index.css'
       - 'tailwind.config.js'
@@ -14,7 +15,6 @@ on:
 
 permissions:
   contents: write
-  
   issues: write
 
 jobs:
@@ -29,6 +29,9 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+      - name: Early terminate if not on step 5
+        if: steps.read_step.outputs.current_step != '5'
+        run: exit 78
 
   create_issues:
     needs: get_current_step
@@ -211,9 +214,9 @@ jobs:
           # Check for Tailwind 4 and required packages
           PACKAGE_CHECKS=(
             "\"tailwindcss\": \"\^4"
-            "\"@tailwindcss/vite\":"
-            "\"@tailwindcss/forms\":"
-            "\"@tailwindcss/typography\":"
+            "\"@tailwindcss/vite\":" 
+            "\"@tailwindcss/forms\":" 
+            "\"@tailwindcss/typography\":" 
           )
           
           MISSING=""
@@ -240,9 +243,9 @@ jobs:
           fi
           
           # Check for required CSS elements
-          CSS_CHECKS=(
-            "@import \"tailwindcss\""
-            "@layer"
+          CSS_CHECKS=( 
+            "@import \"tailwindcss\"" 
+            "@layer" 
           )
           
           MISSING=""
@@ -269,9 +272,9 @@ jobs:
           fi
           
           # Check for required App.css elements
-          APP_CSS_CHECKS=(
-            "@layer"
-            "utilities"
+          APP_CSS_CHECKS=( 
+            "@layer" 
+            "utilities" 
           )
           
           MISSING=""
@@ -298,13 +301,13 @@ jobs:
           fi
           
           # Check for required Tailwind configuration
-          TAILWIND_CHECKS=(
-            "content: \["
-            "\"./index.html\""
-            "\"./src/\*\*/\*.{js,ts,jsx,tsx}\""
-            "theme: {"
-            "extend: {"
-            "plugins: \["
+          TAILWIND_CHECKS=( 
+            "content: \[" 
+            "\"./index.html\"" 
+            "\"./src/\*\*/\*.{js,ts,jsx,tsx}\"" 
+            "theme: {" 
+            "extend: {" 
+            "plugins: \[" 
           )
           
           MISSING=""

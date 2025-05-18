@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github/steps/-step.txt'
       - 'resources/Quiz3.md'
       - 'vite.config.ts'
       - 'tsconfig.json'
@@ -18,7 +19,6 @@ on:
 
 permissions:
   contents: write
-  
 
 jobs:
   get_current_step:
@@ -32,6 +32,9 @@ jobs:
           fetch-depth: 0
       - id: read_step
         run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+      - name: Early terminate if not on step 3
+        if: steps.read_step.outputs.current_step != '3'
+        run: exit 78
 
   validate_and_progress:
     needs: get_current_step

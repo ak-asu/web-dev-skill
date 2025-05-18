@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github/steps/-step.txt'
       - 'resources/Quiz1.md'
   workflow_dispatch:
 
@@ -21,6 +22,9 @@ jobs:
       - id: get_step
         run: |
           echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+      - name: Early terminate if not on step 1
+        if: steps.get_step.outputs.current_step != '1'
+        run: exit 78
     outputs:
       current_step: ${{ steps.get_step.outputs.current_step }}
 
