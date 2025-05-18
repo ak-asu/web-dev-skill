@@ -22,9 +22,6 @@ jobs:
   get_current_step:
     name: Check current step number
     runs-on: ubuntu-latest
-    outputs:
-      current_step: ${{ steps.get_step.outputs.current_step }}
-      should_run: ${{ steps.get_step.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,6 +33,10 @@ jobs:
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+    outputs:
+      current_step: ${{ steps.get_step.outputs.current_step }}
+      should_run: ${{ steps.get_step.outputs.should_run }}
 
   validate_and_progress:
     name: Validate Quiz Answers and Progress
@@ -107,7 +108,7 @@ jobs:
             exit 1
           fi          
           # Check for Tailwind 4 and required packages
-          PACKAGE_CHECKS=(
+          PACKAGE_CHECKS=( 
             "\"tailwindcss\": \"\^4"
             "\"@tailwindcss/vite\":" 
             "\"@tailwindcss/forms\":" 

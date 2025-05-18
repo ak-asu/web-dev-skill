@@ -95,6 +95,6 @@ jobs:
       #       //   repo: context.repo.repo,
       #       //   event_type: 'check-chapter1',
       #       //   client_payload: {
-      #       //     triggered_by: 'step_advancement'
+      #       //     triggered_by: 'step_advancement_0'
       #       //   }
       #       // });

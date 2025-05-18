@@ -18,9 +18,6 @@ jobs:
   get_current_step:
     name: Check current step number
     runs-on: ubuntu-latest
-    outputs:
-      current_step: ${{ steps.get_step.outputs.current_step }}
-      should_run: ${{ steps.check_step.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,6 +30,9 @@ jobs:
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
           fi
+    outputs:
+      current_step: ${{ steps.get_step.outputs.current_step }}
+      should_run: ${{ steps.get_step.outputs.should_run }}
 
   validate_and_progress:
     name: Validate Quiz Answers and Progress
