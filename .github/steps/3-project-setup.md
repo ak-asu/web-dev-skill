@@ -4,17 +4,10 @@ _Nice work finishing "Project Planning & Requirements" :sparkles:_
 
 This chapter provides a comprehensive guide to initializing a web development project for your portfolio site using modern tools. We will set up a React application with TypeScript using Vite, a high-performance build tool. To ensure code quality, we’ll configure ESLint for linting and Prettier for consistent formatting. Additionally, we’ll integrate Tailwind CSS for rapid styling. This guide is designed for beginners, offering step-by-step instructions and explanations of key files and concepts.
 
-## :keyboard: Activity: Complete the Chapter 1 Quiz
+## :keyboard: Activity: Chapter Tasks
 
-1. Start by reading through the content to understand the course workflow and basic web concepts.
-   
-2. Once you've reviewed the material, open the `resources/Quiz3.md` file to take the quiz.
-   
-3. For each question in the quiz, place an 'X' inside the brackets [ ] for your chosen answer.
-   
-4. After you've answered all questions, commit your changes to the `resources/Quiz3.md` file.
-   
-5. The GitHub Actions workflow will automatically check your answers and, if correct, will progress you to the next chapter.
+1. Once you've reviewed the material, open the `resources/Quiz3.md` file to take the quiz.
+2. Setup your project using the instructions provided in this chapter. Follow the steps to install Node.js, Vite, and Tailwind CSS, and configure ESLint and Prettier.
 
 Remember: There's no need to create a new branch - simply edit the quiz file, commit your changes, and push them to the main branch.
 
@@ -62,12 +55,12 @@ Vite simplifies project setup with templates for popular frameworks like React. 
 Run the following command to scaffold a new Vite project:
 
 ```bash
-npm create vite@latest my-portfolio -- --template react-ts
+npm create vite@latest web-dev -- --template react-ts
 ```
 
 - **Explanation**:
   - `npm create vite@latest`: Uses the `create-vite` tool to initialize a project.
-  - `my-portfolio`: The project name (replace with your preferred name).
+  - `web-dev`: The project name (replace with your preferred name).
   - `-- --template react-ts`: Specifies the React + TypeScript template.
 
 Follow the prompts if any appear, or the project will be created automatically.
@@ -77,7 +70,7 @@ Follow the prompts if any appear, or the project will be created automatically.
 Navigate to the project directory and install dependencies:
 
 ```bash
-cd my-portfolio
+cd web-dev
 npm install
 ```
 
@@ -114,6 +107,11 @@ After creating the project, Vite generates a standard directory structure. Under
 | `src/`                | Source code for the application.                                                |
 | `src/assets/`         | Assets like images or SVGs used in your components.                             |
 | `src/components/`     | Reusable React components (may need to be created manually).                     |
+| `src/context/`        | Context API providers for managing global state.                                |
+| `src/data/`           | Mock data or API response structures for development and testing.               |
+| `src/types/`          | Custom TypeScript types and interfaces.                                         |
+| `src/hooks/`          | Custom React hooks for reusable logic.                                          |
+| `src/utils/`          | Utility functions or helper methods.                                            |
 | `src/App.tsx`         | Main application component, defining the app’s structure.                       |
 | `src/main.tsx`        | Entry point, rendering the app into the DOM.                                    |
 | `index.html`          | HTML template, serving as the app’s entry point.                                |
@@ -130,7 +128,7 @@ Configuration files define how your project behaves, from build settings to type
 
 ### vite.config.ts
 
-The `vite.config.ts` file customizes Vite’s behavior, such as enabling plugins or setting build options. A default configuration for a React + TypeScript project looks like:
+The [`vite.config.ts`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/vite.config.ts) file customizes Vite’s behavior, such as enabling plugins or setting build options. A default configuration for a React + TypeScript project looks like:
 
 ```ts
 import { defineConfig } from 'vite'
@@ -151,7 +149,7 @@ You can extend this file later to add more plugins or customize settings like th
 
 ### tsconfig.json
 
-The `tsconfig.json` file configures the TypeScript compiler, ensuring your code is type-checked and compiled correctly. A typical configuration is:
+The [`tsconfig.json`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/tsconfig.json) file configures the TypeScript compiler, ensuring your code is type-checked and compiled correctly. A typical configuration is:
 
 ```json
 {
@@ -188,7 +186,7 @@ The `tsconfig.node.json` file, referenced here, configures TypeScript for Node.j
 
 ### package.json
 
-The `package.json` file contains project metadata, scripts, and dependencies. A default example is:
+The [`package.json`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/package.json) file contains project metadata, scripts, and dependencies. A default example is:
 
 ```json
 {
@@ -223,7 +221,7 @@ The `package.json` file contains project metadata, scripts, and dependencies. A 
 
 ## 6. Setting Up Tailwind CSS
 
-Tailwind CSS is a utility-first CSS framework that simplifies styling by providing pre-defined classes. It integrates seamlessly with Vite, especially with the latest Tailwind CSS v4.
+Tailwind CSS is a utility-first CSS framework that simplifies styling by providing pre-defined classes. It integrates seamlessly with Vite, especially with the latest Tailwind CSS v4. We will talk more about Tailwind CSS in the 5th chapter, but for now, we’ll set it up to ensure your project is ready for styling.
 
 ### Installation and Configuration
 
@@ -423,7 +421,7 @@ To make linting and formatting seamless:
 To maintain a high-quality project, follow these best practices:
 
 - **Use Version Control**: Initialize a Git repository (`git init`) to track changes and collaborate. Host your project on platforms like GitHub for backup and visibility.
-- **Organize Code**: Structure your `src/` folder with subdirectories like `components/`, `hooks/`, and `utils/` to separate concerns.
+- **Organize Code**: Structure your `src/` folder with subdirectories like `components/`, and `utils/` to separate concerns.
 - **Regular Linting**: Run `npm run lint` frequently to catch issues early. Fix warnings to maintain a clean codebase.
 - **Consistent Formatting**: Rely on Prettier to enforce a uniform code style, reducing debates over formatting.
 - **Testing Setup**: Plan to add a testing framework like Vitest (optimized for Vite) to write unit and integration tests, ensuring your components work as expected.

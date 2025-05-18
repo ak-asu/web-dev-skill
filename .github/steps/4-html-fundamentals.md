@@ -2,11 +2,9 @@
 
 This chapter introduces HTML (HyperText Markup Language), the foundation of web development, tailored for beginners building a portfolio site with React and Vite. We'll explore core HTML elements, semantic HTML for better structure, accessibility practices, SEO essentials, and how HTML integrates with React. By mastering these concepts, you'll create structured, accessible, and search-friendly web pages.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
-To complete this chapter, you need to:
-
-1. **Complete the HTML Quiz**: Answer 5 questions correctly in the `quizzes/Chapter4.md` file
+1. **Complete the HTML Quiz**: Answer questions correctly in the `resources/Quiz4.md` file
 2. **Create/Update Your index.html**: Build a properly structured HTML file with all required elements:
    - Basic HTML structure (doctype, html, head, body)
    - Required meta tags for SEO and social sharing
@@ -320,19 +318,11 @@ For proper routing in single-page applications, include this script in your `<he
 <script type="module" src="/src/main.tsx"></script>
 ```
 
-## Example index.html
+### Example index.html
 
 `index.html` is the entry point for your React application. It should include all necessary elements to ensure proper functionality and SEO. Here's a sample example of an [`index.html`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/index.html) file with all required elements.
 
-## Quiz Instructions
-
-Complete the quiz in `quizzes/Chapter4.md` by marking exactly 5 correct answers with [X]. For example:
-```
-- [ ] This is an incorrect answer
-- [X] This is a correct answer
-```
-
-## Conclusion
+## 11. Conclusion
 
 HTML is the cornerstone of web development, providing structure for both static sites and dynamic React applications. By mastering core elements, semantic HTML, accessibility, SEO, and React integration, you'll build a professional portfolio site that's accessible, discoverable, and engaging. The next chapter will explore CSS for styling your site.
 

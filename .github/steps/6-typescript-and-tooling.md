@@ -2,11 +2,9 @@
 
 This chapter provides a comprehensive guide to using TypeScript in your React portfolio site, built with Vite, to enhance code quality and maintainability. TypeScript, a statically typed superset of JavaScript, adds type safety, catching errors early and improving developer productivity. We'll explore TypeScript's core concepts, its application in React, common types, project configuration, linting and formatting tools, and how to define interfaces for your portfolio's data structures. Designed for beginners, this guide uses clear explanations and practical examples to help you strengthen your codebase.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
-To complete this chapter, you need to:
-
-1. **Complete the TypeScript Quiz**: Answer 5 questions correctly in the `quizzes/Chapter6.md` file
+1. **Complete the TypeScript Quiz**: Answer questions correctly in the `resources/Quiz6.md` file
 2. **Configure TypeScript Files**:
    - Set up `tsconfig.json`, `tsconfig.app.json`, and `tsconfig.node.json`
    - Configure proper settings for React and TypeScript
@@ -518,7 +516,15 @@ interface Project {
 }
 ```
 
-## 10. Required Tasks and Examples
+## 7. Best Practices and Tips
+- **Start Small**: Begin with simple types and gradually add complexity.
+- **Leverage IDE Features**: Use VSCode's TypeScript support for quick fixes and suggestions.
+- **Run Linting Regularly**: Catch issues early with `npm run lint`.
+- **Avoid `any` Type**: Be explicit to maximize type safety.
+- **Test Components**: Ensure typed props and state work as expected in your UI.
+
+
+## 8. Required Tasks and Examples
 
 For the tasks in this chapter, you'll need to create several key files:
 
@@ -580,22 +586,7 @@ Create an assets folder at `src/assets/` and add placeholder images for:
 
 You can use SVG files, placeholder images, or your own images. An assets folder is used for storing all static files like images, fonts, and icons. A sample is provided in [`src/assets/`](https://github.com/ak-asu/web-dev-skill/tree/main/resources/example/src/assets/).
 
-## Quiz Instructions
-
-Complete the quiz in `quizzes/Chapter6.md` by marking exactly 5 correct answers with [X]. For example:
-```
-- [ ] This is an incorrect answer
-- [X] This is a correct answer
-```
-
-## 7. Best Practices and Tips
-- **Start Small**: Begin with simple types and gradually add complexity.
-- **Leverage IDE Features**: Use VSCode's TypeScript support for quick fixes and suggestions.
-- **Run Linting Regularly**: Catch issues early with `npm run lint`.
-- **Avoid `any` Type**: Be explicit to maximize type safety.
-- **Test Components**: Ensure typed props and state work as expected in your UI.
-
-## 8. Conclusion
+## 9. Conclusion
 TypeScript transforms your React development by adding type safety, reducing errors, and enhancing tooling. By typing props, state, and events, configuring your project with `tsconfig.json`, and using ESLint and Prettier, you create a robust codebase for your portfolio site. Defining interfaces for projects and forms ensures consistent data handling. As you build, experiment with TypeScript's features to write cleaner, more maintainable code.
 
 The next chapter will explore JavaScript and interactivity, building on this foundation to add dynamic features to your site.

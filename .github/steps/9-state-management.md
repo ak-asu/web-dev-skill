@@ -2,11 +2,9 @@
 
 This chapter explores state management in your React portfolio site using Redux Toolkit, a powerful toolset designed to simplify Redux for managing complex or cross-cutting state. Tailored for beginners, it covers the essentials of Redux, the advantages of Redux Toolkit, and practical steps to implement it in your Vite + React + TypeScript project. You'll learn to manage global state for theme toggling and project data, replacing the Context API approach from Chapter 8 and enhancing scalability. The chapter includes code examples, best practices, and a brief look at state persistence, ensuring your portfolio site is robust and maintainable.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
-To complete this chapter, you need to:
-
-1. **Complete the Redux State Management Quiz**: Answer 5 questions correctly in the `quizzes/Chapter9.md` file
+1. **Complete the Redux State Management Quiz**: Answer questions correctly in the `resources/Quiz9.md` file
 2. **Implement Redux State Management**:
    - Install the required Redux packages
    - Create a Redux store configuration
@@ -61,7 +59,7 @@ Traditional Redux setup involves significant boilerplate, such as manually creat
 
 For your portfolio, Redux Toolkit makes it easier to manage theme toggles and project data, aligning with the [Redux Toolkit Documentation](https://redux-toolkit.js.org/).
 
-## 4. Setting Up Redux Toolkit in Your Project
+## 4. Setting Up Redux Toolkit in Your Project (Optional)
 
 To integrate Redux Toolkit into your Vite + React + TypeScript portfolio site, follow these steps to set up the store, define slices, and connect to React.
 
@@ -339,7 +337,7 @@ For more robust persistence, consider [redux-persist](https://github.com/rt2zz/r
 - Missing cleanup in `useEffect` for side effects like local storage.
 - Incorrect TypeScript types, leading to runtime errors.
 
-## 10. Examples for Your Portfolio
+## 8. Examples for Your Portfolio (Optional)
 
 To implement Redux in your portfolio website, you should set up the following files:
 
@@ -523,15 +521,7 @@ function App() {
 export default App;
 ```
 
-## Quiz Instructions
-
-Complete the quiz in `quizzes/Chapter9.md` by marking exactly 5 correct answers with [X]. For example:
-```
-- [ ] This is an incorrect answer
-- [X] This is a correct answer
-```
-
-## 8. When to Use Redux Toolkit
+## 9. When to Use Redux Toolkit
 
 Redux Toolkit shines in scenarios with:
 - Complex state logic across multiple components.
@@ -540,7 +530,7 @@ Redux Toolkit shines in scenarios with:
 
 For your portfolio, Redux may be overkill if state remains simple, but it's a valuable learning exercise and prepares you for larger applications. Compare it with Context API or alternatives like Zustand for simpler use cases.
 
-## 9. Conclusion
+## 10. Conclusion
 
 By integrating Redux Toolkit, you've enhanced your portfolio site's state management, replacing Context API for theme toggling and centralizing project data. This setup improves scalability, making it easier to add features like dynamic project filtering or user settings. The skills learned—creating stores, slices, and using Redux hooks—equip you for building complex React applications. Next, consider exploring RTK Query for API data fetching or optimizing performance with memoized selectors.
 

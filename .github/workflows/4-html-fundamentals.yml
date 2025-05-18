@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'quizzes/Chapter4.md'
+      - 'resources/Quiz4.md'
       - 'index.html'
   workflow_dispatch:
 
@@ -57,7 +57,7 @@ jobs:
                 body: `
                 # Complete the HTML Fundamentals Quiz
                 
-                1. Navigate to the \`quizzes/Chapter4.md\` file
+                1. Navigate to the \`resources/Quiz4.md\` file
                 2. Answer all questions by marking the correct answers with [X]
                 3. Select exactly 5 answers total
                 4. Commit your changes to complete this task
@@ -144,7 +144,7 @@ jobs:
       - name: Validate Quiz Answers
         id: quiz
         run: |
-          QUIZ=quizzes/Chapter4.md
+          QUIZ=resources/Quiz4.md
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."

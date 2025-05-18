@@ -4,17 +4,12 @@ _You did "Web Fundamentals"! :tada:_
 
 This chapter provides a comprehensive guide to planning and defining requirements for a portfolio website, tailored for beginners in web development. A portfolio site showcases a developer’s skills, projects, and experience to potential employers or clients. Effective planning ensures the site meets its goals, is user-friendly, and stands out in a competitive landscape. We’ll cover the Software Development Life Cycle (SDLC), requirement gathering techniques, project scope definition, user stories with acceptance criteria, and designing a Software Requirements Specification (SRS) document.
 
-## :keyboard: Activity: Complete the Chapter 1 Quiz
+## :keyboard: Activity: Chapter Tasks
 
-1. Start by reading through the content to understand the course workflow and basic web concepts.
-   
-2. Once you've reviewed the material, open the `resources/Quiz2.md` file to take the quiz.
-   
-3. For each question in the quiz, place an 'X' inside the brackets [ ] for your chosen answer.
-   
-4. After you've answered all questions, commit your changes to the `resources/Quiz2.md` file.
-   
-5. The GitHub Actions workflow will automatically check your answers and, if correct, will progress you to the next chapter.
+1. Once you've reviewed the material, open the `resources/Quiz2.md` file to take the quiz.
+2. Complete the SRS document template provided in the [`resources/SRS.md`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/SRS.md) file. This will help you practice writing a Software Requirements Specification for your portfolio site.
+
+   - **Note**: The SRS document is a critical part of the planning process, ensuring clarity and alignment among stakeholders.
 
 Remember: There's no need to create a new branch - simply edit the quiz file, commit your changes, and push them to the main branch.
 

@@ -2,11 +2,11 @@
 
 This chapter guides beginners through building a portfolio site as a React single-page application (SPA). You'll learn React's core concepts—functional components, JSX, props, state, event handling, list rendering, and navigation—while creating interactive components like About, Skills, Projects, and a Navbar. Practical examples, including a "Show More" button and scroll-based navigation highlighting, ensure you apply these concepts effectively. Tailored for your Vite + React + TypeScript project, this guide uses Tailwind CSS for styling and focuses on a single-page scroll layout, with an optional introduction to React Router.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
 To complete this chapter, you need to:
 
-1. **Complete the React Quiz**: Answer 5 questions correctly in the `quizzes/Chapter7.md` file
+1. **Complete the React Quiz**: Answer questions correctly in the `resources/Quiz7.md` file
 2. **Create React Components**:
    - Build `About.tsx`, `Hero.tsx`, `Footer.tsx`, and `NotFound.tsx` components
    - Add proper TypeScript typing and styling
@@ -143,6 +143,10 @@ const SkillList: React.FC = () => {
 };
 ```
 
+**Features**:
+- Renders a dynamic list with `.map()`.
+- Uses unique keys for efficient rendering.
+
 ### Conditional Rendering
 Render elements based on conditions using ternary operators or logical `&&`.
 
@@ -160,10 +164,12 @@ const ToggleContent: React.FC = () => {
 ```
 
 These techniques will be used in your Skills and About components.
+- Uses `useState` for toggling visibility.
+- Conditionally renders extra text with `&&`.
 
 ## 6. Navigation in React
 
-For a single-page portfolio, anchor links can scroll to sections. Highlighting the active section enhances usability.
+For a single-page portfolio, anchor links can scroll to sections. Highlighting the active section enhances usability. React Router is useful for larger projects. See [React Router Documentation](https://reactrouter.com/en/main).
 
 ### Anchor-Based Navigation
 Assign IDs to sections and use `<a>` tags in the Navbar.
@@ -188,7 +194,22 @@ const Navbar: React.FC = () => {
 ### Scroll-Based Highlighting
 Use `useState` and `useEffect` to highlight the current section based on scroll position.
 
-## 10. Required Tasks and Examples
+## 7. Best Practices and Tips
+
+| **Practice** | **Description** |
+|--------------|-----------------|
+| **Unique Keys** | Always provide unique `key` props for lists, preferably using IDs rather than indices. |
+| **Component Reusability** | Design components to accept props for flexibility, e.g., passing `projects` to `Projects`. |
+| **State Management** | Use local state with `useState` for simple interactions; consider lifting state up for shared data. |
+| **Clean JSX** | Keep JSX concise; extract complex logic to functions or hooks. |
+| **Accessibility** | Use semantic HTML and ARIA attributes, e.g., `aria-current` for active nav links. |
+
+**Common Pitfalls**:
+- Avoid missing `key` props in lists, which can cause rendering issues.
+- Don’t overuse state; use props for static data.
+- Test scroll highlighting to ensure accurate section detection.
+
+## 8. Required Tasks and Examples
 
 For the tasks in this chapter, you need to create or update the following components:
 
@@ -212,25 +233,7 @@ Create a 404 page component which will be displayed when a user navigates to a n
 
 Update your App.tsx to include the new components. This file manages the overall layout and routing of your application. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.tsx).
 
-## Quiz Instructions
-
-Complete the quiz in `quizzes/Chapter7.md` by marking exactly 5 correct answers with [X]. For example:
-```
-- [ ] This is an incorrect answer
-- [X] This is a correct answer
-```
-
-## 7. Best Practices and Tips
-
-| **Practice** | **Description** |
-|--------------|-----------------|
-| **Unique Keys** | Always provide unique `key` props for lists, preferably using IDs rather than indices. |
-| **Component Reusability** | Design components to accept props for flexibility, e.g., passing `projects` to `Projects`. |
-| **State Management** | Use local state with `useState` for simple interactions; consider lifting state up for shared data. |
-| **Clean JSX** | Keep JSX concise; extract complex logic to functions or hooks. |
-| **Accessibility** | Use semantic HTML and ARIA attributes, e.g., `aria-current` for active nav links. |
-
-## 8. Conclusion
+## 9. Conclusion
 
 This chapter has equipped you with React fundamentals to build a dynamic portfolio site. You've created functional components, managed state and props, handled events, rendered lists, and implemented navigation. The About, Skills, Projects, and Navbar components demonstrate these concepts in action, forming a solid foundation for your SPA. Next, consider adding a Contact form or exploring advanced React features like context or custom hooks to enhance your site.
 

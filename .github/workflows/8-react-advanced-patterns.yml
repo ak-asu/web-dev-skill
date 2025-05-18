@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'quizzes/Chapter8.md'
+      - 'resources/Quiz8.md'
       - 'src/**/*.{ts,tsx}'
   workflow_dispatch:
 
@@ -57,7 +57,7 @@ jobs:
                 body: `
                 # Complete the React Advanced Patterns Quiz
                 
-                1. Navigate to the \`quizzes/Chapter8.md\` file
+                1. Navigate to the \`resources/Quiz8.md\` file
                 2. Answer all questions by marking the correct answers with [X]
                 3. Select exactly 5 answers total
                 4. Commit your changes to complete this task
@@ -129,7 +129,7 @@ jobs:
       - name: Validate Quiz Answers
         id: quiz
         run: |
-          QUIZ=quizzes/Chapter8.md
+          QUIZ=resources/Quiz8.md
           COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
           if [ "$COUNT" -ne 5 ]; then
             echo "::error::You must select exactly 5 answers (found $COUNT)."

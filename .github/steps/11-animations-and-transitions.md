@@ -2,11 +2,9 @@
 
 This chapter enhances your React portfolio site, built with Vite, TypeScript, and Tailwind CSS, by adding smooth animations and transitions using Framer Motion, now known as Motion. Animations improve user experience by making interactions intuitive and visually appealing, guiding attention and reinforcing your site's professionalism. Designed for beginners, this guide covers animation fundamentals, Motion's key features, and practical implementations like fade-ins, staggered lists, and exit animations. We'll also address performance considerations to ensure animations run smoothly, preparing your portfolio to impress potential employers or clients.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
-To complete this chapter, you need to:
-
-1. **Complete the Animations and Transitions Quiz**: Answer 5 questions correctly in the `quizzes/Chapter11.md` file
+1. **Complete the Animations and Transitions Quiz**: Answer questions correctly in the `resources/Quiz11.md` file
 2. **Implement Animated Components**:
    - Create or update `Achievements.tsx` with motion animations
    - Create or update `Education.tsx` with animation variants
@@ -193,6 +191,7 @@ The Achievements component should display accomplishments with interactive anima
 - Implement `whileHover` for interactive hover effects
 - Add celebratory animations on click or interaction
 - Use staggered animations for multiple achievement items
+- Use `transform` and `opacity` for GPU acceleration
 
 Key techniques to use:
 - Variants for coordinated animations
@@ -228,7 +227,23 @@ Key techniques to use:
 - Interactive elements for job details
 - Responsive animations that work on all devices
 
-## 10. Required Tasks and Examples
+## 6. Reviewing Animation Performance
+
+To ensure animations enhance rather than hinder user experience:
+- **Profile with DevTools**: Record a performance session in Chrome DevTools, checking the FPS meter. Aim for 60 FPS; dropped frames indicate jank.
+- **Optimize if Needed**: If animations lag, reduce `duration` (e.g., from 0.8s to 0.5s), simplify properties (e.g., avoid `box-shadow`), or limit simultaneous animations.
+- **Test on Devices**: Check animations on mobile and low-end devices to ensure consistency.
+- **Use willChange**: Add `willChange: transform, opacity` to animated elements in `index.css`:
+  ```css
+  .motion-animated {
+    will-change: transform, opacity;
+  }
+  ```
+  Apply `motion-animated` to `<motion>` components.
+
+If jank persists, consider reducing the number of animated elements or using CSS transitions for simpler effects.
+
+## 7. Required Tasks and Examples
 
 For the tasks in this chapter, you need to implement the following components:
 
@@ -244,15 +259,7 @@ Create an Education component that displays your educational background with ani
 
 Create an Experience component with an animated timeline showing your work history. Implement staggered animations and interactive elements. A sample reference has been provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/Experience.tsx).
 
-### Quiz Completion
-
-Complete the quiz in `quizzes/Chapter11.md` by marking exactly 5 correct answers with [X]. For example:
-```
-- [ ] This is an incorrect answer
-- [X] This is a correct answer
-```
-
-## 7. Best Practices and Tips
+## 8. Best Practices and Tips
 - **Keep Animations Subtle**: Avoid overwhelming users with excessive motion, especially for accessibility.
 - **Use Variants for Orchestration**: Coordinate parent-child animations with `staggerChildren` for polished effects.
 - **Test Accessibility**: Ensure animations don't interfere with screen readers or keyboard navigation.
@@ -262,5 +269,5 @@ Complete the quiz in `quizzes/Chapter11.md` by marking exactly 5 correct answers
   - Overusing complex animations, leading to performance issues.
   - Ignoring mobile performance, where animations may lag.
 
-## 8. Conclusion
+## 9. Conclusion
 By integrating Motion animations into your portfolio components, you'll transform your site into a dynamic, engaging experience. The Achievements, Education, and Experience components will showcase your skills while demonstrating your ability to implement professional animations. These techniques not only enhance the visual appeal of your portfolio but also demonstrate your proficiency with modern React animation patterns—a valuable skill for front-end development roles.

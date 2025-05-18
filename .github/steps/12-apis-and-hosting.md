@@ -2,11 +2,9 @@
 
 This chapter guides you through configuring your React portfolio site, built with Vite, TypeScript, and Tailwind CSS, for production, integrating external data via APIs, and automating deployment with continuous integration and continuous deployment (CI/CD). Designed for beginners, it covers environment variables, REST API consumption, secret management, dynamic content loading, error handling, and hosting on platforms like GitHub Pages or Vercel. Practical examples, such as fetching GitHub repositories for the Projects section and setting up GitHub Actions, ensure your site is scalable, secure, and maintainable, showcasing your skills professionally.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
-To complete this chapter, you need to:
-
-1. **Complete the APIs and Hosting Quiz**: Answer 5 questions correctly in the `quizzes/Chapter12.md` file
+1. **Complete the APIs and Hosting Quiz**: Answer questions correctly in the `resources/Quiz12.md` file
 2. **Implement Contact Component and API Integration**:
    - Create or update `src/components/Contact.tsx` with a functional contact form
    - Configure API handling for the contact form in `src/api/contact.ts`
@@ -371,7 +369,7 @@ const App: React.FC = () => (
 
 Continuous Integration (CI) automates testing and building your code on every push or pull request, catching issues early.
 
-### Setting Up CI
+### Setting Up CI (Optional)
 Create `.github/workflows/ci.yml`:
 ```yaml
 name: CI
@@ -436,55 +434,12 @@ For more on GitHub Actions, see [GitHub Actions Documentation](https://docs.gith
 Automated deployment ensures your site updates automatically when code is merged, reducing manual effort.
 
 ### Deploying to GitHub Pages
-Create `.github/workflows/deploy.yml`:
-```yaml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-        env:
-          VITE_GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-```
+Create `.github/workflows/deploy.yml`. It is used to deploy your site to GitHub Pages automatically on pushes to the `main` branch. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/deploy.yml).
 
 ### Enable GitHub Pages
 1. Go to your repository’s “Settings” > “Pages”.
 2. Set the source to the `gh-pages` branch.
 3. Your site will be available at `https://yourusername.github.io/yourrepo`.
-
-### Add Status Badge
-In `README.md`:
-```markdown
-![Deploy to GitHub Pages](https://github.com/yourusername/yourrepo/actions/workflows/deploy.yml/badge.svg)
-```
-
-Replace `yourusername` and `yourrepo` with your GitHub details.
 
 ### Alternative: Vercel
 1. **Link Repository**:

@@ -2,11 +2,9 @@
 
 This chapter provides a comprehensive guide to styling your portfolio site using CSS and Tailwind CSS within a React and Vite project. CSS is the backbone of web styling, controlling layout, colors, and typography, while Tailwind CSS offers a utility-first approach to streamline development. We'll cover CSS fundamentals, Tailwind's integration, and practical examples to create a responsive, visually appealing portfolio site. All styling will be managed through Tailwind classes in JSX and the `index.css` file, adhering to the requirement to avoid additional CSS files.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
-To complete this chapter, you need to:
-
-1. **Complete the CSS and Tailwind Quiz**: Answer 5 questions correctly in the `quizzes/Chapter5.md` file
+1. **Complete the CSS and Tailwind Quiz**: Answer questions correctly in the `resources/Quiz5.md` file
 2. **Set up Tailwind CSS 4**:
    - Update `package.json` with Tailwind 4 and related packages
    - Configure `vite.config.ts` to use the Tailwind plugin
@@ -397,7 +395,19 @@ export default ThemeToggle;
 
 Add this component to your layout, e.g., in the navigation bar or footer.
 
-## 10. Required Tasks for Your Portfolio Styling
+## 5. Best Practices and Tips
+
+- **Consistency**: Use Tailwind’s design tokens (e.g., `text-sm`, `bg-blue-500`) for uniform styling.
+- **Minimize Custom CSS**: Rely on Tailwind classes to avoid maintenance issues; use `index.css` only for global or component styles.
+- **Componentization**: Create reusable React components with predefined Tailwind classes.
+- **Developer Tools**: Regularly inspect elements to test Tailwind classes and ensure responsiveness.
+- **IntelliSense**: Install the [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss) VSCode extension for class auto-completion.
+- **Common Mistakes**:
+  - Ensure all JSX files are included in `tailwind.config.js`’s `content` array to generate classes.
+  - Use correct responsive prefixes (e.g., `md:` for ≥768px, not `lg:`).
+  - Test dark mode thoroughly to ensure all elements adapt correctly.
+
+## 6. Required Tasks for Your Portfolio Styling
 
 For your portfolio website built with React, Vite, and Tailwind CSS 4, you need to set up the following files:
 
@@ -447,15 +457,7 @@ Here's a sample example of an [`src/index.css`](https://github.com/ak-asu/web-de
 
 Here's a sample example of an [`src/App.css`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.css) file with all required elements. This file is responsible for defining component-specific styles.
 
-## Quiz Instructions
-
-Complete the quiz in `quizzes/Chapter5.md` by marking exactly 5 correct answers with [X]. For example:
-```
-- [ ] This is an incorrect answer
-- [X] This is a correct answer
-```
-
-## 6. Conclusion
+## 7. Conclusion
 
 This chapter has equipped you with the skills to style your portfolio site using CSS fundamentals and Tailwind CSS. By mastering selectors, the box model, flexbox, grid, and responsive design, and applying Tailwind’s utilities, you can create a professional, accessible, and responsive site. Continue experimenting with Tailwind classes and developer tools to refine your design, preparing you for the next chapter on JavaScript and interactivity.
 

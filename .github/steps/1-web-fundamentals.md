@@ -4,17 +4,12 @@ _Welcome to "Learning Web Fundamentals"! :wave:_
 
 This guide provides a comprehensive introduction to web fundamentals, designed for beginners. It covers how the web works, the roles of HTML, CSS, and JavaScript, browser rendering, and other essential topics to establish a solid foundation for web development.
 
-## :keyboard: Activity: Complete the Chapter 1 Quiz
+## :keyboard: Activity: Chapter Tasks
 
-1. Start by reading through the content to understand the course workflow and basic web concepts.
-   
-2. Once you've reviewed the material, open the `resources/Quiz1.md` file to take the quiz.
-   
-3. For each question in the quiz, place an 'X' inside the brackets [ ] for your chosen answer.
-   
-4. After you've answered all questions, commit your changes to the `resources/Quiz1.md` file.
-   
-5. The GitHub Actions workflow will automatically check your answers and, if correct, will progress you to the next chapter.
+1. Once you've reviewed the material, open the `resources/Quiz1.md` file to take the quiz.
+2. For each question in the quiz, place an 'X' inside the brackets [ ] for your chosen answer.
+3. After you've answered all questions, commit your changes to the `resources/Quiz1.md` file.
+4. The GitHub Actions workflow will automatically check your answers and, if correct, will progress you to the next chapter.
 
 Remember: There's no need to create a new branch - simply edit the quiz file, commit your changes, and push them to the main branch.
 
@@ -53,7 +48,6 @@ The Web relies on a client-server model, where:
 
 **Analogy**: Think of a restaurant where customers (clients) order food from waiters (servers), who fetch and deliver the requested items.
 
-![Client-Server Architecture Diagram](https://d3n0h9tb65y8q.cloudfront.net/public_assets/assets/000/002/225/original/client-server-architecture.png?1654680938)  
 *Source: [GeeksforGeeks: Client-Server Architecture](https://www.geeksforgeeks.org/client-server-architecture-system-design/)*
 
 ### HTTP Protocol

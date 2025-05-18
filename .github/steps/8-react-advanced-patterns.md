@@ -2,11 +2,9 @@
 
 This chapter dives into advanced React patterns to optimize and organize your portfolio site, built as a single-page application (SPA) with Vite, React, TypeScript, and Tailwind CSS. Designed for beginners, it covers sophisticated techniques like `useEffect` for side effects, Context API for global state, code splitting with `React.lazy` and `Suspense`, and performance optimizations using `useMemo`, `useCallback`, and `React.memo`. You'll implement a global theme toggle, lazy-load the Projects section, enhance navigation with scroll-based highlighting, and optimize rendering to ensure a fast, user-friendly experience. Practical examples and clear explanations make these concepts accessible, empowering you to elevate your portfolio site.
 
-## Chapter Tasks
+## :keyboard: Activity: Chapter Tasks
 
-To complete this chapter, you need to:
-
-1. **Complete the React Advanced Patterns Quiz**: Answer 5 questions correctly in the `quizzes/Chapter8.md` file
+1. **Complete the React Advanced Patterns Quiz**: Answer questions correctly in the `resources/Quiz8.md` file
 2. **Implement Advanced React Patterns in Components**:
    - Create or update `Navbar.tsx` with scroll-based highlighting using `useEffect`
    - Create or update `Projects.tsx` with performance optimizations
@@ -101,7 +99,7 @@ Scroll events fire frequently, potentially impacting performance. Debouncing del
 npm install lodash
 ```
 
-Update the Navbar:
+You can do the following in the Navbar:
 
 ```tsx
 import { useState, useEffect } from 'react';
@@ -169,7 +167,7 @@ For more on `useEffect`, see the [React Hooks Documentation](https://react.dev/r
 The Context API enables sharing data across components without prop drilling, ideal for global state like themes or user preferences. For your portfolio, a theme toggle for light/dark modes is a practical application.
 
 ### Creating ThemeContext
-Define a `ThemeContext` to manage the theme state and toggle function.
+Define a `ThemeContext` to manage the theme state and toggle function. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/tree/main/resources/example/src/context/)
 
 ```tsx
 import { createContext, useContext, useState } from 'react';
@@ -533,7 +531,21 @@ export default ProjectCard;
 
 For advanced profiling, use [React Developer Tools](https://react.dev/learn/react-developer-tools).
 
-## 10. Required Tasks and Examples
+## 6. Best Practices and Tips
+
+- **Profile Regularly**: Use React Developer Tools to monitor re-renders and optimize bottlenecks.
+- **Keep Context Lean**: Store only global data in Context to avoid unnecessary updates.
+- **Test Lazy Loading**: Simulate slow networks in browser dev tools to verify fallbacks.
+- **Debounce Events**: Apply debouncing to high-frequency events like scroll or resize.
+- **Avoid Over-Optimization**: Only memoize when profiling shows a performance issue.
+
+**Common Pitfalls**:
+- Forgetting to clean up event listeners in `useEffect`, causing memory leaks.
+- Overusing `React.memo`, which adds overhead for simple components.
+- Incorrect dependency arrays in `useEffect` or `useCallback`, leading to stale data.
+
+
+## 7. Required Tasks and Examples
 
 For the tasks in this chapter, you need to create or update the following components:
 
@@ -551,27 +563,6 @@ Create a Skills component that leverages at least one advanced React pattern. Em
 
 ### App.tsx
 Update your `App.tsx` to include the new components. A sample implementation is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/App.tsx).
-
-## Quiz Instructions
-
-Complete the quiz in `quizzes/Chapter8.md` by marking exactly 5 correct answers with [X]. For example:
-```
-- [ ] This is an incorrect answer
-- [X] This is a correct answer
-```
-
-## 7. Best Practices and Tips
-
-- **Profile Regularly**: Use React Developer Tools to monitor re-renders and optimize bottlenecks.
-- **Keep Context Lean**: Store only global data in Context to avoid unnecessary updates.
-- **Test Lazy Loading**: Simulate slow networks in browser dev tools to verify fallbacks.
-- **Debounce Events**: Apply debouncing to high-frequency events like scroll or resize.
-- **Avoid Over-Optimization**: Only memoize when profiling shows a performance issue.
-
-**Common Pitfalls**:
-- Forgetting to clean up event listeners in `useEffect`, causing memory leaks.
-- Overusing `React.memo`, which adds overhead for simple components.
-- Incorrect dependency arrays in `useEffect` or `useCallback`, leading to stale data.
 
 ## 8. Conclusion
 
