@@ -10,7 +10,7 @@ on:
 
 permissions:
   contents: write
-  issues: read
+  
 
 jobs:
   get_current_step:
