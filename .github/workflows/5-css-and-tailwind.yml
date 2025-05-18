@@ -82,7 +82,7 @@ jobs:
 
       - name: Check Vite Config
         id: vite_config
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "vite.config.ts" ]; then
             echo "::error::vite.config.ts file is missing."
@@ -101,7 +101,7 @@ jobs:
 
       - name: Check Package.json
         id: package_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "package.json" ]; then
             echo "::error::package.json file is missing."

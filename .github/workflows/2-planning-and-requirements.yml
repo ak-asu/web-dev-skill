@@ -72,7 +72,7 @@ jobs:
 
       - name: Check SRS Document
         id: srs
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "resources/SRS.md" ]; then
             echo "::error::SRS document is missing. Please create resources/SRS.md"

@@ -137,7 +137,7 @@ jobs:
 
       - name: Check Advanced Animation Features
         id: advanced_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.animation_check.outputs.animation_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.animated_components.outputs.animated_components_ok == 'true'
         run: |
           # Check for advanced features like AnimatePresence, staggerChildren, or whileHover
           ADVANCED_FEATURES=(
@@ -161,12 +161,12 @@ jobs:
           echo "advanced_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: npm install
 
       - name: Build Project
         id: build_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.advanced_check.outputs.advanced_ok == 'true'
         run: |
           if npm run build; then
             echo "build_ok=true" >> $GITHUB_OUTPUT

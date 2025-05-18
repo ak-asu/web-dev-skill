@@ -76,7 +76,7 @@ jobs:
 
       - name: Check Vite Project Files
         id: vite_project
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           # Check for required Vite project files
           REQUIRED_FILES=(

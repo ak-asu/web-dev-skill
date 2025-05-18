@@ -31,7 +31,6 @@ jobs:
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
-          fi
     outputs:
       current_step: ${{ steps.get_step.outputs.current_step }}
       should_run: ${{ steps.get_step.outputs.should_run }}
@@ -126,12 +125,12 @@ jobs:
           echo "deployment_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: npm install
 
       - name: Build Project
         id: build_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.deployment_check.outputs.deployment_ok == 'true'
         run: |
           # Create a temporary .env file with placeholder values
           echo "# Temporary env file for build" > .env

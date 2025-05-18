@@ -78,7 +78,7 @@ jobs:
 
       - name: Check HTML File
         id: html_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "index.html" ]; then
             echo "::error::index.html file is missing."
@@ -143,12 +143,12 @@ jobs:
           echo "html_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install HTML validator
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.html_check.outputs.html_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.html_check.outputs.html_ok == 'true'
         run: npm install -g html-validate
 
       - name: Run HTML linting
         id: html_lint
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.html_check.outputs.html_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.html_check.outputs.html_ok == 'true'
         run: |
           if html-validate index.html; then
             echo "html_lint_ok=true" >> $GITHUB_OUTPUT
@@ -159,7 +159,7 @@ jobs:
 
       - name: Update to Step 5
         if: >
-          steps.quiz.outputs.quiz_ok == 'true' &&
+          steps.quiz_validation.outputs.quiz_ok == 'true' &&
           steps.html_check.outputs.html_ok == 'true' &&
           steps.html_lint.outputs.html_lint_ok == 'true' &&
           success()

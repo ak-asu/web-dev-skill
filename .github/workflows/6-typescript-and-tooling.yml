@@ -35,7 +35,6 @@ jobs:
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
-          fi
     outputs:
       current_step: ${{ steps.get_step.outputs.current_step }}
       should_run: ${{ steps.get_step.outputs.should_run }}
@@ -162,7 +161,7 @@ jobs:
 
       - name: Check ESLint Configuration
         id: eslint_check
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.ts_config.outputs.ts_config_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.typescript_check.outputs.typescript_ok == 'true'
         run: |
           if [ ! -f "eslint.config.js" ]; then
             echo "::error::eslint.config.js file is missing."
@@ -177,7 +176,7 @@ jobs:
 
       - name: Check TypeScript Usage
         id: ts_usage
-        if: steps.quiz.outputs.quiz_ok == 'true' && steps.eslint_check.outputs.eslint_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.eslint_check.outputs.eslint_ok == 'true'
         run: |
           # Check for TypeScript interfaces or types
           if ! find src -name "*.ts" -o -name "*.tsx" | xargs grep -l "interface\|type\|React.FC" > /dev/null; then
@@ -187,12 +186,12 @@ jobs:
           echo "ts_usage_ok=true" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: npm install
 
       - name: Type Check
         id: type_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if npx tsc --noEmit; then
             echo "type_check_ok=true" >> $GITHUB_OUTPUT
@@ -203,7 +202,7 @@ jobs:
 
       - name: Run Lint Check
         id: lint_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if npm run lint; then
             echo "lint_ok=true" >> $GITHUB_OUTPUT
