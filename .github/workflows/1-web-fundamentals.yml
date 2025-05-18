@@ -1,0 +1,95 @@
+name: Chapter 1 - Web Fundamentals
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'resources/Quiz1.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  get_current_step:
+    name: Check current step number
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - id: get_step
+        run: |
+          echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+    outputs:
+      current_step: ${{ steps.get_step.outputs.current_step }}
+
+  validate_quiz:
+    name: Validate Quiz Answers
+    needs: get_current_step
+    if: >-
+      ${{ !github.event.repository.is_template
+          && needs.get_current_step.outputs.current_step == 1 }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if quiz file exists
+        run: |
+          if [ ! -f "resources/Quiz1.md" ]; then
+            echo "::error::resources/Quiz1.md is missing"
+            exit 1
+          fi
+
+      - name: Validate quiz answers
+        id: quiz_validation
+        run: |
+          QUIZ_FILE="resources/Quiz1.md"
+          SELECTED_COUNT=$(grep -c "\[X\]" "$QUIZ_FILE" || true)
+          if [ "$SELECTED_COUNT" -eq 0 ]; then
+            echo "::error::No answers selected. Mark answers with [X]."
+            exit 1
+          fi
+          if [ "$SELECTED_COUNT" -ne 5 ]; then
+            echo "::error::Found $SELECTED_COUNT selections; select exactly 5 answers."
+            exit 1
+          fi
+          INCORRECT=0
+          if ! grep -q "\[X\] B. Served as pre-built files" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] C. The client sends requests and the server responds" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] B. A tree-like representation of the HTML document" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] D. To control the presentation and layout of elements" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if ! grep -q "\[X\] C. Use the useState hook's setter function" "$QUIZ_FILE"; then INCORRECT=$((INCORRECT+1)); fi
+          if [ "$INCORRECT" -gt 0 ]; then
+            echo "::error::Found $INCORRECT incorrect answers."
+            exit 1
+          fi
+          echo "quiz_completed=true" >> $GITHUB_OUTPUT
+
+      - name: Ensure All Chapter-1 Tasks Are Closed
+        if: steps.quiz_validation.outputs.quiz_completed == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter1-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter1-task issues.`);
+            }
+
+      - name: Update to step 2
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 1
+          to_step: 2
+          branch_name: main

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "project-1",
+    "title": "E-commerce Platform",
+    "description": "A full-featured e-commerce platform with product catalog, shopping cart, user authentication, and payment processing.",
+    "technologies": ["React", "Node.js", "Express", "MongoDB", "Stripe API"],
+    "imageUrl": "https://placehold.co/600x400",
+    "demoUrl": "https://demo-ecommerce.example.com",
+    "sourceUrl": "https://github.com/yourusername/ecommerce-platform"
+  },
+  {
+    "id": "project-2",
+    "title": "Task Management App",
+    "description": "A productivity application for managing tasks, organizing projects, and tracking progress with a clean, intuitive interface.",
+    "technologies": ["React", "TypeScript", "Tailwind CSS", "Firebase"],
+    "imageUrl": "https://placehold.co/600x400",
+    "demoUrl": "https://tasks-app.example.com",
+    "sourceUrl": "https://github.com/yourusername/task-manager"
+  },
+  {
+    "id": "project-3",
+    "title": "Weather Dashboard",
+    "description": "A weather application that displays current conditions and forecasts using data from a weather API with location-based searches.",
+    "technologies": ["JavaScript", "HTML/CSS", "OpenWeather API"],
+    "imageUrl": "https://placehold.co/600x400",
+    "demoUrl": "https://weather.example.com",
+    "sourceUrl": "https://github.com/yourusername/weather-app"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "edu-1",
+    "degree": "Master of Science in Computer Science",
+    "institution": "Arizona State University",
+    "location": "Tempe, AZ",
+    "period": "August 2018 - May 2020",
+    "description": "Specialized in Web Technologies and Software Engineering with a focus on modern frontend frameworks and distributed systems.",
+    "achievements": [
+      "GPA: 3.9/4.0",
+      "Graduate Teaching Assistant for Web Development courses",
+      "President of the Computer Science Graduate Student Association"
+    ],
+    "courses": [
+      "Advanced Web Development",
+      "Distributed Systems Architecture",
+      "Cloud Computing",
+      "User Experience Design",
+      "Software Project Management",
+      "Machine Learning Fundamentals"
+    ]
+  },
+  {
+    "id": "edu-2",
+    "degree": "Bachelor of Science in Computer Science",
+    "institution": "University of Arizona",
+    "location": "Tucson, AZ",
+    "period": "August 2014 - May 2018",
+    "description": "Foundational education in computer science with a minor in Mathematics.",
+    "achievements": [
+      "GPA: 3.7/4.0",
+      "Dean's List all semesters",
+      "Undergraduate Research Assistant in Human-Computer Interaction Lab"
+    ],
+    "courses": [
+      "Data Structures and Algorithms",
+      "Database Management Systems",
+      "Web Application Development",
+      "Object-Oriented Programming",
+      "Computer Networks",
+      "Operating Systems"
+    ]
+  }
+]

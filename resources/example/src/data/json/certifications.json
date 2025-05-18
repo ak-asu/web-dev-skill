@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cert-1",
+    "name": "AWS Certified Solutions Architect - Associate",
+    "issuer": "Amazon Web Services",
+    "date": "January 2023",
+    "credentialId": "AWS-ASA-12345",
+    "credentialUrl": ""
+  },
+  {
+    "id": "cert-2",
+    "name": "Professional Front-End Developer Certification",
+    "issuer": "Meta",
+    "date": "June 2022",
+    "credentialId": "META-FED-67890",
+    "credentialUrl": ""
+  },
+  {
+    "id": "cert-3",
+    "name": "React Native Specialization",
+    "issuer": "Coursera",
+    "date": "March 2021",
+    "credentialId": "COURSERA-RN-54321",
+    "credentialUrl": ""
+  }
+]

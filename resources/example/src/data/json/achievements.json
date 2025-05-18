@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ach-1",
+    "title": "Best Web Application Award",
+    "organization": "Arizona Web Development Conference",
+    "date": "November 2023",
+    "description": "Received first place award for developing an innovative accessibility-focused web application that helps visually impaired users navigate complex websites.",
+    "icon": "trophy"
+  },
+  {
+    "id": "ach-2",
+    "title": "Hackathon Winner",
+    "organization": "TechInnovate Hackathon",
+    "date": "May 2023",
+    "description": "Led a team of four developers to create a real-time collaboration tool that won first place among 50+ competing teams.",
+    "icon": "medal"
+  },
+  {
+    "id": "ach-3",
+    "title": "Open Source Contributor",
+    "organization": "React Community",
+    "date": "March 2022 - Present",
+    "description": "Recognized for significant contributions to React ecosystem projects, with over 50 merged pull requests and 10+ issues resolved.",
+    "icon": "award"
+  },
+  {
+    "id": "ach-4",
+    "title": "Published Technical Article",
+    "organization": "Web Development Journal",
+    "date": "January 2022",
+    "description": "Authored a technical article on modern state management techniques in React applications, which has been cited in multiple educational resources.",
+    "icon": "certificate"
+  },
+  {
+    "id": "ach-5",
+    "title": "Community Mentor Award",
+    "organization": "Local Coding Bootcamp",
+    "date": "August 2021",
+    "description": "Recognized for exceptional mentorship provided to junior developers, helping them transition successfully into tech careers.",
+    "icon": "award"
+  }
+]

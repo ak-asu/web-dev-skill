@@ -1,54 +1,55 @@
-<header>
+# Web Development Skill Tutorial
 
-<!--
-  <<< Author notes: Course header >>>
-  Read <https://skills.github.com/quickstart> for more information about how to build courses using this template.
-  Include a 1280×640 image, course name in sentence case, and a concise description in emphasis.
-  In your repository settings: enable template repository, add your 1280×640 social image, auto delete head branches.
-  Next to "About", add description & tags; disable releases, packages, & environments.
-  Add your open source license, GitHub uses the MIT license.
--->
+_Learn the fundamentals of modern web development by building your very own portfolio website! This hands-on tutorial covers project planning, setting up a React + TypeScript project with Vite, styling with Tailwind CSS, and more._
 
-# TBD-course-name
+## Welcome
 
-_TBD-course-description_
+- **Who is this for**: Developers who want to improve their web development skills, learn best practices, and build a professional portfolio website.
+- **What you'll learn**: 
+  - How to plan a web project and define requirements
+  - Setting up a Vite project with React and TypeScript
+  - Styling with Tailwind CSS and responsive design techniques
+  - Building reusable React components and implementing state management
+  - Integrating external APIs, error handling, and CI/CD deployment workflows
+- **What you'll build**: A basic portfolio website that showcases your skills, projects, and experience.
+- **Prerequisites**: Basic programming knowledge and familiarity with HTML, CSS, and JavaScript.
+- **Estimated Time**: This exercise typically takes at least one day to complete.
 
-</header>
+In this exercise, you will:
 
-<!--
-  <<< Author notes: Step 1 >>>
-  Choose 3-5 steps for your course.
-  The first step is always the hardest, so pick something easy!
-  Link to docs.github.com for further explanations.
-  Encourage users to open new tabs for steps!
-  TBD-step-1-notes.
--->
+1. Set up a React + TypeScript project with Vite.
+2. Plan your project by defining requirements and user stories.
+3. Build and style a portfolio website using Tailwind CSS.
+4. Implement fundamental and advanced React patterns, including state management.
+5. Integrate APIs and configure environment variables for dynamic content.
+6. Set up GitHub Actions for testing, building, and automated deployment.
 
-## Step 1: TBD-step-1-name
+### How to Start This Exercise
 
-_Welcome to "TBD-course-name"! :wave:_
+> [!IMPORTANT]
+> This exercise assumes basic programming knowledge.
 
-TBD-step-1-information
+Simply copy the exercise to your account and then refresh the page after a brief wait.
 
-**What is _TBD-term-1_**: TBD-definition-1
+[![](https://img.shields.io/badge/Copy%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/new?template_owner=ak-asu&template_name=web-dev-skill&owner=%40me&name=web-dev&description=Exercise:+Web+Development+Beginner&visibility=public)
 
-### :keyboard: Activity: TBD-step-1-name
+<details>
+<summary>Having trouble? 🤷</summary><br/>
 
-1. Open a new browser tab, and work on the steps in your second tab while you read the instructions in this tab.
-1. TBD-step-1-instructions.
-1. Wait about 20 seconds then refresh this page (the one you're following instructions from). [GitHub Actions](https://docs.github.com/en/actions) will automatically update to the next step.
+When copying the exercise, we recommend the following settings:
 
-<footer>
+- For owner, choose your personal account or an organization to host the repository.
 
-<!--
-  <<< Author notes: Footer >>>
-  Add a link to get support, GitHub status page, code of conduct, license link.
--->
+- We recommend creating a public repository, since private repositories will use Actions minutes.
+
+If the exercise isn't ready in 20 seconds, please check the [Actions](../../actions) tab.
+
+- Check to see if a job is running. Sometimes it simply takes a bit longer.
+
+- If the page shows a failed job, please submit an issue. Nice, you found a bug! 🐛
+
+</details>
 
 ---
 
-Get help: [TBD-support](TBD-support-link) &bull; [Review the GitHub status page](https://www.githubstatus.com/)
-
-&copy; 2023 TBD-copyright-holder &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
-
-</footer>
+&copy; 2025 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)

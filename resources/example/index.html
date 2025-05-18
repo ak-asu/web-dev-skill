@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- SEO-friendly meta description -->
+    <meta name="description" content="A professional web development portfolio showcasing my projects and skills" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Title appears in browser tab and search results -->
+    <title>Portfolio | Patrick Jane</title>
+    <!-- Additional meta tags for SEO -->
+    <meta name="keywords" content="web development, portfolio, react, typescript" />
+    <meta name="author" content="Patrick Jane" />
+    <!-- Open Graph tags for social media sharing -->
+    <meta property="og:title" content="Web Development Portfolio" />
+    <meta property="og:description" content="Showcasing my web development projects and skills" />
+    <!-- Handle redirects for GitHub Pages SPA -->
+    <script>
+      (function() {
+        // Redirect for GitHub Pages SPA
+        if (sessionStorage.redirect) {
+          const redirect = sessionStorage.redirect;
+          delete sessionStorage.redirect;
+          if (redirect && redirect !== location.href) {
+            history.replaceState(null, null, redirect);
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Main container for React application -->
+    <div id="root"></div>
+    <!-- Entry point script for the React application -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

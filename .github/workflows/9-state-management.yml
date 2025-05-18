@@ -1,0 +1,316 @@
+name: Chapter 9 - State Management with Redux Toolkit
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'resources/Quiz9.md'
+      - 'src/**/*.{ts,tsx}'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  
+  issues: write
+
+jobs:
+  get_current_step:
+    runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.read_step.outputs.current_step }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: read_step
+        run: echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+
+  create_issues:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '9' &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create Quiz Task Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,quiz',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 9: Complete the Redux Quiz',
+                body: `
+                # Complete the Redux State Management Quiz
+                
+                1. Navigate to the \`resources/Quiz9.md\` file
+                2. Answer all questions by marking the correct answers with [X]
+                3. Select exactly 5 answers total
+                4. Commit your changes to complete this task
+                
+                This issue will automatically close when you successfully complete the quiz.
+                `,
+                labels: ['chapter9-task', 'quiz']
+              });
+            }
+            
+      - name: Create Redux Implementation Issue
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,redux',
+              state: 'open'
+            });
+            
+            if (existingIssues.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'Chapter 9: Implement Redux State Management',
+                body: `
+                # Implement Redux State Management
+                
+                1. Install Redux Toolkit and React Redux:
+                   - Add \`@reduxjs/toolkit\` and \`react-redux\` to your package.json
+                
+                2. Create your Redux store:
+                   - Set up a Redux store file (e.g., \`src/app/store.ts\` or \`src/store/index.ts\`)
+                   - Use \`configureStore\` to create the store
+                
+                3. Create at least one Redux slice:
+                   - Use \`createSlice\` to define reducers and actions
+                   - Implement state management for theme or projects data
+                
+                4. Connect Redux to your React application:
+                   - Wrap your application with the Redux \`Provider\`
+                   - Use Redux hooks (\`useSelector\` and \`useDispatch\`) in components
+                
+                This issue will automatically close when you successfully complete all the required tasks.
+                `,
+                labels: ['chapter9-task', 'redux']
+              });
+            }
+
+  validate_and_progress:
+    needs: get_current_step
+    if: >
+      !github.event.repository.is_template &&
+      needs.get_current_step.outputs.current_step == '9'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Validate Quiz Answers
+        id: quiz
+        run: |
+          QUIZ=resources/Quiz9.md
+          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
+          if [ "$COUNT" -ne 5 ]; then
+            echo "::error::You must select exactly 5 answers (found $COUNT)."
+            exit 1
+          fi
+          echo "quiz_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Redux Toolkit Dependencies
+        id: redux_deps_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          # Check for Redux Toolkit in package.json
+          if ! grep -q "\"@reduxjs/toolkit\"" "package.json" || ! grep -q "\"react-redux\"" "package.json"; then
+            echo "::error::Missing Redux Toolkit dependencies (@reduxjs/toolkit and/or react-redux) in package.json."
+            exit 1
+          fi
+          
+          echo "redux_deps_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Redux Store Implementation
+        id: redux_store_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.redux_deps_check.outputs.redux_deps_ok == 'true'
+        run: |
+          # Check for Redux store configuration
+          STORE_FILE_FOUND=false
+          for path in "src/app/store.ts" "src/store/index.ts" "src/store.ts"; do
+            if [ -f "$path" ]; then
+              STORE_FILE_FOUND=true
+              break
+            fi
+          done
+          
+          if [ "$STORE_FILE_FOUND" = false ]; then
+            echo "::error::No Redux store configuration file found. Expected src/app/store.ts, src/store/index.ts, or src/store.ts."
+            exit 1
+          fi
+          
+          # Check for configureStore usage
+          if ! grep -r "configureStore" --include="*.ts" --include="*.tsx" src > /dev/null; then
+            echo "::error::No configureStore usage found in Redux configuration."
+            exit 1
+          fi
+          
+          # Check for createSlice usage
+          if ! grep -r "createSlice" --include="*.ts" --include="*.tsx" src > /dev/null; then
+            echo "::error::No Redux Toolkit slice creation found."
+            exit 1
+          fi
+          
+          echo "redux_store_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Check Redux Integration in React
+        id: redux_integration_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.redux_store_check.outputs.redux_store_ok == 'true'
+        run: |
+          # Check for useSelector or useDispatch
+          if ! grep -r "useSelector\|useDispatch" --include="*.tsx" src > /dev/null; then
+            echo "::error::No Redux hooks usage found (useSelector/useDispatch)."
+            exit 1
+          fi
+          
+          # Check for Provider
+          if ! grep -r "Provider.*store" --include="*.tsx" --include="*.ts" src > /dev/null; then
+            echo "::error::No Redux Provider component with store prop found."
+            exit 1
+          fi
+          
+          echo "redux_integration_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Install Dependencies
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: npm install
+
+      - name: Type Check
+        id: type_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npx tsc --noEmit; then
+            echo "type_check_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::TypeScript type checking failed. Please fix the type errors."
+            exit 1
+          fi
+
+      - name: Run Lint Check
+        id: lint_check
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        run: |
+          if npm run lint; then
+            echo "lint_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Linting failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Build Project
+        id: build_check
+        if: steps.quiz.outputs.quiz_ok == 'true' && steps.lint_check.outputs.lint_ok == 'true'
+        run: |
+          if npm run build; then
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Build failed. Please fix the issues."
+            exit 1
+          fi
+
+      - name: Close Completed Quiz Issue
+        if: steps.quiz.outputs.quiz_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,quiz',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Close Completed Redux Implementation Issue
+        if: >
+          steps.redux_deps_check.outputs.redux_deps_ok == 'true' && 
+          steps.redux_store_check.outputs.redux_store_ok == 'true' && 
+          steps.redux_integration_check.outputs.redux_integration_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task,redux',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+      - name: Ensure All Chapter-9 Tasks Are Closed
+        if: >
+          steps.quiz.outputs.quiz_ok == 'true' && 
+          steps.redux_deps_check.outputs.redux_deps_ok == 'true' &&
+          steps.redux_store_check.outputs.redux_store_ok == 'true' &&
+          steps.redux_integration_check.outputs.redux_integration_ok == 'true' &&
+          steps.type_check.outputs.type_check_ok == 'true' &&
+          steps.lint_check.outputs.lint_ok == 'true' &&
+          steps.build_check.outputs.build_ok == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'chapter9-task',
+              state: 'open'
+            });
+            if (open.data.length > 0) {
+              core.setFailed(`There are still ${open.data.length} open chapter9-task issues.`);
+            }
+
+      - name: Advance to Step 10
+        if: success()
+        uses: skills/action-update-step@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          from_step: 9
+          to_step: 10
+          branch_name: main
