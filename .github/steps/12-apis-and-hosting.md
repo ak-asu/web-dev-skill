@@ -184,7 +184,54 @@ const fetchRepos = async () => {
 
 Learn more at [MDN Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) and [Axios Documentation](https://axios-http.com/docs/intro).
 
-## 5. Securing Secrets
+## 5. Example API Integration (Optional)
+
+Let's implement a practical example: a contact form that sends messages using a third-party form handling service (Formspree). This integration demonstrates how to use environment variables, handle form submissions, and provide user feedback.
+
+### Setting Up Formspree
+
+[Formspree](https://formspree.io/) is a service that handles form submissions without requiring your own backend:
+
+1. **Create a Formspree Account**: Sign up at [formspree.io](https://formspree.io/)
+2. **Create a New Form**: From your dashboard, create a new form to get an endpoint URL
+3. **Store the Endpoint**: Add it to your environment variables
+
+```env
+# .env
+VITE_FORM_ENDPOINT=https://formspree.io/f/your-unique-form-id
+```
+
+### Creating the API Module
+
+Create a dedicated module to handle form submissions in [`src/api/contact.ts`](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/api/contact.ts)
+
+### Implementing the Contact Component
+
+Update your Contact component to use the API module. A sample is provided [here](https://github.com/ak-asu/web-dev-skill/blob/main/resources/example/src/components/Contact.tsx).
+
+### Key Learning Points
+
+1. **Separation of Concerns**:
+   - API logic is separated into its own module
+   - Component focuses on UI and state management
+
+2. **Error Handling**:
+   - Validate form data before submission
+   - Handle network errors and API response errors
+   - Provide clear feedback to users
+
+3. **User Experience**:
+   - Show loading state during submission
+   - Display success or error messages
+   - Include honeypot field for spam protection
+
+4. **Environment Variables**:
+   - Store API endpoint in environment variables
+   - Check for missing configuration at runtime
+
+This example demonstrates a complete integration flow: user input → validation → API call → response handling → user feedback. The pattern can be adapted for other APIs in your portfolio, such as fetching projects from GitHub or integrating other third-party services.
+
+## 6. Securing Secrets
 
 Secrets, such as API keys or tokens, must be protected to prevent unauthorized access. Hardcoding secrets in source code risks exposure, especially in public repositories.
 
@@ -217,7 +264,7 @@ jobs:
 
 GitHub masks secrets in logs, ensuring they remain secure.
 
-## 6. Dynamic Content Loading
+## 7. Dynamic Content Loading
 
 Dynamically loading content from APIs keeps your portfolio up-to-date and engaging. In React, use `useEffect` to fetch data when components mount.
 
@@ -292,7 +339,7 @@ export default Projects;
 
 Replace `yourusername` with your GitHub username.
 
-## 7. Error Handling in API Requests
+## 8. Error Handling in API Requests
 
 Robust error handling ensures your portfolio remains usable even when APIs fail.
 
@@ -365,7 +412,7 @@ const App: React.FC = () => (
 );
 ```
 
-## 8. Continuous Integration with GitHub Actions
+## 9. Continuous Integration with GitHub Actions
 
 Continuous Integration (CI) automates testing and building your code on every push or pull request, catching issues early.
 
@@ -429,7 +476,7 @@ Ensure your `package.json` includes:
 
 For more on GitHub Actions, see [GitHub Actions Documentation](https://docs.github.com/en/actions).
 
-## 9. Automated Deployment
+## 10. Automated Deployment
 
 Automated deployment ensures your site updates automatically when code is merged, reducing manual effort.
 
@@ -457,11 +504,11 @@ Create `.github/workflows/deploy.yml`. It is used to deploy your site to GitHub 
 
 Vercel offers features like automatic HTTPS and domain management, making it a strong alternative. See [Vercel Documentation](https://vercel.com/docs).
 
-## 10. Maintaining the Live Site
+## 11. Maintaining the Live Site
 - **Monitor Deployments**: Check GitHub Actions logs for build or deployment failures.
 - **Update Content**: Regularly push updates to keep API-driven content fresh.
 - **Add Features**: Consider analytics or a contact form backend to enhance functionality.
 - **Custom Domain**: Purchase a domain and configure it in GitHub Pages or Vercel settings for a professional URL.
 
-## 11. Conclusion
+## 12. Conclusion
 This chapter has equipped you to configure, integrate, and deploy your portfolio site with modern development practices. Environment variables secure your configuration, APIs bring dynamic content, and GitHub Actions automate testing and deployment. Hosting on GitHub Pages or Vercel ensures your site is accessible and scalable. These skills prepare you for professional web development, showcasing a portfolio that reflects your technical expertise and attention to detail.

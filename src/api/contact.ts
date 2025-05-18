@@ -1,5 +1,4 @@
-// For a Vite application, we need to use a different approach than Next.js API routes
-// Here's an implementation using Formspree as an example
+// Here's an implementation using Formspree as an example, https://formspree.io/
 
 export interface ContactFormData {
   name: string;
@@ -17,7 +16,7 @@ export async function submitContactForm(formData: ContactFormData): Promise<Resp
   const endpoint = import.meta.env.VITE_FORM_ENDPOINT;
   
   if (!endpoint) {
-    throw new Error('Form endpoint environment variable (VITE_FORM_ENDPOINT) is not set');
+    throw new Error('Form endpoint environment variable is not set');
   }
 
   try {

@@ -11,7 +11,7 @@ _Learn the fundamentals of modern web development by building your very own port
   - Styling with Tailwind CSS and responsive design techniques
   - Building reusable React components and implementing state management
   - Integrating external APIs, error handling, and CI/CD deployment workflows
-- **What you'll build**: A basic portfolio website that showcases your skills, projects, and experience.
+- **What you'll build**: A basic portfolio website that showcases your skills, projects, experience and more.
 - **Prerequisites**: Basic programming knowledge and familiarity with HTML, CSS, and JavaScript.
 - **Estimated Time**: This exercise typically takes at least one day to complete.
 

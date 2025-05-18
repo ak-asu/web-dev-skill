@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { personalInfo } from '../data';
-
+import { submitContactForm } from '../api/contact';
 
 // Animation variant for fade-in effect used throughout the component
 const fadeIn = {
@@ -106,22 +106,12 @@ const Contact: React.FC = () => {
     // Set submitting state to show loading spinner
     setIsSubmitting(true);
     try {
-      // API call to send contact message
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to send message');
-      }
+      // Use the API function instead of direct fetch
+      await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        message: formData.message
+      });      
       // Success case - show success message and reset form
       setSubmitMessage({
         text: 'Your message has been sent successfully! I will get back to you soon.',
