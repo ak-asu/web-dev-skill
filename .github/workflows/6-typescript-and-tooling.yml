@@ -31,10 +31,11 @@ jobs:
         run: |
           current_step=$(cat ./.github/steps/-step.txt)
           echo "current_step=$current_step" >> $GITHUB_OUTPUT
-          if [ "$current_step" -eq "6" ]; then
+          if [ "$current_step" -eq "5" ]; then
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
     outputs:
       current_step: ${{ steps.get_step.outputs.current_step }}
       should_run: ${{ steps.get_step.outputs.should_run }}

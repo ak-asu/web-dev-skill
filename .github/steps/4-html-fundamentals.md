@@ -63,7 +63,6 @@ Semantic HTML elements describe their purpose, improving accessibility, SEO, and
 
 ### Key Semantic Elements
 | **Element**   | **Role**                                                                 |
-|---------------|--------------------------------------------------------------------------|
 | `<header>`    | Introductory content or navigation, often with logos or titles.           |
 | `<nav>`       | Navigation menu with links to other pages or sections.                   |
 | `<main>`      | Primary content of the page, unique to each page.                        |

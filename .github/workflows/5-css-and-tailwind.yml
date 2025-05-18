@@ -128,7 +128,7 @@ jobs:
 
       - name: Check CSS File
         id: css_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "src/index.css" ]; then
             echo "::error::src/index.css file is missing."
@@ -153,7 +153,7 @@ jobs:
 
       - name: Check App CSS File
         id: app_css_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "src/App.css" ]; then
             echo "::error::src/App.css file is missing."
@@ -178,7 +178,7 @@ jobs:
 
       - name: Check Tailwind Config
         id: tailwind_check
-        if: steps.quiz.outputs.quiz_ok == 'true'
+        if: steps.quiz_validation.outputs.quiz_ok == 'true'
         run: |
           if [ ! -f "tailwind.config.js" ]; then
             echo "::error::tailwind.config.js file is missing."

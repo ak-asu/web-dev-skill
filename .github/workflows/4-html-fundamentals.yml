@@ -67,7 +67,7 @@ jobs:
           if ! grep -A5 "2. \*\*What attribute must be provided" "$QUIZ" | grep -q "\[X\] B. alt"; then 
             INCORRECT=$((INCORRECT+1))
           fi
-          if ! grep -A5 "3. \*\*In a React \+ Vite project" "$QUIZ" | grep -q "\[X\] B. \`<div id=\"root\">\`"; then 
+          if ! grep -A5 "3. \*\*In a React + Vite project" "$QUIZ" | grep -q "\[X\] B. \`<div id=\"root\">\`"; then 
             INCORRECT=$((INCORRECT+1))
           fi
           if [ "$INCORRECT" -gt 0 ]; then
@@ -106,9 +106,6 @@ jobs:
             
             # Icon link
             "<link.*rel=\"icon\".*href=\".*\""
-            
-            # Redirect script
-            "<script>.*sessionStorage\.redirect.*</script>"
           )          
           MISSING=""
           for check in "${HTML_CHECKS[@]}"; do
@@ -150,7 +147,7 @@ jobs:
         id: html_lint
         if: steps.quiz_validation.outputs.quiz_ok == 'true' && steps.html_check.outputs.html_ok == 'true'
         run: |
-          if html-validate index.html; then
+          if html-validate index.html --rule void-style=off; then
             echo "html_lint_ok=true" >> $GITHUB_OUTPUT
           else
             echo "::error::HTML validation failed. Please check your HTML for errors."

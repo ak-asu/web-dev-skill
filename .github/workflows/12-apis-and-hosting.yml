@@ -31,6 +31,7 @@ jobs:
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
             echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
     outputs:
       current_step: ${{ steps.get_step.outputs.current_step }}
       should_run: ${{ steps.get_step.outputs.should_run }}

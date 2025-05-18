@@ -38,11 +38,15 @@ Simply copy the exercise to your account and then refresh the page after a brief
 
 When copying the exercise, we recommend the following settings:
 
+- Use node version 20.
+
+- You can also chase the chapter number in the `.github/steps/-steps.txt` file to start at a specific chapter.
+
 - For owner, choose your personal account or an organization to host the repository.
 
 - We recommend creating a public repository, since private repositories will use Actions minutes.
 
-If the exercise isn't ready in 20 seconds, please check the [Actions](../../actions) tab.
+- If the exercise isn't ready in 20 seconds or you want to troubleshoot the exercise errors, please check the [Actions](../../actions) tab and the corresponding workflow logs.
 
 - Check to see if a job is running. Sometimes it simply takes a bit longer.
 

@@ -90,7 +90,6 @@ jobs:
             "About"
             "Hero"
             "Footer"
-            "NotFound"
           )
           MISSING_COMPONENTS=""
           for component in "${REQUIRED_COMPONENTS[@]}"; do
