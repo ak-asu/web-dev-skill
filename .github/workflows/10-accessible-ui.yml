@@ -59,9 +59,19 @@ jobs:
             echo "::error::$QUIZ is missing"
             exit 1
           fi
-          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
-          if [ "$COUNT" -ne 5 ]; then
-            echo "::error::You must select exactly 5 answers (found $COUNT)."
+          # Check for correct answers
+          INCORRECT=0
+          if ! grep -A5 "1. \*\*What is a controlled component" "$QUIZ" | grep -q "\[X\] B. A form element whose value is managed by React state"; then 
+            INCORRECT=$((INCORRECT+1))
+          fi
+          if ! grep -A5 "2. \*\*Which event handler attribute" "$QUIZ" | grep -q "\[X\] C. onChange"; then 
+            INCORRECT=$((INCORRECT+1))
+          fi
+          if ! grep -A5 "3. \*\*Which library is designed" "$QUIZ" | grep -q "\[X\] B. Formik"; then 
+            INCORRECT=$((INCORRECT+1))
+          fi
+          if [ "$INCORRECT" -gt 0 ]; then
+            echo "::error::Found $INCORRECT incorrect answers."
             exit 1
           fi
           echo "quiz_ok=true" >> $GITHUB_OUTPUT

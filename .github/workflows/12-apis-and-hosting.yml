@@ -60,9 +60,19 @@ jobs:
             echo "::error::$QUIZ is missing"
             exit 1
           fi
-          COUNT=$(grep -c "\[X\]" "$QUIZ" || echo 0)
-          if [ "$COUNT" -ne 5 ]; then
-            echo "::error::You must select exactly 5 answers (found $COUNT)."
+          # Check for correct answers
+          INCORRECT=0
+          if ! grep -A5 "1. \*\*Which library is recommended" "$QUIZ" | grep -q "\[X\] C. React Testing Library"; then 
+            INCORRECT=$((INCORRECT+1))
+          fi
+          if ! grep -A5 "2. \*\*Which function from" "$QUIZ" | grep -q "\[X\] A. render"; then 
+            INCORRECT=$((INCORRECT+1))
+          fi
+          if ! grep -A5 "3. \*\*Which Jest function" "$QUIZ" | grep -q "\[X\] A. expect()"; then 
+            INCORRECT=$((INCORRECT+1))
+          fi
+          if [ "$INCORRECT" -gt 0 ]; then
+            echo "::error::Found $INCORRECT incorrect answers."
             exit 1
           fi
           echo "quiz_ok=true" >> $GITHUB_OUTPUT
