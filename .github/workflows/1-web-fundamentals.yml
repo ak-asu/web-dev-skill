@@ -7,6 +7,8 @@ on:
       - '.github/steps/-step.txt'
       - 'resources/Quiz1.md'
   workflow_dispatch:
+  repository_dispatch:
+    types: [check-chapter1]
 
 permissions:
   contents: write
@@ -16,23 +18,29 @@ jobs:
   get_current_step:
     name: Check current step number
     runs-on: ubuntu-latest
+    outputs:
+      current_step: ${{ steps.get_step.outputs.current_step }}
+      should_run: ${{ steps.check_step.outputs.should_run }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - id: get_step
         run: |
           echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
-      - name: Early terminate if not on step 1
-        if: steps.get_step.outputs.current_step != '1'
-        run: exit 78
-    outputs:
-      current_step: ${{ steps.get_step.outputs.current_step }}
+      - id: check_step
+        run: |
+          CURRENT_STEP=$(cat ./.github/steps/-step.txt)
+          if [ "$CURRENT_STEP" == "1" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_run=false" >> $GITHUB_OUTPUT
+            echo "Current step is $CURRENT_STEP, skipping Chapter 1 workflow."
 
   create_issues:
     needs: get_current_step
     if: >
       !github.event.repository.is_template &&
-      needs.get_current_step.outputs.current_step == '1' &&
+      needs.get_current_step.outputs.should_run == 'true' &&
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -75,7 +83,7 @@ jobs:
     needs: get_current_step
     if: >-
       ${{ !github.event.repository.is_template
-          && needs.get_current_step.outputs.current_step == 1 }}
+          && needs.get_current_step.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
